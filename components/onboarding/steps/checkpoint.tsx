@@ -39,7 +39,7 @@ export function CheckpointStep() {
         ].map((item) => (
           <li
             key={item}
-            className="flex items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3"
+            className="flex min-h-[70px] items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3"
           >
             <CheckCircle2 className="size-5 text-action" />
             <span className="text-[16px] font-medium text-ink">{item}</span>
