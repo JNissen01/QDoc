@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Plus, ScanLine, Search, Trash2, X } from "lucide-react";
+import { Pencil, Plus, ScanLine, Trash2, X } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   CheckBox,
@@ -10,6 +10,7 @@ import {
   GhostButton,
   InfoNote,
   PrimaryButton,
+  SearchField,
   SegmentedControl,
   SelectorCard,
 } from "@/components/onboarding/primitives";
@@ -94,6 +95,7 @@ export function MedicalHistoryStep() {
             description={option.description}
             leading={<CheckBox selected={selected.includes(option.value)} />}
             trailing={null}
+            variant="choice"
             onClick={() => toggle(option.value)}
           />
         ))}
@@ -253,6 +255,7 @@ export function MedicationsStep() {
             {MEDICATION_REACTIONS.map((reaction) => (
               <Chip
                 key={reaction}
+                variant="soft"
                 selected={draft.reactions.includes(reaction)}
                 onClick={() => {
                   const reactions = draft.reactions.includes(reaction)
@@ -321,23 +324,19 @@ export function AllergiesStep() {
       subtitle="Search or pick common allergens. You can skip this if nothing applies."
       footer={<PrimaryButton onClick={() => goNext()}>Next</PrimaryButton>}
     >
-      <div className="text-left">
-        <p className="mb-2 text-[13px] text-body">Allergen</p>
-        <div className="relative">
-          <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
-          <Field
-            placeholder="e.g. Peanuts"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.preventDefault();
-                addQuery();
-              }
-            }}
-            inputClassName="pl-10"
-          />
-        </div>
+      <div>
+        <p className="mb-2 text-[13px] font-semibold text-body">Allergen</p>
+        <SearchField
+          placeholder="e.g. Peanuts"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              addQuery();
+            }
+          }}
+        />
         {query.trim() ? (
           <button
             type="button"
@@ -356,7 +355,7 @@ export function AllergiesStep() {
             ))}
           </div>
         ) : null}
-        <p className="mt-5 mb-2 text-[13px] text-body">Common allergies</p>
+        <p className="mt-5 mb-2 text-[13px] font-semibold text-body">Common allergies</p>
         <div className="flex flex-wrap gap-2">
           {COMMON_ALLERGIES.map((allergy) => (
             <Chip

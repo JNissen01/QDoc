@@ -44,7 +44,7 @@ export function ScanCardStep() {
   if (scanning) {
     return (
       <PhoneFrame>
-        <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <div className="flex flex-1 flex-col justify-center text-left">
           <div className="relative flex size-56 items-center justify-center rounded-[28px] border-2 border-dashed border-action bg-white">
             <ScanLine className="size-16 text-action" />
           </div>
@@ -143,20 +143,7 @@ export function HealthCardStep() {
           update({ healthCardNumber: formatHealthCard(event.target.value) })
         }
       />
-      <Field
-        className="mt-4"
-        label="Expiry date"
-        placeholder="MM / YY"
-        value={state.healthCardExpiry}
-        onChange={(event) =>
-          update({
-            healthCardExpiry: event.target.value
-              .replace(/[^\d/]/g, "")
-              .slice(0, 5),
-          })
-        }
-      />
-      <div className="mt-4">
+      <div className="mt-3">
         <LockNote>Your information is encrypted and secure</LockNote>
       </div>
     </OnboardingShell>
@@ -173,7 +160,6 @@ export function InsuranceStep() {
   return (
     <OnboardingShell
       step="insurance"
-      align="left"
       title="Insurance details"
       subtitle="Currently we only accept MSH private insurance."
       footer={
@@ -234,7 +220,6 @@ export function PaymentStep() {
   return (
     <OnboardingShell
       step="payment"
-      align="left"
       title="Payment Details"
       subtitle="Enter your card information below"
       footer={
@@ -288,20 +273,6 @@ export function PaymentStep() {
             onChange={(event) =>
               update({ cardCvv: event.target.value.replace(/\D/g, "").slice(0, 4) })
             }
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field
-            label="NIHB ID (optional)"
-            placeholder="If applicable"
-            value={state.nihbId}
-            onChange={(event) => update({ nihbId: event.target.value })}
-          />
-          <Field
-            label="IFHP ID (optional)"
-            placeholder="If applicable"
-            value={state.ifhpId}
-            onChange={(event) => update({ ifhpId: event.target.value })}
           />
         </div>
       </div>

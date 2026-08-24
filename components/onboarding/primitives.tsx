@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, Search } from "lucide-react";
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -63,6 +63,25 @@ export function GhostButton({
   );
 }
 
+export function SearchField({
+  className,
+  inputClassName,
+  ...props
+}: ComponentProps<"input"> & { inputClassName?: string }) {
+  return (
+    <div className={cn("relative", className)}>
+      <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
+      <Input
+        className={cn(
+          "h-14 rounded-[14px] border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+          inputClassName,
+        )}
+        {...props}
+      />
+    </div>
+  );
+}
+
 export function Field({
   label,
   error,
@@ -77,7 +96,7 @@ export function Field({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {label ? (
-        <Label className="text-[13px] leading-4 font-normal text-ink">
+        <Label className="text-[13px] leading-4 font-semibold text-ink">
           {label}
         </Label>
       ) : null}
@@ -103,6 +122,7 @@ export function SelectorCard({
   onClick,
   leading,
   trailing,
+  variant = "radio",
 }: {
   selected?: boolean;
   title: string;
@@ -110,6 +130,7 @@ export function SelectorCard({
   onClick: () => void;
   leading?: ReactNode;
   trailing?: ReactNode;
+  variant?: "radio" | "choice";
 }) {
   return (
     <button
@@ -122,7 +143,12 @@ export function SelectorCard({
     >
       {leading}
       <span className="min-w-0 flex-1">
-        <span className="block text-[16px] leading-[22px] font-medium text-ink">
+        <span
+          className={cn(
+            "block text-[16px] leading-[22px] font-medium",
+            selected && variant === "radio" ? "text-action" : "text-ink",
+          )}
+        >
           {title}
         </span>
         {description ? (
@@ -131,13 +157,7 @@ export function SelectorCard({
           </span>
         ) : null}
       </span>
-      {trailing !== undefined
-        ? trailing
-        : selected
-          ? (
-              <Check className="size-5 shrink-0 text-action" strokeWidth={2.4} />
-            )
-          : null}
+      {trailing}
     </button>
   );
 }
@@ -172,10 +192,12 @@ export function Chip({
   selected,
   children,
   onClick,
+  variant = "solid",
 }: {
   selected?: boolean;
   children: ReactNode;
   onClick: () => void;
+  variant?: "solid" | "soft";
 }) {
   return (
     <button
@@ -183,9 +205,9 @@ export function Chip({
       onClick={onClick}
       className={cn(
         "rounded-[43px] border px-3.5 py-2 text-[14px] leading-[18px] font-medium transition-colors",
-        selected
-          ? "border-action bg-action text-white"
-          : "border-line bg-white text-ink",
+        selected && variant === "solid" && "border-action bg-action text-white",
+        selected && variant === "soft" && "border-action bg-tint text-ink",
+        !selected && "border-line bg-white text-ink",
       )}
     >
       {children}
@@ -206,7 +228,7 @@ export function InfoNote({ children }: { children: ReactNode }) {
 
 export function LockNote({ children }: { children: ReactNode }) {
   return (
-    <p className="flex items-center justify-center gap-2 text-[14px] leading-[18px] text-caption">
+    <p className="flex items-center gap-2 text-[14px] leading-[18px] text-caption">
       <svg
         viewBox="0 0 24 24"
         className="size-4"
@@ -255,7 +277,7 @@ export function SegmentedControl<T extends string>({
               "h-12 rounded-[14px] border text-[16px] font-medium",
               selected
                 ? "border-action bg-action text-white"
-                : "border-line bg-white text-ink",
+                : "border-line bg-tint text-ink",
             )}
           >
             {option.label}

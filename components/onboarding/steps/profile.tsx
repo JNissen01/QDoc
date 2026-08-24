@@ -163,7 +163,7 @@ export function AddressStep() {
           />
         </div>
         <div>
-          <p className="mb-2 text-[13px] leading-4 text-ink">Province</p>
+          <p className="mb-2 text-[13px] leading-4 font-semibold text-ink">Province</p>
           <div className="grid grid-cols-3 gap-2">
             {(
               [

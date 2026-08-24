@@ -75,7 +75,7 @@ export function WelcomeStep() {
         ))}
       </ul>
 
-      <div className="mt-8 flex justify-center gap-2">
+      <div className="mt-8 flex gap-2">
         {SLIDES.map((_, slideIndex) => (
           <button
             key={slideIndex}
@@ -90,7 +90,7 @@ export function WelcomeStep() {
         ))}
       </div>
 
-      <div className="mt-8 flex flex-wrap justify-center gap-2">
+      <div className="mt-8 flex flex-wrap gap-2">
         {["PHIA", "HIPAA", "Manitoba", "Nunavut", "NW Ontario"].map((seal) => (
           <span
             key={seal}

@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   Field,
   PrimaryButton,
   RadioDot,
+  SearchField,
   SelectorCard,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
@@ -32,18 +32,15 @@ export function PharmacyStep() {
         </PrimaryButton>
       }
     >
-      <div className="relative mb-4">
-        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
-        <Field
-          placeholder="Search by name or city"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          inputClassName="pl-10"
-        />
-      </div>
+      <SearchField
+        className="mb-4"
+        placeholder="Search by name or city"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+      />
       <div className="space-y-3">
         {results.length === 0 ? (
-          <p className="rounded-[14px] border border-line bg-white px-4 py-6 text-center text-[14px] text-caption">
+          <p className="rounded-[14px] border border-line bg-white px-4 py-6 text-[14px] text-caption">
             No pharmacies match that search.
           </p>
         ) : (
@@ -102,15 +99,12 @@ export function FamilyDoctorStep() {
       </div>
       {state.hasFamilyDoctor ? (
         <div className="mt-6">
-          <div className="relative mb-4">
-            <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
-            <Field
-              placeholder="Search clinics"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              inputClassName="pl-10"
-            />
-          </div>
+          <SearchField
+            className="mb-4"
+            placeholder="Search clinics"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
           <div className="space-y-3">
             {results.map((clinic) => (
               <SelectorCard

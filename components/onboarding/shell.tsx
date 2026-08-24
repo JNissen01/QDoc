@@ -59,7 +59,6 @@ export function OnboardingShell({
   step,
   title,
   subtitle,
-  align = "center",
   footer,
   children,
   hideBack,
@@ -67,7 +66,6 @@ export function OnboardingShell({
   step: StepId;
   title?: string;
   subtitle?: string;
-  align?: "center" | "left";
   footer?: ReactNode;
   children: ReactNode;
   hideBack?: boolean;
@@ -82,25 +80,16 @@ export function OnboardingShell({
       <div className="flex min-h-0 flex-1 flex-col">
         {!progress.hidden ? (
           <ProgressTracker current={progress.current} total={progress.total} />
-        ) : (
-          <div className="h-[5px]" />
-        )}
+        ) : null}
 
         {!hideBack && prev ? (
           <div className="mt-4">
             <BackLink onClick={() => router.push(hrefFor(prev))} />
           </div>
-        ) : (
-          <div className="mt-4 h-6" />
-        )}
+        ) : null}
 
         {(title || subtitle) && (
-          <header
-            className={cn(
-              "mt-5 space-y-2",
-              align === "center" ? "text-center" : "text-left",
-            )}
-          >
+          <header className="mt-6 space-y-2 text-left">
             {title ? (
               <h1 className="text-[28px] leading-9 font-semibold tracking-normal text-ink">
                 {title}
@@ -114,7 +103,7 @@ export function OnboardingShell({
           </header>
         )}
 
-        <div className="mt-6 flex-1 pb-4">{children}</div>
+        <div className="mt-6 flex-1 pb-4 text-left">{children}</div>
       </div>
       {footer ? (
         <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]">

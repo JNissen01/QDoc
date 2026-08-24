@@ -46,7 +46,7 @@ export function CheckpointStep() {
           </li>
         ))}
       </ul>
-      <p className="mt-6 text-center text-[14px] leading-[18px] text-caption">
+      <p className="mt-6 text-[14px] leading-[18px] text-caption">
         Phase 2 is optional. You can add pharmacy, history, and medications
         later from your profile.
       </p>

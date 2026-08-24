@@ -81,7 +81,7 @@ export function AccountStep() {
 }
 
 export function ConfirmEmailStep() {
-  const { state, update, goNext } = useStepNav("confirm-email");
+  const { update, goNext } = useStepNav("confirm-email");
   const [digits, setDigits] = useState(["", "", "", "", ""]);
   const [error, setError] = useState("");
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
@@ -120,14 +120,14 @@ export function ConfirmEmailStep() {
     <OnboardingShell
       step="confirm-email"
       title="Confirm your email"
-      subtitle={`Enter the code sent to ${state.email || "your email address"} to secure your account.`}
+      subtitle="Enter the code sent to your email address to secure your account."
       footer={
         <PrimaryButton disabled={!complete} onClick={verify}>
           Verify
         </PrimaryButton>
       }
     >
-      <div className="flex justify-center gap-2">
+      <div className="grid grid-cols-5 gap-2">
         {boxes.map((index) => (
           <input
             key={index}
@@ -142,19 +142,15 @@ export function ConfirmEmailStep() {
             onChange={(event) => setDigit(index, event.target.value)}
             onKeyDown={(event) => onKeyDown(index, event)}
             className={cn(
-              "size-14 rounded-[14px] border border-line bg-white text-center text-[24px] font-semibold text-ink placeholder:text-fog focus:border-action focus:outline-none",
+              "h-14 w-full rounded-[14px] border border-line bg-white text-center text-[24px] font-semibold text-ink placeholder:text-fog focus:border-action focus:outline-none",
               error && "border-danger",
             )}
           />
         ))}
       </div>
       {error ? (
-        <p className="mt-3 text-center text-[14px] text-danger">{error}</p>
-      ) : (
-        <p className="mt-4 text-center text-[14px] text-caption">
-          Demo tip: any 5-digit code works, including 12345.
-        </p>
-      )}
+        <p className="mt-3 text-[14px] text-danger">{error}</p>
+      ) : null}
     </OnboardingShell>
   );
 }
