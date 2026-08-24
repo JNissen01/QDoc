@@ -114,9 +114,13 @@ export function OnboardingShell({
           </header>
         )}
 
-        <div className="mt-6 flex-1">{children}</div>
+        <div className="mt-6 flex-1 pb-4">{children}</div>
       </div>
-      {footer ? <div className="mt-6 shrink-0">{footer}</div> : null}
+      {footer ? (
+        <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+          {footer}
+        </div>
+      ) : null}
     </PhoneFrame>
   );
 }

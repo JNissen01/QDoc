@@ -41,8 +41,8 @@ export function DashboardScreen() {
       </div>
 
       <div className="mt-4 flex flex-col items-center">
-        <div className="flex size-24 items-center justify-center rounded-full bg-tint text-[28px] font-semibold text-white">
-          <span className="text-action">{initials}</span>
+        <div className="flex size-24 items-center justify-center rounded-full bg-tint text-[28px] font-semibold text-action">
+          {initials}
         </div>
         <h1 className="mt-4 text-center text-[28px] leading-9 font-semibold text-ink">
           Welcome back, {firstName}
