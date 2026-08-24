@@ -73,7 +73,7 @@ export function SearchField({
       <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
       <Input
         className={cn(
-          "h-14 rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+          "h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
           inputClassName,
         )}
         {...props}
@@ -103,7 +103,7 @@ export function Field({
       <Input
         aria-invalid={Boolean(error)}
         className={cn(
-          "h-14 rounded-[14px] border border-line bg-white px-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0 md:text-[16px]",
+          "h-[70px] rounded-[14px] border border-line bg-white px-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0 md:text-[16px]",
           inputClassName,
         )}
         {...props}
@@ -137,7 +137,7 @@ export function SelectorCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-3 rounded-[14px] border bg-white px-4 py-3 text-left transition-colors",
+        "flex min-h-[70px] w-full items-center gap-3 rounded-[14px] border bg-white px-4 py-3 text-left transition-colors",
         selected ? "border-action bg-tint" : "border-line",
       )}
     >
@@ -321,7 +321,7 @@ export function SegmentedControl<T extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             className={cn(
-              "h-12 rounded-[14px] border text-[16px] font-medium",
+              "h-[70px] rounded-[14px] border text-[16px] font-medium",
               selected
                 ? "border-action bg-action text-white"
                 : "border-line bg-tint text-ink",

@@ -177,7 +177,7 @@ export function AddressStep() {
                 type="button"
                 onClick={() => update({ province: value })}
                 className={cn(
-                  "h-12 rounded-[14px] border bg-white text-[16px] font-medium",
+                  "h-[70px] rounded-[14px] border bg-white text-[16px] font-medium",
                   state.province === value
                     ? "border-action text-action"
                     : "border-transparent text-ink",
