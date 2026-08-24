@@ -12,6 +12,7 @@ import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { MOCK_LOCATION } from "@/lib/mocks";
 import type { Province } from "@/lib/onboarding-state";
 import type { StepId } from "@/lib/onboarding-flow";
+import { cn } from "@/lib/utils";
 
 const PRONOUNS = ["She/her", "He/him", "They/them", "Prefer not to say"];
 const GENDERS = ["Woman", "Man", "Non-binary", "Prefer not to say"];
@@ -289,7 +290,12 @@ export function AddressStep() {
                 type="button"
                 aria-pressed={state.province === value}
                 onClick={() => update({ province: value })}
-                className="province-chip h-[70px] rounded-[14px] text-[16px] font-medium"
+                className={cn(
+                  "h-[70px] rounded-[14px] text-[16px] font-medium",
+                  state.province === value
+                    ? "province-chip-selected"
+                    : "border border-line bg-white text-ink",
+                )}
               >
                 {label}
               </button>

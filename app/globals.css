@@ -111,13 +111,7 @@
   }
 }
 
-.province-chip {
-  border: 1px solid #ccdbff;
-  background-color: #fff;
-  color: #1e1b4b;
-}
-
-.province-chip[aria-pressed="true"] {
+.province-chip-selected {
   border: 2px solid #425bc7;
   background-color: #c9d2ff;
   color: #425bc7;
