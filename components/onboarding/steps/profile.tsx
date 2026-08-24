@@ -136,8 +136,8 @@ function RadioQuestion({
   options: string[];
   value: string;
   field: "pronouns" | "gender" | "sex";
-  customLabel: string;
-  customPlaceholder: string;
+  customLabel?: string;
+  customPlaceholder?: string;
 }) {
   const { update, goNext } = useStepNav(step);
   const listed = options.includes(value);
@@ -164,12 +164,14 @@ function RadioQuestion({
             onClick={() => update({ [field]: option })}
           />
         ))}
-        <Field
-          label={customLabel}
-          placeholder={customPlaceholder}
-          value={customValue}
-          onChange={(event) => update({ [field]: event.target.value })}
-        />
+        {customLabel && customPlaceholder ? (
+          <Field
+            label={customLabel}
+            placeholder={customPlaceholder}
+            value={customValue}
+            onChange={(event) => update({ [field]: event.target.value })}
+          />
+        ) : null}
       </div>
     </OnboardingShell>
   );
@@ -201,8 +203,6 @@ export function GenderStep() {
       options={GENDERS}
       value={state.gender}
       field="gender"
-      customLabel="Something else"
-      customPlaceholder="Enter your gender"
     />
   );
 }
