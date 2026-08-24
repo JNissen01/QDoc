@@ -10,105 +10,180 @@ import {
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { MOCK_LOCATION } from "@/lib/mocks";
 import type { Province } from "@/lib/onboarding-state";
+import type { StepId } from "@/lib/onboarding-flow";
 import { cn } from "@/lib/utils";
 
 const PRONOUNS = ["She/her", "He/him", "They/them", "Prefer not to say"];
 const GENDERS = ["Woman", "Man", "Non-binary", "Prefer not to say"];
 const SEXES = ["Female", "Male", "Intersex", "Prefer not to say"];
 
-export function ProfileStep() {
-  const { state, update, goNext } = useStepNav("profile");
-  const valid =
-    state.firstName.trim() &&
-    state.lastName.trim() &&
-    state.dob &&
-    state.pronouns &&
-    state.gender &&
-    state.sex;
+export function NameStep() {
+  const { state, update, goNext } = useStepNav("name");
+  const valid = state.firstName.trim() && state.lastName.trim();
 
   return (
     <OnboardingShell
-      step="profile"
-      title="Tell us about you"
-      subtitle="This helps your provider address you correctly and keep your record accurate."
+      step="name"
+      title="What is your name?"
+      subtitle="Use the name on your health card so we can match your record."
       footer={
         <PrimaryButton disabled={!valid} onClick={() => goNext()}>
           Continue
         </PrimaryButton>
       }
     >
-      <div className="space-y-4 text-left">
-        <div className="grid grid-cols-2 gap-3">
-          <Field
-            label="First name"
-            placeholder="Sarah"
-            value={state.firstName}
-            onChange={(event) => update({ firstName: event.target.value })}
-          />
-          <Field
-            label="Last name"
-            placeholder="Nguyen"
-            value={state.lastName}
-            onChange={(event) => update({ lastName: event.target.value })}
-          />
-        </div>
+      <div className="grid grid-cols-2 gap-3">
         <Field
-          label="Date of birth"
-          type="date"
-          value={state.dob}
-          onChange={(event) => update({ dob: event.target.value })}
+          label="First name"
+          placeholder="Sarah"
+          value={state.firstName}
+          onChange={(event) => update({ firstName: event.target.value })}
         />
         <Field
-          label="Phone"
-          type="tel"
-          placeholder="204-555-0100"
-          value={state.phone}
-          onChange={(event) => update({ phone: event.target.value })}
+          label="Last name"
+          placeholder="Nguyen"
+          value={state.lastName}
+          onChange={(event) => update({ lastName: event.target.value })}
         />
-        <div>
-          <p className="mb-2 text-[13px] leading-4 text-ink">Pronouns</p>
-          <div className="flex flex-wrap gap-2">
-            {PRONOUNS.map((option) => (
-              <Chip
-                key={option}
-                selected={state.pronouns === option}
-                onClick={() => update({ pronouns: option })}
-              >
-                {option}
-              </Chip>
-            ))}
-          </div>
-        </div>
-        <div>
-          <p className="mb-2 text-[13px] leading-4 text-ink">Gender</p>
-          <div className="flex flex-wrap gap-2">
-            {GENDERS.map((option) => (
-              <Chip
-                key={option}
-                selected={state.gender === option}
-                onClick={() => update({ gender: option })}
-              >
-                {option}
-              </Chip>
-            ))}
-          </div>
-        </div>
-        <div>
-          <p className="mb-2 text-[13px] leading-4 text-ink">Sex assigned at birth</p>
-          <div className="flex flex-wrap gap-2">
-            {SEXES.map((option) => (
-              <Chip
-                key={option}
-                selected={state.sex === option}
-                onClick={() => update({ sex: option })}
-              >
-                {option}
-              </Chip>
-            ))}
-          </div>
-        </div>
       </div>
     </OnboardingShell>
+  );
+}
+
+export function DobStep() {
+  const { state, update, goNext } = useStepNav("dob");
+
+  return (
+    <OnboardingShell
+      step="dob"
+      title="What is your date of birth?"
+      subtitle="Your provider uses this to confirm your identity."
+      footer={
+        <PrimaryButton disabled={!state.dob} onClick={() => goNext()}>
+          Continue
+        </PrimaryButton>
+      }
+    >
+      <Field
+        label="Date of birth"
+        type="date"
+        value={state.dob}
+        onChange={(event) => update({ dob: event.target.value })}
+      />
+    </OnboardingShell>
+  );
+}
+
+export function PhoneStep() {
+  const { state, update, goNext } = useStepNav("phone");
+
+  return (
+    <OnboardingShell
+      step="phone"
+      title="What is your phone number?"
+      subtitle="We’ll text you when a provider is ready so you don’t have to wait in the app."
+      footer={
+        <PrimaryButton
+          disabled={state.phone.replace(/\D/g, "").length < 10}
+          onClick={() => goNext()}
+        >
+          Continue
+        </PrimaryButton>
+      }
+    >
+      <Field
+        label="Phone"
+        type="tel"
+        placeholder="204-555-0100"
+        value={state.phone}
+        onChange={(event) => update({ phone: event.target.value })}
+      />
+    </OnboardingShell>
+  );
+}
+
+function ChipQuestion({
+  step,
+  title,
+  subtitle,
+  options,
+  value,
+  field,
+}: {
+  step: StepId;
+  title: string;
+  subtitle: string;
+  options: string[];
+  value: string;
+  field: "pronouns" | "gender" | "sex";
+}) {
+  const { update, goNext } = useStepNav(step);
+
+  return (
+    <OnboardingShell
+      step={step}
+      title={title}
+      subtitle={subtitle}
+      footer={
+        <PrimaryButton disabled={!value} onClick={() => goNext()}>
+          Continue
+        </PrimaryButton>
+      }
+    >
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <Chip
+            key={option}
+            selected={value === option}
+            onClick={() => update({ [field]: option })}
+          >
+            {option}
+          </Chip>
+        ))}
+      </div>
+    </OnboardingShell>
+  );
+}
+
+export function PronounsStep() {
+  const { state } = useStepNav("pronouns");
+  return (
+    <ChipQuestion
+      step="pronouns"
+      title="What are your pronouns?"
+      subtitle="We’ll use these when we talk with you."
+      options={PRONOUNS}
+      value={state.pronouns}
+      field="pronouns"
+    />
+  );
+}
+
+export function GenderStep() {
+  const { state } = useStepNav("gender");
+  return (
+    <ChipQuestion
+      step="gender"
+      title="What is your gender?"
+      subtitle="Select the option that best describes you."
+      options={GENDERS}
+      value={state.gender}
+      field="gender"
+    />
+  );
+}
+
+export function SexStep() {
+  const { state } = useStepNav("sex");
+  return (
+    <ChipQuestion
+      step="sex"
+      title="What is your sex assigned at birth?"
+      subtitle="This helps your provider with clinical decisions."
+      options={SEXES}
+      value={state.sex}
+      field="sex"
+    />
   );
 }
 
@@ -163,7 +238,9 @@ export function AddressStep() {
           />
         </div>
         <div>
-          <p className="mb-2 text-[13px] leading-4 font-normal text-ink">Province</p>
+          <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+            Province
+          </p>
           <div className="grid grid-cols-3 gap-2">
             {(
               [

@@ -8,7 +8,12 @@ export const STEP_IDS = [
   "off-ramp",
   "account",
   "confirm-email",
-  "profile",
+  "name",
+  "dob",
+  "phone",
+  "pronouns",
+  "gender",
+  "sex",
   "address",
   "scan-card",
   "health-card",
@@ -52,7 +57,12 @@ export function getProgress(step: StepId): ProgressMeta {
     case "account":
       return { current: 2, total: PHASE1 };
     case "confirm-email":
-    case "profile":
+    case "name":
+    case "dob":
+    case "phone":
+    case "pronouns":
+    case "gender":
+    case "sex":
       return { current: 3, total: PHASE1 };
     case "address":
     case "scan-card":
@@ -115,8 +125,18 @@ export function getNextStep(
     case "account":
       return "confirm-email";
     case "confirm-email":
-      return "profile";
-    case "profile":
+      return "name";
+    case "name":
+      return "dob";
+    case "dob":
+      return "phone";
+    case "phone":
+      return "pronouns";
+    case "pronouns":
+      return "gender";
+    case "gender":
+      return "sex";
+    case "sex":
       return "address";
     case "address":
       if (state.coverage === "provincial") return "scan-card";
@@ -171,10 +191,20 @@ export function getPrevStep(
       return state.coverage === "provincial" ? "issued-province" : "coverage";
     case "confirm-email":
       return "account";
-    case "profile":
+    case "name":
       return "confirm-email";
+    case "dob":
+      return "name";
+    case "phone":
+      return "dob";
+    case "pronouns":
+      return "phone";
+    case "gender":
+      return "pronouns";
+    case "sex":
+      return "gender";
     case "address":
-      return "profile";
+      return "sex";
     case "scan-card":
     case "insurance":
     case "payment":

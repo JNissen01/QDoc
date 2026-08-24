@@ -12,7 +12,15 @@ import {
   AccountStep,
   ConfirmEmailStep,
 } from "@/components/onboarding/steps/account";
-import { AddressStep, ProfileStep } from "@/components/onboarding/steps/profile";
+import {
+  AddressStep,
+  DobStep,
+  GenderStep,
+  NameStep,
+  PhoneStep,
+  PronounsStep,
+  SexStep,
+} from "@/components/onboarding/steps/profile";
 import {
   HealthCardStep,
   InsuranceStep,
@@ -49,8 +57,18 @@ export function StepView({ step }: { step: StepId }) {
       return <AccountStep />;
     case "confirm-email":
       return <ConfirmEmailStep />;
-    case "profile":
-      return <ProfileStep />;
+    case "name":
+      return <NameStep />;
+    case "dob":
+      return <DobStep />;
+    case "phone":
+      return <PhoneStep />;
+    case "pronouns":
+      return <PronounsStep />;
+    case "gender":
+      return <GenderStep />;
+    case "sex":
+      return <SexStep />;
     case "address":
       return <AddressStep />;
     case "scan-card":
