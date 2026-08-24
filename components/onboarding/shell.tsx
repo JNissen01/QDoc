@@ -15,15 +15,22 @@ export function ProgressTracker({
   total: number;
 }) {
   return (
-    <div className="flex gap-1.5" aria-label={`Step ${current} of ${total}`}>
+    <div
+      className="flex gap-[6px]"
+      role="progressbar"
+      aria-valuemin={1}
+      aria-valuemax={total}
+      aria-valuenow={current}
+      aria-label={`Step ${current} of ${total}`}
+    >
       {Array.from({ length: total }, (_, index) => {
         const filled = index < current;
         return (
           <span
             key={index}
             className={cn(
-              "h-[5px] flex-1 rounded-full",
-              filled ? "bg-action" : "bg-line",
+              "h-[5px] min-w-0 flex-1 rounded-full",
+              filled ? "bg-action" : "bg-progress-idle",
             )}
           />
         );
@@ -37,9 +44,9 @@ export function BackLink({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1 self-start text-[16px] font-medium text-action"
+      className="inline-flex items-center gap-1 self-start text-[16px] leading-[22px] font-medium text-action"
     >
-      <ChevronLeft className="size-5" strokeWidth={2} />
+      <ChevronLeft className="size-5 text-action" strokeWidth={1.8} />
       Back
     </button>
   );
