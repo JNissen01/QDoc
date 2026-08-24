@@ -83,6 +83,7 @@ export function DobStep() {
         label="Date of birth"
         inputMode="numeric"
         placeholder="DD/MM/YYYY"
+        inputClassName="text-center"
         value={value}
         onChange={(event) => update({ dob: formatDob(event.target.value) })}
       />
