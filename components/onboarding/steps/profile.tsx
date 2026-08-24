@@ -163,7 +163,7 @@ export function AddressStep() {
           />
         </div>
         <div>
-          <p className="mb-2 text-[13px] leading-4 font-semibold text-ink">Province</p>
+          <p className="mb-2 text-[13px] leading-4 font-normal text-ink">Province</p>
           <div className="grid grid-cols-3 gap-2">
             {(
               [
@@ -180,7 +180,7 @@ export function AddressStep() {
                   "h-12 rounded-[14px] border bg-white text-[16px] font-medium",
                   state.province === value
                     ? "border-action text-action"
-                    : "border-line text-ink",
+                    : "border-transparent text-ink",
                 )}
               >
                 {label}

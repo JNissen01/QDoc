@@ -142,7 +142,7 @@ export function ConfirmEmailStep() {
             onChange={(event) => setDigit(index, event.target.value)}
             onKeyDown={(event) => onKeyDown(index, event)}
             className={cn(
-              "h-14 w-full rounded-[14px] border border-line bg-white text-center text-[24px] font-semibold text-ink placeholder:text-fog focus:border-action focus:outline-none",
+              "h-14 w-full rounded-[14px] border border-line bg-white text-center text-[24px] font-semibold text-ink placeholder:text-fog focus:border-2 focus:border-action focus:outline-none",
               error && "border-danger",
             )}
           />

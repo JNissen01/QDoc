@@ -15,7 +15,7 @@ export function PrimaryButton({
     <button
       type="button"
       className={cn(
-        "inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-action text-[20px] leading-[26px] font-semibold text-white transition-colors active:bg-ink disabled:bg-fog disabled:text-white",
+        "inline-flex h-14 w-full items-center justify-center gap-2 rounded-[51px] bg-action text-[20px] leading-[26px] font-semibold text-white transition-colors active:bg-ink disabled:bg-fog disabled:text-white",
         className,
       )}
       {...props}
@@ -34,7 +34,7 @@ export function TonalButton({
     <button
       type="button"
       className={cn(
-        "inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-tint text-[20px] leading-[26px] font-semibold text-action",
+        "inline-flex h-14 w-full items-center justify-center gap-2 rounded-[51px] bg-tint text-[20px] leading-[26px] font-semibold text-action",
         className,
       )}
       {...props}
@@ -73,7 +73,7 @@ export function SearchField({
       <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
       <Input
         className={cn(
-          "h-14 rounded-[14px] border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+          "h-14 rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
           inputClassName,
         )}
         {...props}
@@ -96,14 +96,14 @@ export function Field({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {label ? (
-        <Label className="text-[13px] leading-4 font-semibold text-ink">
+        <Label className="text-[13px] leading-4 font-normal text-ink">
           {label}
         </Label>
       ) : null}
       <Input
         aria-invalid={Boolean(error)}
         className={cn(
-          "h-14 rounded-[14px] border-line bg-white px-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0 md:text-[16px]",
+          "h-14 rounded-[14px] border border-line bg-white px-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0 md:text-[16px]",
           inputClassName,
         )}
         {...props}
@@ -137,7 +137,7 @@ export function SelectorCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-3 rounded-[14px] border bg-white px-4 py-3.5 text-left transition-colors",
+        "flex w-full items-center gap-3 rounded-[14px] border bg-white px-4 py-3 text-left transition-colors",
         selected ? "border-action bg-tint" : "border-line",
       )}
     >

@@ -30,7 +30,7 @@ export function ProgressTracker({
             key={index}
             className={cn(
               "h-[5px] min-w-0 flex-1 rounded-full",
-              filled ? "bg-action" : "bg-progress-idle",
+              filled ? "bg-progress" : "bg-progress-idle",
             )}
           />
         );
@@ -103,7 +103,7 @@ export function OnboardingShell({
               </h1>
             ) : null}
             {subtitle ? (
-              <p className="text-[16px] leading-[22px] font-medium text-body">
+              <p className="text-[16px] leading-[22px] font-normal text-body">
                 {subtitle}
               </p>
             ) : null}

@@ -325,7 +325,7 @@ export function AllergiesStep() {
       footer={<PrimaryButton onClick={() => goNext()}>Next</PrimaryButton>}
     >
       <div>
-        <p className="mb-2 text-[13px] font-semibold text-body">Allergen</p>
+        <p className="mb-2 text-[13px] leading-4 font-normal text-body">Allergen</p>
         <SearchField
           placeholder="e.g. Peanuts"
           value={query}
@@ -355,7 +355,9 @@ export function AllergiesStep() {
             ))}
           </div>
         ) : null}
-        <p className="mt-5 mb-2 text-[13px] font-semibold text-body">Common allergies</p>
+        <p className="mt-5 mb-2 text-[13px] leading-4 font-normal text-body">
+          Common allergies
+        </p>
         <div className="flex flex-wrap gap-2">
           {COMMON_ALLERGIES.map((allergy) => (
             <Chip
