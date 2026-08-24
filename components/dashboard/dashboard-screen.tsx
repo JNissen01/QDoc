@@ -40,18 +40,18 @@ export function DashboardScreen() {
         </button>
       </div>
 
-      <div className="mt-4 flex flex-col items-center">
+      <div className="mt-4">
         <div className="flex size-24 items-center justify-center rounded-full bg-tint text-[28px] font-semibold text-action">
           {initials}
         </div>
-        <h1 className="mt-4 text-center text-[28px] leading-9 font-semibold text-ink">
+        <h1 className="mt-4 text-left text-[28px] leading-9 font-semibold text-ink">
           Welcome back, {firstName}
         </h1>
       </div>
 
       <section className="mt-8">
         <h2 className="text-[20px] font-semibold text-ink">Upcoming Visits</h2>
-        <div className="mt-3 rounded-[14px] bg-white px-4 py-8 text-center text-[16px] text-caption">
+        <div className="mt-3 rounded-[14px] bg-white px-4 py-8 text-left text-[16px] text-caption">
           No upcoming visits
         </div>
       </section>
