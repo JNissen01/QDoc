@@ -13,6 +13,7 @@ import {
   Field,
   GhostButton,
   HighlightBanner,
+  IconWell,
   LockNote,
   PrimaryButton,
 } from "@/components/onboarding/primitives";
@@ -77,8 +78,8 @@ export function ScanCardStep() {
       <HighlightBanner>
         OCR Feature is 100% secure and all extracted data is encrypted.
       </HighlightBanner>
-      <ol className="relative mt-8 space-y-6 pl-2">
-        <span className="absolute top-6 bottom-6 left-[22px] w-px bg-line" />
+      <ol className="relative mt-8 space-y-6">
+        <span className="absolute top-6 bottom-6 left-[22px] w-px bg-action" />
         {[
           {
             icon: ScanLine,
@@ -96,12 +97,14 @@ export function ScanCardStep() {
             body: "Review your information carefully before continuing",
           },
         ].map((item) => (
-          <li key={item.title} className="relative flex gap-3">
-            <span className="z-10 flex size-11 shrink-0 items-center justify-center rounded-[14px] border border-line bg-white text-action">
+          <li key={item.title} className="relative flex items-start gap-3">
+            <IconWell className="z-10">
               <item.icon className="size-5" strokeWidth={1.8} />
-            </span>
-            <div>
-              <p className="text-[16px] font-medium text-ink">{item.title}</p>
+            </IconWell>
+            <div className="pt-0.5">
+              <p className="text-[16px] leading-[22px] font-semibold text-ink">
+                {item.title}
+              </p>
               <p className="mt-1 text-[14px] leading-[18px] text-body">
                 {item.body}
               </p>

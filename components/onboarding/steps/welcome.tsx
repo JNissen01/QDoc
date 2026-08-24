@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ShieldCheck, Smartphone, Video } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
-import { PrimaryButton } from "@/components/onboarding/primitives";
+import { PrimaryButton, FeatureItem } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { cn } from "@/lib/utils";
 
@@ -59,21 +59,11 @@ export function WelcomeStep() {
         </div>
       }
     >
-      <ul className="space-y-3">
+      <div className="space-y-3">
         {slide.items.map((item) => (
-          <li
-            key={item.label}
-            className="flex items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3"
-          >
-            <span className="flex size-11 items-center justify-center rounded-[14px] border border-line bg-canvas text-action">
-              <item.icon className="size-5" strokeWidth={1.8} />
-            </span>
-            <span className="text-[16px] leading-[22px] font-medium text-ink">
-              {item.label}
-            </span>
-          </li>
+          <FeatureItem key={item.label} icon={item.icon} title={item.label} />
         ))}
-      </ul>
+      </div>
 
       <div className="mt-8 flex gap-2">
         {SLIDES.map((_, slideIndex) => (

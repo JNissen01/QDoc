@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Search } from "lucide-react";
+import { Check, Search, type LucideIcon } from "lucide-react";
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -185,6 +185,53 @@ export function CheckBox({ selected }: { selected: boolean }) {
     >
       {selected ? <Check className="size-3.5" strokeWidth={3} /> : null}
     </span>
+  );
+}
+
+export function IconWell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "flex size-11 shrink-0 items-center justify-center rounded-[12px] border border-line bg-white text-action",
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+export function FeatureItem({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3">
+      <IconWell>
+        <Icon className="size-5" strokeWidth={1.8} />
+      </IconWell>
+      <span className="min-w-0">
+        <span className="block text-[16px] leading-[22px] font-semibold text-ink">
+          {title}
+        </span>
+        {description ? (
+          <span className="mt-0.5 block text-[14px] leading-[18px] font-normal text-body">
+            {description}
+          </span>
+        ) : null}
+      </span>
+    </div>
   );
 }
 
