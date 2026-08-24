@@ -3,9 +3,10 @@
 import { MapPin } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
-  Chip,
   Field,
   PrimaryButton,
+  RadioDot,
+  SelectorCard,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { MOCK_LOCATION } from "@/lib/mocks";
@@ -119,13 +120,15 @@ export function PhoneStep() {
   );
 }
 
-function ChipQuestion({
+function RadioQuestion({
   step,
   title,
   subtitle,
   options,
   value,
   field,
+  customLabel,
+  customPlaceholder,
 }: {
   step: StepId;
   title: string;
@@ -133,8 +136,12 @@ function ChipQuestion({
   options: string[];
   value: string;
   field: "pronouns" | "gender" | "sex";
+  customLabel: string;
+  customPlaceholder: string;
 }) {
   const { update, goNext } = useStepNav(step);
+  const listed = options.includes(value);
+  const customValue = listed ? "" : value;
 
   return (
     <OnboardingShell
@@ -142,21 +149,27 @@ function ChipQuestion({
       title={title}
       subtitle={subtitle}
       footer={
-        <PrimaryButton disabled={!value} onClick={() => goNext()}>
+        <PrimaryButton disabled={!value.trim()} onClick={() => goNext()}>
           Continue
         </PrimaryButton>
       }
     >
-      <div className="flex flex-wrap gap-2">
+      <div className="space-y-3">
         {options.map((option) => (
-          <Chip
+          <SelectorCard
             key={option}
             selected={value === option}
+            title={option}
+            leading={<RadioDot selected={value === option} />}
             onClick={() => update({ [field]: option })}
-          >
-            {option}
-          </Chip>
+          />
         ))}
+        <Field
+          label={customLabel}
+          placeholder={customPlaceholder}
+          value={customValue}
+          onChange={(event) => update({ [field]: event.target.value })}
+        />
       </div>
     </OnboardingShell>
   );
@@ -165,13 +178,15 @@ function ChipQuestion({
 export function PronounsStep() {
   const { state } = useStepNav("pronouns");
   return (
-    <ChipQuestion
+    <RadioQuestion
       step="pronouns"
       title="What are your pronouns?"
       subtitle="We’ll use these when we talk with you."
       options={PRONOUNS}
       value={state.pronouns}
       field="pronouns"
+      customLabel="Something else"
+      customPlaceholder="Enter your pronouns"
     />
   );
 }
@@ -179,13 +194,15 @@ export function PronounsStep() {
 export function GenderStep() {
   const { state } = useStepNav("gender");
   return (
-    <ChipQuestion
+    <RadioQuestion
       step="gender"
       title="What is your gender?"
       subtitle="Select the option that best describes you."
       options={GENDERS}
       value={state.gender}
       field="gender"
+      customLabel="Something else"
+      customPlaceholder="Enter your gender"
     />
   );
 }
@@ -193,13 +210,15 @@ export function GenderStep() {
 export function SexStep() {
   const { state } = useStepNav("sex");
   return (
-    <ChipQuestion
+    <RadioQuestion
       step="sex"
       title="What is your sex assigned at birth?"
       subtitle="This helps your provider with clinical decisions."
       options={SEXES}
       value={state.sex}
       field="sex"
+      customLabel="Something else"
+      customPlaceholder="Enter sex assigned at birth"
     />
   );
 }
