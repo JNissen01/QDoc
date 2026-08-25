@@ -8,6 +8,7 @@ import {
   Menu,
   Plus,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { PhoneFrame } from "@/components/onboarding/shell";
 import { PrimaryButton } from "@/components/onboarding/primitives";
 import { useOnboarding } from "@/components/onboarding/provider";
@@ -24,9 +25,15 @@ const ACTIONS = [
 ];
 
 export function DashboardScreen() {
-  const { state } = useOnboarding();
+  const router = useRouter();
+  const { state, reset } = useOnboarding();
   const initials = initialsFromName(state.firstName, state.lastName);
   const firstName = displayFirstName(state.firstName);
+
+  function restartPrototype() {
+    reset();
+    router.push("/onboarding/welcome");
+  }
 
   return (
     <PhoneFrame>
@@ -83,6 +90,16 @@ export function DashboardScreen() {
           ))}
         </div>
       </section>
+
+      <div className="mt-auto flex justify-end pt-8">
+        <button
+          type="button"
+          onClick={restartPrototype}
+          className="text-[13px] leading-4 font-medium text-caption hover:text-action"
+        >
+          Restart prototype
+        </button>
+      </div>
     </PhoneFrame>
   );
 }
