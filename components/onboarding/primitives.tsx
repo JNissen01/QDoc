@@ -218,7 +218,7 @@ export function FeatureItem({
 }) {
   return (
     <div className="flex items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3">
-      <IconWell>
+      <IconWell className="border-0">
         <Icon className="size-5" strokeWidth={1.8} />
       </IconWell>
       <span className="min-w-0">
