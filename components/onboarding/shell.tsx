@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { getPrevStep, getProgress, hrefFor, type StepId } from "@/lib/onboarding-flow";
 import { useOnboarding } from "@/components/onboarding/provider";
+import { useFlowPreview } from "@/components/flow/flow-preview-context";
 
 export function ProgressTracker({
   current,
@@ -53,9 +54,18 @@ export function BackLink({ onClick }: { onClick: () => void }) {
 }
 
 export function PhoneFrame({ children }: { children: ReactNode }) {
+  const preview = useFlowPreview();
+
   return (
-    <div className="min-h-dvh bg-canvas">
-      <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5 pb-7 pt-5">
+    <div
+      className={cn("bg-canvas", preview ? "h-[780px] overflow-hidden" : "min-h-dvh")}
+    >
+      <div
+        className={cn(
+          "mx-auto flex w-full max-w-[430px] flex-col px-5 pb-7 pt-5",
+          preview ? "h-full" : "min-h-dvh",
+        )}
+      >
         {children}
       </div>
     </div>

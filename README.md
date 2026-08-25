@@ -13,6 +13,8 @@ npm run dev
 
 Open [http://localhost:43173](http://localhost:43173). The app starts on the welcome carousel.
 
+To see every screen in journey order, open [http://localhost:43173/flow](http://localhost:43173/flow). Click a frame to enter that step.
+
 ## Prototype notes
 
 - All data stays in the browser (`localStorage`). There is no backend, email, payment charge, or camera access.
