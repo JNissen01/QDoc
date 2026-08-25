@@ -4,14 +4,23 @@ import Link from "next/link";
 import { DashboardScreen } from "@/components/dashboard/dashboard-screen";
 import { FlowPreviewProvider } from "@/components/flow/flow-preview-context";
 import { StepView } from "@/components/onboarding/step-view";
-import { FLOW_SCREENS, type FlowScreen } from "@/lib/flow-screens";
+import {
+  getFlowSections,
+  type FlowScreen,
+} from "@/lib/flow-screens";
 import type { StepId } from "@/lib/onboarding-flow";
 
 const PHONE_WIDTH = 430;
 const PHONE_HEIGHT = 780;
 const SCALE = 0.56;
 
-function ScreenPreview({ screen, index }: { screen: FlowScreen; index: number }) {
+function ScreenPreview({
+  screen,
+  index,
+}: {
+  screen: FlowScreen;
+  index: number;
+}) {
   const number = String(index + 1).padStart(2, "0");
 
   return (
@@ -21,9 +30,9 @@ function ScreenPreview({ screen, index }: { screen: FlowScreen; index: number })
           <p className="text-[13px] font-medium tracking-wide text-caption uppercase">
             {number}
           </p>
-          <h2 className="truncate text-[16px] leading-[22px] font-semibold text-ink">
+          <h3 className="truncate text-[16px] leading-[22px] font-semibold text-ink">
             {screen.title}
-          </h2>
+          </h3>
           {screen.note ? (
             <p className="text-[13px] leading-4 text-body">{screen.note}</p>
           ) : null}
@@ -62,20 +71,26 @@ function ScreenPreview({ screen, index }: { screen: FlowScreen; index: number })
 }
 
 export function FlowBoard() {
+  const sections = getFlowSections();
+  const startIndexBySection = sections.reduce<number[]>((acc, group, i) => {
+    const prev = i === 0 ? 0 : acc[i - 1] + sections[i - 1].screens.length;
+    acc.push(prev);
+    return acc;
+  }, []);
+
   return (
     <div className="min-h-dvh bg-canvas px-5 py-8 md:px-8">
-      <header className="mx-auto mb-8 max-w-[1400px]">
+      <header className="mx-auto mb-10 max-w-[1400px]">
         <p className="text-[13px] font-medium tracking-wide text-action uppercase">
           Prototype map
         </p>
         <h1 className="mt-1 text-[28px] leading-9 font-semibold text-ink">
-          All screens
+          Onboarding by section
         </h1>
         <p className="mt-2 max-w-2xl text-[16px] leading-[22px] text-body">
-          Every onboarding step and the dashboard, in journey order. These
-          frames render the same live screens as the clickable prototype, so
-          design changes show up here automatically. Click a frame to open that
-          screen.
+          Screens grouped by flow section. Frames render the same live
+          components as the clickable prototype—click any frame to open that
+          route.
         </p>
         <Link
           href="/onboarding/welcome"
@@ -86,9 +101,35 @@ export function FlowBoard() {
       </header>
 
       <FlowPreviewProvider>
-        <div className="mx-auto grid max-w-[1400px] grid-cols-1 justify-items-center gap-x-6 gap-y-10 sm:grid-cols-2 sm:justify-items-start xl:grid-cols-3 2xl:grid-cols-4">
-          {FLOW_SCREENS.map((screen, index) => (
-            <ScreenPreview key={screen.id} screen={screen} index={index} />
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-14">
+          {sections.map((group, sectionIndex) => (
+            <section
+              key={group.section.id}
+              aria-labelledby={`flow-section-${group.section.id}`}
+            >
+              <div className="mb-6 border-b border-line pb-4">
+                <h2
+                  id={`flow-section-${group.section.id}`}
+                  className="text-[22px] leading-7 font-semibold text-ink"
+                >
+                  {group.section.title}
+                </h2>
+                {group.section.description ? (
+                  <p className="mt-1 text-[15px] leading-5 text-body">
+                    {group.section.description}
+                  </p>
+                ) : null}
+              </div>
+              <div className="grid grid-cols-1 justify-items-center gap-x-6 gap-y-10 sm:grid-cols-2 sm:justify-items-start xl:grid-cols-3 2xl:grid-cols-4">
+                {group.screens.map((screen, localIndex) => (
+                  <ScreenPreview
+                    key={screen.id}
+                    screen={screen}
+                    index={startIndexBySection[sectionIndex] + localIndex}
+                  />
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       </FlowPreviewProvider>
