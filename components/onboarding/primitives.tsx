@@ -170,7 +170,7 @@ export function RadioDot({ selected }: { selected: boolean }) {
         selected ? "border-action" : "border-line",
       )}
     >
-      {selected ? <span className="size-2.5 rounded-full bg-action" /> : null}
+      {selected ? <span className="size-2.5 rounded-full bg-white" /> : null}
     </span>
   );
 }
