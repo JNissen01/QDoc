@@ -1,10 +1,11 @@
 "use client";
 
-import { CircleCheck, Lock, ShieldPlus } from "lucide-react";
+import { Lock, ShieldPlus } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import { PrimaryButton } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { QDocLogo } from "@/components/brand/qdoc-logo";
+import { VerifiedCheckIcon } from "@/components/brand/verified-check-icon";
 
 const TRUST_ITEMS = [
   {
@@ -16,7 +17,7 @@ const TRUST_ITEMS = [
     label: "AES-256 encrypted health data",
   },
   {
-    icon: CircleCheck,
+    icon: VerifiedCheckIcon,
     label: "Verified with provincial health databases",
   },
 ];
