@@ -17,6 +17,8 @@ import {
   IconWell,
   LockNote,
   PrimaryButton,
+  RadioDot,
+  SelectorCard,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import {
@@ -298,45 +300,78 @@ export function ConfirmInfoStep() {
   );
 }
 
-export function InsuranceStep() {
-  const { state, update, goNext } = useStepNav("insurance");
-  const valid =
-    state.insuranceProvider.trim() &&
-    state.policyNumber.trim() &&
-    state.memberId.trim();
+export function InsuranceProviderStep() {
+  const { state, update, goNext } = useStepNav("insurance-provider");
+  const selected = state.insuranceProvider === "MSH";
 
   return (
     <OnboardingShell
-      step="insurance"
-      title="Insurance details"
-      subtitle="Currently we only accept MSH private insurance."
+      step="insurance-provider"
+      title="Who is your insurance provider?"
+      subtitle="Currently we only accept MSH private insurance"
+      footer={
+        <PrimaryButton disabled={!selected} onClick={() => goNext()}>
+          Next
+        </PrimaryButton>
+      }
+    >
+      <SelectorCard
+        selected={selected}
+        title="MSH"
+        leading={<RadioDot selected={selected} />}
+        onClick={() => update({ insuranceProvider: "MSH" })}
+      />
+    </OnboardingShell>
+  );
+}
+
+export function InsurancePolicyStep() {
+  const { state, update, goNext } = useStepNav("insurance-policy");
+  const valid = state.policyNumber.trim().length > 0;
+
+  return (
+    <OnboardingShell
+      step="insurance-policy"
+      title="What is your insurance policy/group number?"
+      footer={
+        <PrimaryButton disabled={!valid} onClick={() => goNext()}>
+          Next
+        </PrimaryButton>
+      }
+    >
+      <Field
+        placeholder="12345-A"
+        value={state.policyNumber}
+        onChange={(event) => update({ policyNumber: event.target.value })}
+      />
+      <div className="mt-3">
+        <LockNote>Your information is encrypted and secure</LockNote>
+      </div>
+    </OnboardingShell>
+  );
+}
+
+export function InsuranceMemberStep() {
+  const { state, update, goNext } = useStepNav("insurance-member");
+  const valid = state.memberId.trim().length > 0;
+
+  return (
+    <OnboardingShell
+      step="insurance-member"
+      title="What is your member ID?"
       footer={
         <PrimaryButton disabled={!valid} onClick={() => goNext()}>
           Continue
         </PrimaryButton>
       }
     >
-      <div className="space-y-4">
-        <Field
-          label="Provider"
-          value={state.insuranceProvider}
-          onChange={(event) =>
-            update({ insuranceProvider: event.target.value })
-          }
-        />
-        <Field
-          label="Policy / Group number"
-          placeholder="GRP-00000"
-          value={state.policyNumber}
-          onChange={(event) => update({ policyNumber: event.target.value })}
-        />
-        <Field
-          label="Member ID"
-          placeholder="MSH123456"
-          value={state.memberId}
-          onChange={(event) => update({ memberId: event.target.value })}
-        />
-        <LockNote>Processed through a secure coverage check</LockNote>
+      <Field
+        placeholder="E4992104"
+        value={state.memberId}
+        onChange={(event) => update({ memberId: event.target.value })}
+      />
+      <div className="mt-3">
+        <LockNote>Your information is encrypted and secure</LockNote>
       </div>
     </OnboardingShell>
   );

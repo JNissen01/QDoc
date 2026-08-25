@@ -25,7 +25,9 @@ import {
 import {
   ConfirmInfoStep,
   HealthCardStep,
-  InsuranceStep,
+  InsuranceMemberStep,
+  InsurancePolicyStep,
+  InsuranceProviderStep,
   PaymentStep,
   RegistrationNumberStep,
   ScanCardStep,
@@ -84,8 +86,12 @@ export function StepView({ step }: { step: StepId }) {
       return <HealthCardStep />;
     case "confirm-info":
       return <ConfirmInfoStep />;
-    case "insurance":
-      return <InsuranceStep />;
+    case "insurance-provider":
+      return <InsuranceProviderStep />;
+    case "insurance-policy":
+      return <InsurancePolicyStep />;
+    case "insurance-member":
+      return <InsuranceMemberStep />;
     case "payment":
       return <PaymentStep />;
     case "checkpoint":

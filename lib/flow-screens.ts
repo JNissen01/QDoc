@@ -114,7 +114,18 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
     title: "Confirm information",
     note: "6 of 7",
   },
-  insurance: { title: "Private insurance", note: "Private coverage" },
+  "insurance-provider": {
+    title: "Insurance provider",
+    note: "1 of 3 · MSH",
+  },
+  "insurance-policy": {
+    title: "Policy / group number",
+    note: "2 of 3",
+  },
+  "insurance-member": {
+    title: "Member ID",
+    note: "3 of 3",
+  },
   payment: { title: "Payment", note: "Uninsured" },
   checkpoint: { title: "Checkpoint" },
   pharmacy: { title: "Pharmacy", note: "Phase 2 · 3/8" },
@@ -146,7 +157,9 @@ const SECTION_BY_STEP: Record<StepId | "dashboard", FlowSectionId> = {
   dob: "public-insurance",
   sex: "public-insurance",
   "confirm-info": "public-insurance",
-  insurance: "private-insurance",
+  "insurance-provider": "private-insurance",
+  "insurance-policy": "private-insurance",
+  "insurance-member": "private-insurance",
   payment: "no-insurance",
   checkpoint: "medical-profile",
   pronouns: "medical-profile",
@@ -182,7 +195,11 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
     "sex",
     "confirm-info",
   ],
-  "private-insurance": ["insurance"],
+  "private-insurance": [
+    "insurance-provider",
+    "insurance-policy",
+    "insurance-member",
+  ],
   "no-insurance": ["payment"],
   "medical-profile": [
     "checkpoint",

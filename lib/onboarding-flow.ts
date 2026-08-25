@@ -18,7 +18,9 @@ export const STEP_IDS = [
   "registration-number",
   "health-card",
   "confirm-info",
-  "insurance",
+  "insurance-provider",
+  "insurance-policy",
+  "insurance-member",
   "payment",
   "checkpoint",
   "pronouns",
@@ -48,6 +50,7 @@ export type ProgressMeta = {
 const TRIAGE_PHASE = 2;
 const ACCOUNT_PHASE = 5;
 const PUBLIC_INSURANCE_PHASE = 7;
+const PRIVATE_INSURANCE_PHASE = 3;
 const PHASE2 = 8;
 
 export function getProgress(
@@ -94,7 +97,12 @@ export function getProgress(
       return { current: 5, total: PUBLIC_INSURANCE_PHASE };
     case "confirm-info":
       return { current: 6, total: PUBLIC_INSURANCE_PHASE };
-    case "insurance":
+    case "insurance-provider":
+      return { current: 1, total: PRIVATE_INSURANCE_PHASE };
+    case "insurance-policy":
+      return { current: 2, total: PRIVATE_INSURANCE_PHASE };
+    case "insurance-member":
+      return { current: 3, total: PRIVATE_INSURANCE_PHASE };
     case "payment":
       return { current: 4, total: ACCOUNT_PHASE };
     case "checkpoint":
@@ -169,7 +177,7 @@ export function getNextStep(
       return "sex";
     case "sex":
       if (state.coverage === "provincial") return "confirm-info";
-      if (state.coverage === "private") return "insurance";
+      if (state.coverage === "private") return "insurance-provider";
       return "payment";
     case "scan-card":
       return "issued-province";
@@ -180,8 +188,13 @@ export function getNextStep(
     case "health-card":
       return "dob";
     case "confirm-info":
-    case "insurance":
     case "payment":
+      return "checkpoint";
+    case "insurance-provider":
+      return "insurance-policy";
+    case "insurance-policy":
+      return "insurance-member";
+    case "insurance-member":
       return "checkpoint";
     case "checkpoint":
       return "pronouns";
@@ -251,12 +264,17 @@ export function getPrevStep(
       return "dob";
     case "confirm-info":
       return "sex";
-    case "insurance":
+    case "insurance-provider":
+      return "sex";
+    case "insurance-policy":
+      return "insurance-provider";
+    case "insurance-member":
+      return "insurance-policy";
     case "payment":
       return "sex";
     case "checkpoint":
       if (state.coverage === "provincial") return "confirm-info";
-      if (state.coverage === "private") return "insurance";
+      if (state.coverage === "private") return "insurance-member";
       return "payment";
     case "pronouns":
       return "checkpoint";
