@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { PhoneFrame } from "@/components/onboarding/shell";
 import { PrimaryButton } from "@/components/onboarding/primitives";
 import { useOnboarding } from "@/components/onboarding/provider";
+import { useFlowPreview } from "@/components/flow/flow-preview-context";
 import {
   displayFirstName,
   initialsFromName,
@@ -26,6 +27,7 @@ const ACTIONS = [
 
 export function DashboardScreen() {
   const router = useRouter();
+  const preview = useFlowPreview();
   const { state, reset } = useOnboarding();
   const initials = initialsFromName(state.firstName, state.lastName);
   const firstName = displayFirstName(state.firstName);
@@ -91,15 +93,17 @@ export function DashboardScreen() {
         </div>
       </section>
 
-      <div className="mt-auto flex justify-end pt-8">
-        <button
-          type="button"
-          onClick={restartPrototype}
-          className="text-[13px] leading-4 font-medium text-caption hover:text-action"
-        >
-          Restart prototype
-        </button>
-      </div>
+      {!preview ? (
+        <div className="mt-auto flex justify-end pt-8">
+          <button
+            type="button"
+            onClick={restartPrototype}
+            className="text-[13px] leading-4 font-medium text-caption hover:text-action"
+          >
+            Restart prototype
+          </button>
+        </div>
+      ) : null}
     </PhoneFrame>
   );
 }

@@ -13,7 +13,7 @@ npm run dev
 
 Open [http://localhost:43173](http://localhost:43173). The app starts on the welcome screen.
 
-To see every screen in journey order, open [http://localhost:43173/flow](http://localhost:43173/flow). Click a frame to enter that step.
+To see every screen in journey order, open [http://localhost:43173/flow](http://localhost:43173/flow). The map renders the same live step and dashboard components as the prototype, so screen changes apply to both. Click a frame to open that step.
 
 ## Prototype notes
 

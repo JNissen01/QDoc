@@ -72,8 +72,10 @@ export function FlowBoard() {
           All screens
         </h1>
         <p className="mt-2 max-w-2xl text-[16px] leading-[22px] text-body">
-          Every onboarding step and the dashboard, in journey order. Frames are
-          a preview — click one to open that screen in the prototype.
+          Every onboarding step and the dashboard, in journey order. These
+          frames render the same live screens as the clickable prototype, so
+          design changes show up here automatically. Click a frame to open that
+          screen.
         </p>
         <Link
           href="/onboarding/welcome"

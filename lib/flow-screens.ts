@@ -8,7 +8,7 @@ export type FlowScreen = {
 };
 
 const TITLES: Record<StepId, { title: string; note?: string }> = {
-  welcome: { title: "Welcome" },
+  welcome: { title: "Welcome", note: "Begin registration" },
   "service-area": { title: "Service area" },
   coverage: { title: "Coverage" },
   "issued-province": {
