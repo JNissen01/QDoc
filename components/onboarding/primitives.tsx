@@ -163,17 +163,32 @@ export function SelectorCard({
 }
 
 export function RadioDot({ selected }: { selected: boolean }) {
+  if (selected) {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        className="size-5 shrink-0"
+        aria-hidden
+      >
+        <path
+          d="M10.0001 1.66602C5.40008 1.66602 1.66675 5.39935 1.66675 9.99935C1.66675 14.5993 5.40008 18.3327 10.0001 18.3327C14.6001 18.3327 18.3334 14.5993 18.3334 9.99935C18.3334 5.39935 14.6001 1.66602 10.0001 1.66602ZM10.0001 16.666C6.31675 16.666 3.33341 13.6827 3.33341 9.99935C3.33341 6.31602 6.31675 3.33268 10.0001 3.33268C13.6834 3.33268 16.6667 6.31602 16.6667 9.99935C16.6667 13.6827 13.6834 16.666 10.0001 16.666Z"
+          fill="#4258C7"
+        />
+        <path
+          d="M10.0001 14.166C12.3013 14.166 14.1667 12.3005 14.1667 9.99935C14.1667 7.69816 12.3013 5.83268 10.0001 5.83268C7.69889 5.83268 5.83341 7.69816 5.83341 9.99935C5.83341 12.3005 7.69889 14.166 10.0001 14.166Z"
+          fill="#4258C7"
+        />
+      </svg>
+    );
+  }
+
   return (
     <span
-      className={cn(
-        "flex size-5 shrink-0 items-center justify-center rounded-full",
-        selected ? "border-action bg-action" : "border border-line bg-white",
-      )}
-      style={
-        selected
-          ? { borderWidth: 2, borderStyle: "solid" }
-          : undefined
-      }
+      className="flex size-5 shrink-0 items-center justify-center rounded-full border border-line bg-white"
       aria-hidden
     />
   );
