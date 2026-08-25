@@ -10,6 +10,23 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+export function AccountIntroStep() {
+  const { goNext } = useStepNav("account-intro");
+
+  return (
+    <OnboardingShell
+      step="account-intro"
+      title="Now that we know you’re eligible, lets set up your account!"
+      subtitle="Basic account setup needed to insure the privacy and security of your information."
+      footer={
+        <PrimaryButton onClick={() => goNext()}>Create Account</PrimaryButton>
+      }
+    >
+      <div className="min-h-[240px]" aria-hidden />
+    </OnboardingShell>
+  );
+}
+
 export function AccountStep() {
   const { state, update, goNext } = useStepNav("account");
   const [confirm, setConfirm] = useState(state.password);

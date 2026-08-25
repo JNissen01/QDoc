@@ -9,6 +9,7 @@ import {
   ServiceAreaStep,
 } from "@/components/onboarding/steps/triage";
 import {
+  AccountIntroStep,
   AccountStep,
   ConfirmEmailStep,
 } from "@/components/onboarding/steps/account";
@@ -53,6 +54,8 @@ export function StepView({ step }: { step: StepId }) {
       return <IssuedProvinceStep />;
     case "off-ramp":
       return <OffRampStep />;
+    case "account-intro":
+      return <AccountIntroStep />;
     case "account":
       return <AccountStep />;
     case "confirm-email":

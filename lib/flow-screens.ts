@@ -19,6 +19,7 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
     note: "Provincial coverage",
   },
   "off-ramp": { title: "Off-ramp", note: "Outside the service area" },
+  "account-intro": { title: "Account intro", note: "After triage" },
   account: { title: "Create account" },
   "confirm-email": { title: "Confirm email" },
   name: { title: "Name" },

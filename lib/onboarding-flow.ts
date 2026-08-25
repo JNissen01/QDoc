@@ -6,6 +6,7 @@ export const STEP_IDS = [
   "coverage",
   "issued-province",
   "off-ramp",
+  "account-intro",
   "account",
   "confirm-email",
   "name",
@@ -54,6 +55,7 @@ export function getProgress(step: StepId): ProgressMeta {
     case "coverage":
     case "issued-province":
       return { current: 1, total: PHASE1 };
+    case "account-intro":
     case "account":
       return { current: 2, total: PHASE1 };
     case "confirm-email":
@@ -119,8 +121,12 @@ export function getNextStep(
     case "off-ramp":
       return "service-area";
     case "coverage":
-      return state.coverage === "provincial" ? "issued-province" : "account";
+      return state.coverage === "provincial"
+        ? "issued-province"
+        : "account-intro";
     case "issued-province":
+      return "account-intro";
+    case "account-intro":
       return "account";
     case "account":
       return "confirm-email";
@@ -187,8 +193,10 @@ export function getPrevStep(
       return "service-area";
     case "issued-province":
       return "coverage";
-    case "account":
+    case "account-intro":
       return state.coverage === "provincial" ? "issued-province" : "coverage";
+    case "account":
+      return "account-intro";
     case "confirm-email":
       return "account";
     case "name":
