@@ -61,7 +61,7 @@ export function DashboardScreen() {
       <section className="mt-8 text-left">
         <h2 className="text-[20px] font-semibold text-ink">Quick Actions</h2>
         <PrimaryButton
-          className="mt-3 rounded-[14px]"
+          className="mt-3 h-16 rounded-[14px]"
           onClick={() => undefined}
         >
           <CalendarDays className="size-5 text-white" strokeWidth={1.8} />
