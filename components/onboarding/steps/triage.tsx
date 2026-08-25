@@ -77,8 +77,8 @@ export function CoverageStep() {
     },
     {
       value: "uninsured",
-      title: "I’ll pay for this visit",
-      description: "About $90 per visit if you don’t have a covered card",
+      title: "Uninsured",
+      description: "Payment information is required",
     },
   ];
 
