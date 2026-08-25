@@ -69,6 +69,7 @@ export const MOCK_LOCATION = {
 };
 
 export const MOCK_HEALTH_CARD = {
+  registrationNumber: "123456",
   number: "1213-456-789",
   expiry: "12/28",
 };

@@ -124,13 +124,12 @@ export function IssuedProvinceStep() {
     <OnboardingShell
       step="issued-province"
       title="Where was your health card issued?"
-      subtitle="Currently we only accept MSH private insurance"
       footer={
         <PrimaryButton
           disabled={!state.issuedProvince}
           onClick={() => goNext()}
         >
-          Continue
+          Next
         </PrimaryButton>
       }
     >

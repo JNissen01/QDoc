@@ -4,6 +4,7 @@ import { MapPin } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   Field,
+  LockNote,
   PrimaryButton,
   RadioDot,
   SelectorCard,
@@ -16,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 const PRONOUNS = ["She/her", "He/him", "They/them", "Prefer not to say"];
 const GENDERS = ["Woman", "Man", "Non-binary", "Prefer not to say"];
-const SEXES = ["Female", "Male", "Intersex", "Prefer not to say"];
+const SEXES = ["Male", "Female", "Intersex", "Prefer not to say"];
 
 export function NameStep() {
   const { state, update, goNext } = useStepNav("name");
@@ -54,40 +55,49 @@ export function NameStep() {
 function formatDob(value: string) {
   const digits = value.replace(/\D/g, "").slice(0, 8);
   if (digits.length <= 2) return digits;
-  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
 }
 
 function displayDob(value: string) {
   const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
+  if (iso) return `${iso[3]}-${iso[2]}-${iso[1]}`;
   return formatDob(value);
 }
 
 export function DobStep() {
   const { state, update, goNext } = useStepNav("dob");
   const value = displayDob(state.dob);
-  const valid = /^\d{2}\/\d{2}\/\d{4}$/.test(value);
+  const valid = /^\d{2}-\d{2}-\d{4}$/.test(value);
+  const provincial = state.coverage === "provincial";
 
   return (
     <OnboardingShell
       step="dob"
       title="What is your date of birth?"
-      subtitle="Your provider uses this to confirm your identity."
+      subtitle={
+        provincial
+          ? undefined
+          : "Your provider uses this to confirm your identity."
+      }
       footer={
         <PrimaryButton disabled={!valid} onClick={() => goNext()}>
-          Continue
+          {provincial ? "Next" : "Continue"}
         </PrimaryButton>
       }
     >
       <Field
-        label="Date of birth"
         inputMode="numeric"
-        placeholder="DD/MM/YYYY"
+        placeholder="DD-MM-YYYY"
         inputClassName="text-center"
         value={value}
         onChange={(event) => update({ dob: formatDob(event.target.value) })}
       />
+      {provincial ? (
+        <div className="mt-3">
+          <LockNote>Your information is encrypted and secure</LockNote>
+        </div>
+      ) : null}
     </OnboardingShell>
   );
 }
@@ -101,6 +111,7 @@ function RadioQuestion({
   field,
   customLabel,
   customPlaceholder,
+  ctaLabel = "Continue",
 }: {
   step: StepId;
   title: string;
@@ -110,6 +121,7 @@ function RadioQuestion({
   field: "pronouns" | "gender" | "sex";
   customLabel?: string;
   customPlaceholder?: string;
+  ctaLabel?: string;
 }) {
   const { update, goNext } = useStepNav(step);
   const listed = options.includes(value);
@@ -119,10 +131,10 @@ function RadioQuestion({
     <OnboardingShell
       step={step}
       title={title}
-      subtitle={subtitle}
+      subtitle={subtitle || undefined}
       footer={
         <PrimaryButton disabled={!value.trim()} onClick={() => goNext()}>
-          Continue
+          {ctaLabel}
         </PrimaryButton>
       }
     >
@@ -181,16 +193,23 @@ export function GenderStep() {
 
 export function SexStep() {
   const { state } = useStepNav("sex");
+  const provincial = state.coverage === "provincial";
   return (
     <RadioQuestion
       step="sex"
-      title="What is your sex assigned at birth?"
-      subtitle="This helps your provider with clinical decisions."
+      title="What sex were you assigned at birth?"
+      subtitle={
+        provincial
+          ? ""
+          : "This helps your provider with clinical decisions."
+      }
       options={SEXES}
       value={state.sex}
       field="sex"
-      customLabel="Something else"
-      customPlaceholder="Enter sex assigned at birth"
+      customLabel={provincial ? undefined : "Something else"}
+      customPlaceholder={
+        provincial ? undefined : "Enter sex assigned at birth"
+      }
     />
   );
 }

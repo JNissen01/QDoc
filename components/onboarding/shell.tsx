@@ -89,7 +89,7 @@ export function OnboardingShell({
 }) {
   const router = useRouter();
   const { state } = useOnboarding();
-  const progress = getProgress(step);
+  const progress = getProgress(step, state);
   const prev = getPrevStep(step, state);
 
   return (

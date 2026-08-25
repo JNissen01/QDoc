@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   CreditCard,
   Lock,
+  Pencil,
   ScanLine,
 } from "lucide-react";
 import { OnboardingShell, PhoneFrame } from "@/components/onboarding/shell";
@@ -23,6 +24,13 @@ import {
   MOCK_HEALTH_CARD,
   MOCK_PAYMENT_CARD,
 } from "@/lib/mocks";
+import type { Province } from "@/lib/onboarding-state";
+
+const PROVINCE_LABELS: Record<Province, string> = {
+  MB: "Manitoba",
+  ON: "Ontario",
+  NU: "Nunavut",
+};
 
 export function ScanCardStep() {
   const { goNext, update } = useStepNav("scan-card");
@@ -32,11 +40,13 @@ export function ScanCardStep() {
     setScanning(true);
     await delay(1400);
     update({
+      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
       healthCardNumber: MOCK_HEALTH_CARD.number,
       healthCardExpiry: MOCK_HEALTH_CARD.expiry,
     });
     setScanning(false);
     goNext({
+      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
       healthCardNumber: MOCK_HEALTH_CARD.number,
       healthCardExpiry: MOCK_HEALTH_CARD.expiry,
     });
@@ -64,7 +74,7 @@ export function ScanCardStep() {
     <OnboardingShell
       step="scan-card"
       title="Scan your health card in seconds"
-      subtitle="Or enter your information manually"
+      subtitle="Or enter your information manually."
       footer={
         <div>
           <PrimaryButton onClick={scan}>
@@ -75,14 +85,11 @@ export function ScanCardStep() {
         </div>
       }
     >
-      <HighlightBanner>
-        OCR Feature is 100% secure and all extracted data is encrypted.
-      </HighlightBanner>
-      <ol className="relative mt-8 space-y-6">
+      <ol className="relative space-y-6">
         <span className="absolute top-6 bottom-6 left-[22px] w-px bg-action" />
         {[
           {
-            icon: ScanLine,
+            icon: Camera,
             title: "Scan your card",
             body: "Use your camera to scan the front of your health card",
           },
@@ -112,6 +119,45 @@ export function ScanCardStep() {
           </li>
         ))}
       </ol>
+      <div className="mt-8">
+        <HighlightBanner>
+          OCR Feature is 100% secure and all extracted data is encrypted
+        </HighlightBanner>
+      </div>
+    </OnboardingShell>
+  );
+}
+
+function formatRegistration(value: string) {
+  return value.replace(/\D/g, "").slice(0, 6);
+}
+
+export function RegistrationNumberStep() {
+  const { state, update, goNext } = useStepNav("registration-number");
+  const valid = state.registrationNumber.replace(/\D/g, "").length === 6;
+
+  return (
+    <OnboardingShell
+      step="registration-number"
+      title="What is your registration number?"
+      subtitle="The Six digit number on your health card."
+      footer={
+        <PrimaryButton disabled={!valid} onClick={() => goNext()}>
+          Next
+        </PrimaryButton>
+      }
+    >
+      <Field
+        inputClassName="text-center tracking-[0.08em]"
+        inputMode="numeric"
+        placeholder="123456"
+        value={state.registrationNumber}
+        onChange={(event) =>
+          update({
+            registrationNumber: formatRegistration(event.target.value),
+          })
+        }
+      />
     </OnboardingShell>
   );
 }
@@ -131,10 +177,10 @@ export function HealthCardStep() {
     <OnboardingShell
       step="health-card"
       title="What is your health card number?"
-      subtitle="Currently we only accept MSH private insurance"
+      subtitle="The nine digit number on your health card."
       footer={
         <PrimaryButton disabled={!valid} onClick={() => goNext()}>
-          Continue
+          Next
         </PrimaryButton>
       }
     >
@@ -148,6 +194,105 @@ export function HealthCardStep() {
       />
       <div className="mt-3">
         <LockNote>Your information is encrypted and secure</LockNote>
+      </div>
+    </OnboardingShell>
+  );
+}
+
+function formatDobDisplay(value: string) {
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (iso) return `${iso[3]}-${iso[2]}-${iso[1]}`;
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 8) {
+    return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
+  }
+  return value || "—";
+}
+
+function ConfirmRow({
+  label,
+  value,
+  onEdit,
+}: {
+  label: string;
+  value: string;
+  onEdit: () => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3 border-b border-line py-4 last:border-b-0">
+      <div className="min-w-0">
+        <p className="text-[13px] leading-4 text-caption">{label}</p>
+        <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
+          {value}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onEdit}
+        className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
+        aria-label={`Edit ${label}`}
+      >
+        <Pencil className="size-4" strokeWidth={1.8} />
+      </button>
+    </div>
+  );
+}
+
+export function ConfirmInfoStep() {
+  const { state, goNext, goTo } = useStepNav("confirm-info");
+  const provinceLabel = state.issuedProvince
+    ? PROVINCE_LABELS[state.issuedProvince]
+    : "—";
+
+  return (
+    <OnboardingShell
+      step="confirm-info"
+      title="Confirm your information"
+      subtitle="Ensure the information entered is correct."
+      footer={
+        <PrimaryButton onClick={() => goNext()}>Confirm</PrimaryButton>
+      }
+    >
+      <div className="rounded-[14px] border border-line bg-white px-4">
+        <ConfirmRow
+          label="Issuing Province"
+          value={provinceLabel}
+          onEdit={() => goTo("issued-province")}
+        />
+        <ConfirmRow
+          label="Registration No."
+          value={state.registrationNumber || "—"}
+          onEdit={() => goTo("registration-number")}
+        />
+        <ConfirmRow
+          label="Health No."
+          value={state.healthCardNumber || "—"}
+          onEdit={() => goTo("health-card")}
+        />
+        <div className="flex items-start justify-between gap-3 py-4">
+          <div className="min-w-0 space-y-3">
+            <div>
+              <p className="text-[13px] leading-4 text-caption">Birthday</p>
+              <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
+                {formatDobDisplay(state.dob)}
+              </p>
+            </div>
+            <div>
+              <p className="text-[13px] leading-4 text-caption">Sex</p>
+              <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
+                {state.sex || "—"}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => goTo("dob")}
+            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
+            aria-label="Edit birthday and sex"
+          >
+            <Pencil className="size-4" strokeWidth={1.8} />
+          </button>
+        </div>
       </div>
     </OnboardingShell>
   );

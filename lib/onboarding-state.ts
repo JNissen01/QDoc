@@ -59,6 +59,7 @@ export type OnboardingState = {
   postalCode: string;
   city: string;
   province: Province | null;
+  registrationNumber: string;
   healthCardNumber: string;
   healthCardExpiry: string;
   insuranceProvider: string;
@@ -102,6 +103,7 @@ export const defaultOnboardingState: OnboardingState = {
   postalCode: "",
   city: "",
   province: null,
+  registrationNumber: "",
   healthCardNumber: "",
   healthCardExpiry: "",
   insuranceProvider: "MSH",

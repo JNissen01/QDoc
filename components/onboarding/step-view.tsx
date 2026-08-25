@@ -23,9 +23,11 @@ import {
   SexStep,
 } from "@/components/onboarding/steps/profile";
 import {
+  ConfirmInfoStep,
   HealthCardStep,
   InsuranceStep,
   PaymentStep,
+  RegistrationNumberStep,
   ScanCardStep,
 } from "@/components/onboarding/steps/coverage-details";
 import { CheckpointStep } from "@/components/onboarding/steps/checkpoint";
@@ -76,8 +78,12 @@ export function StepView({ step }: { step: StepId }) {
       return <SexStep />;
     case "scan-card":
       return <ScanCardStep />;
+    case "registration-number":
+      return <RegistrationNumberStep />;
     case "health-card":
       return <HealthCardStep />;
+    case "confirm-info":
+      return <ConfirmInfoStep />;
     case "insurance":
       return <InsuranceStep />;
     case "payment":
