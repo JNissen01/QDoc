@@ -12,8 +12,6 @@ export const STEP_IDS = [
   "name",
   "address",
   "dob",
-  "pronouns",
-  "gender",
   "sex",
   "scan-card",
   "issued-province",
@@ -23,6 +21,8 @@ export const STEP_IDS = [
   "insurance",
   "payment",
   "checkpoint",
+  "pronouns",
+  "gender",
   "pharmacy",
   "family-doctor",
   "biometrics",
@@ -48,7 +48,7 @@ export type ProgressMeta = {
 const TRIAGE_PHASE = 2;
 const ACCOUNT_PHASE = 5;
 const PUBLIC_INSURANCE_PHASE = 7;
-const PHASE2 = 6;
+const PHASE2 = 8;
 
 export function getProgress(
   step: StepId,
@@ -87,9 +87,6 @@ export function getProgress(
         return { current: 1, total: ACCOUNT_PHASE };
       }
       return { current: 4, total: PUBLIC_INSURANCE_PHASE };
-    case "pronouns":
-    case "gender":
-      return { current: 1, total: ACCOUNT_PHASE };
     case "sex":
       if (state?.coverage === "private" || state?.coverage === "uninsured") {
         return { current: 1, total: ACCOUNT_PHASE };
@@ -102,20 +99,24 @@ export function getProgress(
       return { current: 4, total: ACCOUNT_PHASE };
     case "checkpoint":
       return { current: 5, total: ACCOUNT_PHASE };
-    case "pharmacy":
+    case "pronouns":
       return { current: 1, total: PHASE2 };
-    case "family-doctor":
+    case "gender":
       return { current: 2, total: PHASE2 };
-    case "biometrics":
+    case "pharmacy":
       return { current: 3, total: PHASE2 };
-    case "medical-history":
+    case "family-doctor":
       return { current: 4, total: PHASE2 };
+    case "biometrics":
+      return { current: 5, total: PHASE2 };
+    case "medical-history":
+      return { current: 6, total: PHASE2 };
     case "medications":
     case "allergies":
     case "conditions":
-      return { current: 5, total: PHASE2 };
+      return { current: 7, total: PHASE2 };
     case "success":
-      return { current: 6, total: PHASE2 };
+      return { current: 8, total: PHASE2 };
   }
 }
 
@@ -165,11 +166,6 @@ export function getNextStep(
       if (state.coverage === "provincial") return "scan-card";
       return "dob";
     case "dob":
-      if (state.coverage === "provincial") return "sex";
-      return "pronouns";
-    case "pronouns":
-      return "gender";
-    case "gender":
       return "sex";
     case "sex":
       if (state.coverage === "provincial") return "confirm-info";
@@ -188,6 +184,10 @@ export function getNextStep(
     case "payment":
       return "checkpoint";
     case "checkpoint":
+      return "pronouns";
+    case "pronouns":
+      return "gender";
+    case "gender":
       return "pharmacy";
     case "pharmacy":
       return "family-doctor";
@@ -247,13 +247,8 @@ export function getPrevStep(
     case "dob":
       if (state.coverage === "provincial") return "health-card";
       return "address";
-    case "pronouns":
-      return "dob";
-    case "gender":
-      return "pronouns";
     case "sex":
-      if (state.coverage === "provincial") return "dob";
-      return "gender";
+      return "dob";
     case "confirm-info":
       return "sex";
     case "insurance":
@@ -263,8 +258,12 @@ export function getPrevStep(
       if (state.coverage === "provincial") return "confirm-info";
       if (state.coverage === "private") return "insurance";
       return "payment";
-    case "pharmacy":
+    case "pronouns":
       return "checkpoint";
+    case "gender":
+      return "pronouns";
+    case "pharmacy":
+      return "gender";
     case "family-doctor":
       return "pharmacy";
     case "biometrics":
