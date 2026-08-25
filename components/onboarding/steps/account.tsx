@@ -1,13 +1,80 @@
 "use client";
 
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
-import { Field, PrimaryButton } from "@/components/onboarding/primitives";
+import {
+  Field,
+  GhostButton,
+  PrimaryButton,
+} from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function formatPhone(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length < 4) return `(${digits}`;
+  if (digits.length < 7) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+function PasswordField({
+  label,
+  value,
+  error,
+  placeholder,
+  autoComplete,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  error?: string;
+  placeholder?: string;
+  autoComplete?: string;
+  onChange: (value: string) => void;
+}) {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Label className="text-[13px] leading-4 font-normal text-ink">{label}</Label>
+      <div className="relative">
+        <Input
+          type={visible ? "text" : "password"}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          value={value}
+          aria-invalid={Boolean(error)}
+          onChange={(event) => onChange(event.target.value)}
+          className={cn(
+            "h-[70px] rounded-[14px] border border-line bg-white pr-12 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0 md:text-[16px]",
+          )}
+        />
+        <button
+          type="button"
+          className="absolute top-1/2 right-4 -translate-y-1/2 text-caption"
+          aria-label={visible ? "Hide password" : "Show password"}
+          onClick={() => setVisible((current) => !current)}
+        >
+          {visible ? (
+            <EyeOff className="size-5" strokeWidth={1.8} />
+          ) : (
+            <Eye className="size-5" strokeWidth={1.8} />
+          )}
+        </button>
+      </div>
+      {error ? (
+        <p className="text-[14px] leading-[18px] text-danger">{error}</p>
+      ) : null}
+    </div>
+  );
 }
 
 export function AccountIntroStep() {
@@ -27,31 +94,23 @@ export function AccountIntroStep() {
   );
 }
 
-export function AccountStep() {
-  const { state, update, goNext } = useStepNav("account");
-  const [confirm, setConfirm] = useState(state.password);
+export function ContactStep() {
+  const { state, update, goNext } = useStepNav("contact");
   const [submitted, setSubmitted] = useState(false);
 
   const emailError =
     submitted && !isValidEmail(state.email)
       ? "Enter a valid email address"
       : undefined;
-  const passwordError =
-    submitted && state.password.length < 8
-      ? "Use at least 8 characters"
-      : undefined;
-  const confirmError =
-    submitted && confirm !== state.password
-      ? "Passwords don’t match"
+  const phoneDigits = state.phone.replace(/\D/g, "");
+  const phoneError =
+    submitted && phoneDigits.length < 10
+      ? "Enter a valid phone number"
       : undefined;
 
-  function continueAccount() {
+  function continueContact() {
     setSubmitted(true);
-    if (
-      !isValidEmail(state.email) ||
-      state.password.length < 8 ||
-      confirm !== state.password
-    ) {
+    if (!isValidEmail(state.email) || phoneDigits.length < 10) {
       return;
     }
     goNext();
@@ -59,38 +118,31 @@ export function AccountStep() {
 
   return (
     <OnboardingShell
-      step="account"
-      title="Create your account"
-      subtitle="We’ll send a 5-digit code to confirm it’s you. For this prototype, any code works."
-      footer={<PrimaryButton onClick={continueAccount}>Continue</PrimaryButton>}
+      step="contact"
+      title="Contact information"
+      subtitle="We’ll send a 5-digit code to your email to confirm it’s you. For this prototype, any code works."
+      footer={<PrimaryButton onClick={continueContact}>Next</PrimaryButton>}
     >
       <div className="space-y-4 text-left">
         <Field
           label="Email"
           type="email"
           autoComplete="email"
-          placeholder="you@email.com"
+          placeholder="JaneDoe@email.com"
           value={state.email}
           error={emailError}
           onChange={(event) => update({ email: event.target.value })}
         />
         <Field
-          label="Password"
-          type="password"
-          autoComplete="new-password"
-          placeholder="At least 8 characters"
-          value={state.password}
-          error={passwordError}
-          onChange={(event) => update({ password: event.target.value })}
-        />
-        <Field
-          label="Confirm password"
-          type="password"
-          autoComplete="new-password"
-          placeholder="Re-enter your password"
-          value={confirm}
-          error={confirmError}
-          onChange={(event) => setConfirm(event.target.value)}
+          label="Phone"
+          type="tel"
+          autoComplete="tel"
+          placeholder="(123) 456-7890"
+          value={state.phone}
+          error={phoneError}
+          onChange={(event) =>
+            update({ phone: formatPhone(event.target.value) })
+          }
         />
       </div>
     </OnboardingShell>
@@ -168,6 +220,80 @@ export function ConfirmEmailStep() {
       {error ? (
         <p className="mt-3 text-[14px] text-danger">{error}</p>
       ) : null}
+    </OnboardingShell>
+  );
+}
+
+export function PasswordStep() {
+  const { state, update, goNext } = useStepNav("password");
+  const [confirm, setConfirm] = useState(state.password);
+  const [submitted, setSubmitted] = useState(false);
+
+  const usernameError =
+    submitted && !state.username.trim()
+      ? "Enter a username"
+      : undefined;
+  const passwordError =
+    submitted && state.password.length < 8
+      ? "Use at least 8 characters"
+      : undefined;
+  const confirmError =
+    submitted && confirm !== state.password
+      ? "Passwords don’t match"
+      : undefined;
+
+  function continuePassword() {
+    setSubmitted(true);
+    if (
+      !state.username.trim() ||
+      state.password.length < 8 ||
+      confirm !== state.password
+    ) {
+      return;
+    }
+    goNext();
+  }
+
+  return (
+    <OnboardingShell
+      step="password"
+      title="Create a password"
+      subtitle="Choose a strong password to keep your account secure."
+      footer={
+        <div className="space-y-1">
+          <PrimaryButton onClick={continuePassword}>Next</PrimaryButton>
+          <GhostButton type="button" onClick={() => {}}>
+            Use Face ID
+          </GhostButton>
+        </div>
+      }
+    >
+      <div className="space-y-4 text-left">
+        <Field
+          label="Username"
+          autoComplete="username"
+          placeholder="e.g. Janedoe"
+          value={state.username}
+          error={usernameError}
+          onChange={(event) => update({ username: event.target.value })}
+        />
+        <PasswordField
+          label="Password"
+          autoComplete="new-password"
+          placeholder="At least 8 characters"
+          value={state.password}
+          error={passwordError}
+          onChange={(value) => update({ password: value })}
+        />
+        <PasswordField
+          label="Confirm Password"
+          autoComplete="new-password"
+          placeholder="Re-enter your password"
+          value={confirm}
+          error={confirmError}
+          onChange={setConfirm}
+        />
+      </div>
     </OnboardingShell>
   );
 }

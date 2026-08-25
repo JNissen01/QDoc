@@ -7,15 +7,15 @@ export const STEP_IDS = [
   "issued-province",
   "off-ramp",
   "account-intro",
-  "account",
+  "contact",
   "confirm-email",
+  "password",
   "name",
+  "address",
   "dob",
-  "phone",
   "pronouns",
   "gender",
   "sex",
-  "address",
   "scan-card",
   "health-card",
   "insurance",
@@ -50,23 +50,27 @@ export function getProgress(step: StepId): ProgressMeta {
   switch (step) {
     case "welcome":
     case "off-ramp":
+    case "account-intro":
       return { current: 0, total: PHASE1, hidden: true };
     case "service-area":
     case "coverage":
     case "issued-province":
       return { current: 1, total: PHASE1 };
-    case "account-intro":
-    case "account":
-      return { current: 2, total: PHASE1 };
+    case "contact":
+      return { current: 1, total: PHASE1 };
     case "confirm-email":
+      return { current: 2, total: PHASE1 };
+    case "password":
+      return { current: 3, total: PHASE1 };
     case "name":
+      return { current: 4, total: PHASE1 };
+    case "address":
+      return { current: 5, total: PHASE1 };
     case "dob":
-    case "phone":
     case "pronouns":
     case "gender":
     case "sex":
-      return { current: 3, total: PHASE1 };
-    case "address":
+      return { current: 1, total: PHASE1 };
     case "scan-card":
     case "health-card":
     case "insurance":
@@ -127,24 +131,24 @@ export function getNextStep(
     case "issued-province":
       return "account-intro";
     case "account-intro":
-      return "account";
-    case "account":
+      return "contact";
+    case "contact":
       return "confirm-email";
     case "confirm-email":
+      return "password";
+    case "password":
       return "name";
     case "name":
+      return "address";
+    case "address":
       return "dob";
     case "dob":
-      return "phone";
-    case "phone":
       return "pronouns";
     case "pronouns":
       return "gender";
     case "gender":
       return "sex";
     case "sex":
-      return "address";
-    case "address":
       if (state.coverage === "provincial") return "scan-card";
       if (state.coverage === "private") return "insurance";
       return "payment";
@@ -195,28 +199,28 @@ export function getPrevStep(
       return "coverage";
     case "account-intro":
       return state.coverage === "provincial" ? "issued-province" : "coverage";
-    case "account":
+    case "contact":
       return "account-intro";
     case "confirm-email":
-      return "account";
-    case "name":
+      return "contact";
+    case "password":
       return "confirm-email";
-    case "dob":
+    case "name":
+      return "password";
+    case "address":
       return "name";
-    case "phone":
-      return "dob";
+    case "dob":
+      return "address";
     case "pronouns":
-      return "phone";
+      return "dob";
     case "gender":
       return "pronouns";
     case "sex":
       return "gender";
-    case "address":
-      return "sex";
     case "scan-card":
     case "insurance":
     case "payment":
-      return "address";
+      return "sex";
     case "health-card":
       return "scan-card";
     case "checkpoint":

@@ -45,6 +45,7 @@ export type OnboardingState = {
   coverage: CoverageType | null;
   issuedProvince: Province | null;
   email: string;
+  username: string;
   password: string;
   emailVerified: boolean;
   firstName: string;
@@ -87,6 +88,7 @@ export const defaultOnboardingState: OnboardingState = {
   coverage: null,
   issuedProvince: null,
   email: "",
+  username: "",
   password: "",
   emailVerified: false,
   firstName: "",

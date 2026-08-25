@@ -10,15 +10,15 @@ import {
 } from "@/components/onboarding/steps/triage";
 import {
   AccountIntroStep,
-  AccountStep,
   ConfirmEmailStep,
+  ContactStep,
+  PasswordStep,
 } from "@/components/onboarding/steps/account";
 import {
   AddressStep,
   DobStep,
   GenderStep,
   NameStep,
-  PhoneStep,
   PronounsStep,
   SexStep,
 } from "@/components/onboarding/steps/profile";
@@ -56,24 +56,24 @@ export function StepView({ step }: { step: StepId }) {
       return <OffRampStep />;
     case "account-intro":
       return <AccountIntroStep />;
-    case "account":
-      return <AccountStep />;
+    case "contact":
+      return <ContactStep />;
     case "confirm-email":
       return <ConfirmEmailStep />;
+    case "password":
+      return <PasswordStep />;
     case "name":
       return <NameStep />;
+    case "address":
+      return <AddressStep />;
     case "dob":
       return <DobStep />;
-    case "phone":
-      return <PhoneStep />;
     case "pronouns":
       return <PronounsStep />;
     case "gender":
       return <GenderStep />;
     case "sex":
       return <SexStep />;
-    case "address":
-      return <AddressStep />;
     case "scan-card":
       return <ScanCardStep />;
     case "health-card":

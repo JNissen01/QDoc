@@ -25,24 +25,24 @@ export function NameStep() {
   return (
     <OnboardingShell
       step="name"
-      title="What is your name?"
-      subtitle="Use the name on your health card so we can match your record."
+      title="What is your legal name?"
+      subtitle="First and last name required."
       footer={
         <PrimaryButton disabled={!valid} onClick={() => goNext()}>
-          Continue
+          Next
         </PrimaryButton>
       }
     >
       <div className="space-y-4">
         <Field
           label="First name"
-          placeholder="Sarah"
+          placeholder="e.g. Jane"
           value={state.firstName}
           onChange={(event) => update({ firstName: event.target.value })}
         />
         <Field
           label="Last name"
-          placeholder="Nguyen"
+          placeholder="e.g. Doe"
           value={state.lastName}
           onChange={(event) => update({ lastName: event.target.value })}
         />
@@ -87,34 +87,6 @@ export function DobStep() {
         inputClassName="text-center"
         value={value}
         onChange={(event) => update({ dob: formatDob(event.target.value) })}
-      />
-    </OnboardingShell>
-  );
-}
-
-export function PhoneStep() {
-  const { state, update, goNext } = useStepNav("phone");
-
-  return (
-    <OnboardingShell
-      step="phone"
-      title="What is your phone number?"
-      subtitle="We’ll text you when a provider is ready so you don’t have to wait in the app."
-      footer={
-        <PrimaryButton
-          disabled={state.phone.replace(/\D/g, "").length < 10}
-          onClick={() => goNext()}
-        >
-          Continue
-        </PrimaryButton>
-      }
-    >
-      <Field
-        label="Phone"
-        type="tel"
-        placeholder="204-555-0100"
-        value={state.phone}
-        onChange={(event) => update({ phone: event.target.value })}
       />
     </OnboardingShell>
   );
