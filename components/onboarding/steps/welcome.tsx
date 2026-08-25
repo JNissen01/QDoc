@@ -62,7 +62,7 @@ export function WelcomeStep() {
               className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3"
             >
               <item.icon
-                className="size-6 shrink-0 text-ink"
+                className="size-6 shrink-0 text-action"
                 strokeWidth={1.8}
               />
               <span className="text-left text-[16px] leading-[22px] font-medium text-ink">
