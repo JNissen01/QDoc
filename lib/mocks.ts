@@ -68,6 +68,12 @@ export const MOCK_LOCATION = {
   province: "MB" as const,
 };
 
+export const MOCK_UPCOMING_VISIT = {
+  clinician: "Dr. Robert Mercer",
+  dateLabel: "Today, Aug 18th",
+  timeLabel: "3:00 - 3:10",
+};
+
 export const MOCK_HEALTH_CARD = {
   number: "1213-456-789",
   expiry: "12/28",
