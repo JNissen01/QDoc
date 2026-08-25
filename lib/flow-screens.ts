@@ -9,7 +9,10 @@ export type FlowScreen = {
 
 const TITLES: Record<StepId, { title: string; note?: string }> = {
   welcome: { title: "Welcome", note: "Begin registration" },
-  "service-area": { title: "Service area" },
+  "service-area": {
+    title: "Service area",
+    note: "Canadian resident in MB / ON / NU",
+  },
   coverage: { title: "Coverage" },
   "issued-province": {
     title: "Issued province",

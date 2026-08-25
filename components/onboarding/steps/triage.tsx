@@ -1,5 +1,6 @@
 "use client";
 
+import { MapPin } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   PrimaryButton,
@@ -15,29 +16,37 @@ export function ServiceAreaStep() {
   return (
     <OnboardingShell
       step="service-area"
-      title="Where will you be for your visit?"
-      subtitle="QDoc is for people physically located in Manitoba, Northwestern Ontario, or Nunavut at the time of their visit."
+      title="Are you a Canadian resident living in one of the following locations?"
+      subtitle="QDoc is only available to permanent residents of the following provinces and territories."
       footer={
         <PrimaryButton
           disabled={state.inServiceArea === null}
           onClick={() => goNext()}
         >
-          Continue
+          Next
         </PrimaryButton>
       }
     >
       <div className="space-y-3">
+        <div className="flex min-h-[70px] items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3">
+          <MapPin
+            className="size-5 shrink-0 text-action"
+            strokeWidth={1.8}
+            aria-hidden
+          />
+          <span className="text-left text-[16px] leading-[22px] font-medium text-ink">
+            Manitoba, Ontario, Nunavut
+          </span>
+        </div>
         <SelectorCard
           selected={state.inServiceArea === true}
-          title="Manitoba, Northwestern Ontario, or Nunavut"
-          description="I’ll be in a supported region for my visit"
+          title="Yes"
           leading={<RadioDot selected={state.inServiceArea === true} />}
           onClick={() => update({ inServiceArea: true })}
         />
         <SelectorCard
           selected={state.inServiceArea === false}
-          title="Somewhere else"
-          description="I’m outside the service area"
+          title="No"
           leading={<RadioDot selected={state.inServiceArea === false} />}
           onClick={() => update({ inServiceArea: false })}
         />
