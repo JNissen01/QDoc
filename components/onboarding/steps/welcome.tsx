@@ -1,16 +1,16 @@
 "use client";
 
-import { ShieldPlus } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import { PrimaryButton } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { LockIcon } from "@/components/brand/lock-icon";
 import { QDocLogo } from "@/components/brand/qdoc-logo";
+import { ShieldPlusIcon } from "@/components/brand/shield-plus-icon";
 import { VerifiedCheckIcon } from "@/components/brand/verified-check-icon";
 
 const TRUST_ITEMS = [
   {
-    icon: ShieldPlus,
+    icon: ShieldPlusIcon,
     label: "Protected under the Privacy Act of Canada",
     iconClassName: "size-6 shrink-0 text-action",
   },
@@ -68,10 +68,7 @@ export function WelcomeStep() {
               key={item.label}
               className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3"
             >
-              <item.icon
-                className={item.iconClassName}
-                strokeWidth={1.8}
-              />
+              <item.icon className={item.iconClassName} />
               <span className="text-left text-[16px] leading-[22px] font-medium text-ink">
                 {item.label}
               </span>
