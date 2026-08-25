@@ -82,18 +82,19 @@ export function getProgress(
     case "health-card":
       return { current: 3, total: PUBLIC_INSURANCE_PHASE };
     case "dob":
-      if (provincial) {
-        return { current: 4, total: PUBLIC_INSURANCE_PHASE };
+      // Public path (and /flow previews with unset coverage) uses the 7-step tracker.
+      if (state?.coverage === "private" || state?.coverage === "uninsured") {
+        return { current: 1, total: ACCOUNT_PHASE };
       }
-      return { current: 1, total: ACCOUNT_PHASE };
+      return { current: 4, total: PUBLIC_INSURANCE_PHASE };
     case "pronouns":
     case "gender":
       return { current: 1, total: ACCOUNT_PHASE };
     case "sex":
-      if (provincial) {
-        return { current: 5, total: PUBLIC_INSURANCE_PHASE };
+      if (state?.coverage === "private" || state?.coverage === "uninsured") {
+        return { current: 1, total: ACCOUNT_PHASE };
       }
-      return { current: 1, total: ACCOUNT_PHASE };
+      return { current: 5, total: PUBLIC_INSURANCE_PHASE };
     case "confirm-info":
       return { current: 6, total: PUBLIC_INSURANCE_PHASE };
     case "insurance":
