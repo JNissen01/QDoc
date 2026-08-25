@@ -72,7 +72,7 @@ export function DashboardScreen() {
             <button
               key={action.label}
               type="button"
-              className="flex h-[78px] flex-col items-start justify-center gap-1 rounded-[14px] border border-line bg-white px-4 text-left text-[16px] font-medium text-ink"
+              className="flex h-[78px] flex-col items-start gap-1 rounded-[14px] border border-line bg-white px-4 py-4 text-left text-[16px] leading-[18px] font-medium text-ink"
             >
               <action.icon
                 className="size-6 shrink-0 text-action"
