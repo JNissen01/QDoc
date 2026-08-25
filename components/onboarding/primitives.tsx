@@ -137,8 +137,8 @@ export function SelectorCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex min-h-[70px] w-full items-center gap-3 rounded-[14px] border bg-white px-4 py-3 text-left transition-colors",
-        selected ? "border-action bg-white" : "border-line",
+        "flex min-h-[70px] w-full items-center gap-3 rounded-[14px] bg-white px-4 py-3 text-left transition-colors",
+        selected ? "selector-card-selected" : "border border-line",
       )}
     >
       {leading}
