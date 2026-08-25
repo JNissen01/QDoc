@@ -402,7 +402,7 @@ export function PaymentIntroStep() {
       }
     >
       <ol className="relative space-y-6">
-        <span className="absolute top-6 bottom-6 left-[22px] w-px bg-action" />
+        <span className="absolute top-[2.0625rem] bottom-[2.0625rem] left-[2.0625rem] w-px bg-action" />
         {[
           {
             icon: Stethoscope,
@@ -421,8 +421,8 @@ export function PaymentIntroStep() {
           },
         ].map((item) => (
           <li key={item.title} className="relative flex items-start gap-3">
-            <IconWell className="z-10">
-              <item.icon className="size-5" strokeWidth={1.8} />
+            <IconWell className="z-10 size-[4.125rem] rounded-[0.75rem]">
+              <item.icon className="size-6" strokeWidth={1.8} />
             </IconWell>
             <div className="pt-0.5">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
