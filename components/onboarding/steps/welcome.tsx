@@ -1,94 +1,76 @@
 "use client";
 
-import { useState } from "react";
-import { ShieldCheck, Smartphone, Video } from "lucide-react";
+import { CircleCheck, Lock, ShieldPlus } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
-import { PrimaryButton, FeatureItem } from "@/components/onboarding/primitives";
+import { PrimaryButton } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
-import { cn } from "@/lib/utils";
+import { QDocLogo } from "@/components/brand/qdoc-logo";
 
-const SLIDES = [
+const TRUST_ITEMS = [
   {
-    title: "See a local provider without leaving home",
-    body: "Create a profile, join a virtual queue, and get a text when a Manitoba, Nunavut, or Northwestern Ontario provider is ready.",
-    items: [
-      { icon: Smartphone, label: "Create an account and patient profile" },
-      { icon: ShieldCheck, label: "Join a queue — no waiting in the app" },
-      { icon: Video, label: "Video visit with a treatment plan" },
-    ],
+    icon: ShieldPlus,
+    label: "Protected under the Privacy Act of Canada",
   },
   {
-    title: "Provincially aligned virtual care",
-    body: "QDoc has connected patients with local doctors and nurse practitioners since 2022 — for free with a valid health card.",
-    items: [
-      { icon: ShieldCheck, label: "PHIA and HIPAA aligned privacy practices" },
-      { icon: Video, label: "Prescriptions, labs, referrals, and sick notes" },
-      { icon: Smartphone, label: "Rated 4.9/5 by patients in our community" },
-    ],
+    icon: Lock,
+    label: "AES-256 encrypted health data",
+  },
+  {
+    icon: CircleCheck,
+    label: "Verified with provincial health databases",
   },
 ];
 
 export function WelcomeStep() {
-  const { goNext } = useStepNav("welcome");
-  const [index, setIndex] = useState(0);
-  const slide = SLIDES[index];
-  const last = index === SLIDES.length - 1;
+  const { goNext, goTo } = useStepNav("welcome");
 
   return (
     <OnboardingShell
       step="welcome"
       hideBack
-      title={slide.title}
-      subtitle={slide.body}
       footer={
-        <div className="space-y-3">
-          <PrimaryButton
-            onClick={() => (last ? goNext() : setIndex((value) => value + 1))}
-          >
-            {last ? "Get started" : "Next"}
+        <div className="space-y-4">
+          <PrimaryButton onClick={() => goNext()}>
+            Begin Registration
           </PrimaryButton>
-          {!last ? (
+          <p className="text-center text-[16px] leading-[22px] text-body">
+            Already Registered?{" "}
             <button
               type="button"
-              className="w-full text-center text-[16px] font-semibold text-action"
-              onClick={() => goNext()}
+              className="font-semibold text-action"
+              onClick={() => goTo("dashboard")}
             >
-              Skip
+              Sign In
             </button>
-          ) : null}
+          </p>
         </div>
       }
     >
-      <div className="space-y-3">
-        {slide.items.map((item) => (
-          <FeatureItem key={item.label} icon={item.icon} title={item.label} />
-        ))}
-      </div>
-
-      <div className="mt-8 flex gap-2">
-        {SLIDES.map((_, slideIndex) => (
-          <button
-            key={slideIndex}
-            type="button"
-            aria-label={`Slide ${slideIndex + 1}`}
-            onClick={() => setIndex(slideIndex)}
-            className={cn(
-              "h-2 rounded-full transition-all",
-              slideIndex === index ? "w-6 bg-action" : "w-2 bg-line",
-            )}
-          />
-        ))}
-      </div>
-
-      <div className="mt-8 flex flex-wrap gap-2">
-        {["PHIA", "HIPAA", "Manitoba", "Nunavut", "NW Ontario"].map((seal) => (
-          <span
-            key={seal}
-            className="rounded-full border border-line bg-white px-3 py-1 text-[13px] leading-4 text-caption"
-          >
-            {seal}
-          </span>
-        ))}
+      <div className="flex h-full flex-col items-center justify-center">
+        <QDocLogo />
+        <h1 className="mt-8 text-center text-[28px] leading-9 font-semibold text-ink">
+          Welcome to QDoc!
+        </h1>
+        <p className="mt-3 max-w-[340px] text-center text-[16px] leading-[22px] font-normal text-body">
+          Set up your secure digital health record in a few easy steps. Access
+          virtual care, prescriptions, and medical records anytime.
+        </p>
+        <ul className="mt-8 w-full space-y-3">
+          {TRUST_ITEMS.map((item) => (
+            <li
+              key={item.label}
+              className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3"
+            >
+              <item.icon
+                className="size-6 shrink-0 text-ink"
+                strokeWidth={1.8}
+              />
+              <span className="text-left text-[16px] leading-[22px] font-medium text-ink">
+                {item.label}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     </OnboardingShell>
   );
