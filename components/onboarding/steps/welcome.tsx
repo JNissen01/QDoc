@@ -12,17 +12,17 @@ const TRUST_ITEMS = [
   {
     icon: ShieldPlusIcon,
     label: "Protected under the Privacy Act of Canada",
-    iconClassName: "size-6 shrink-0 text-action",
+    iconClassName: "size-6 text-action",
   },
   {
     icon: LockIcon,
     label: "AES-256 encrypted health data",
-    iconClassName: "h-[21px] w-4 shrink-0 text-action",
+    iconClassName: "h-[21px] w-4 text-action",
   },
   {
     icon: VerifiedCheckIcon,
     label: "Verified with provincial health databases",
-    iconClassName: "size-6 shrink-0 text-action",
+    iconClassName: "size-6 text-action",
   },
 ];
 
@@ -68,7 +68,9 @@ export function WelcomeStep() {
               key={item.label}
               className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3"
             >
-              <item.icon className={item.iconClassName} />
+              <span className="flex size-6 shrink-0 items-center justify-center">
+                <item.icon className={item.iconClassName} />
+              </span>
               <span className="text-left text-[16px] leading-[22px] font-medium text-ink">
                 {item.label}
               </span>
