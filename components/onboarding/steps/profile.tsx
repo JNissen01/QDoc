@@ -206,10 +206,6 @@ export function SexStep() {
       options={SEXES}
       value={state.sex}
       field="sex"
-      customLabel={provincial ? undefined : "Something else"}
-      customPlaceholder={
-        provincial ? undefined : "Enter sex assigned at birth"
-      }
     />
   );
 }
