@@ -17,7 +17,6 @@ const TRUST_ITEMS = [
   {
     icon: LockIcon,
     label: "AES-256 encrypted health data",
-    // Preserve 16×21 lock aspect (avoid size-6 square crop)
     iconClassName: "h-[21px] w-4 shrink-0 text-action",
   },
   {
