@@ -46,12 +46,14 @@ export function WelcomeStep() {
         </div>
       }
     >
-      <div className="flex h-full flex-col items-center justify-center">
-        <QDocLogo />
-        <h1 className="mt-8 text-center text-[28px] leading-9 font-semibold text-ink">
+      <div className="flex h-full w-full flex-col items-stretch justify-center">
+        <div className="flex justify-center">
+          <QDocLogo />
+        </div>
+        <h1 className="mt-8 text-left text-[28px] leading-9 font-semibold text-ink">
           Welcome to QDoc!
         </h1>
-        <p className="mt-3 max-w-[340px] text-center text-[16px] leading-[22px] font-normal text-body">
+        <p className="mt-3 max-w-[340px] text-left text-[16px] leading-[22px] font-normal text-body">
           Set up your secure digital health record in a few easy steps. Access
           virtual care, prescriptions, and medical records anytime.
         </p>
