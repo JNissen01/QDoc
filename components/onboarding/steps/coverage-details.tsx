@@ -420,8 +420,8 @@ export function PaymentIntroStep() {
             body: "For missing or cancelling appointments with less than 24h notice",
           },
         ].map((item) => (
-          <li key={item.title} className="relative flex items-start gap-3">
-            <IconWell className="z-10 size-[4.125rem] rounded-[0.75rem]">
+          <li key={item.title} className="relative flex items-center gap-3">
+            <IconWell className="z-10 size-[4.125rem] rounded-[0.75rem] border-2 border-line">
               <item.icon className="size-[2.125rem]" strokeWidth={1.8} />
             </IconWell>
             <div className="pt-0.5">
