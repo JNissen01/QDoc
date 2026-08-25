@@ -45,6 +45,7 @@ export type ProgressMeta = {
   hidden?: boolean;
 };
 
+const TRIAGE_PHASE = 2;
 const ACCOUNT_PHASE = 5;
 const PUBLIC_INSURANCE_PHASE = 7;
 const PHASE2 = 6;
@@ -59,8 +60,9 @@ export function getProgress(
     case "account-intro":
       return { current: 0, total: ACCOUNT_PHASE, hidden: true };
     case "service-area":
+      return { current: 1, total: TRIAGE_PHASE };
     case "coverage":
-      return { current: 1, total: ACCOUNT_PHASE };
+      return { current: 2, total: TRIAGE_PHASE };
     case "contact":
       return { current: 1, total: ACCOUNT_PHASE };
     case "confirm-email":
