@@ -53,8 +53,6 @@ export function getProgress(
   step: StepId,
   state?: Pick<OnboardingState, "coverage">,
 ): ProgressMeta {
-  const provincial = state?.coverage === "provincial";
-
   switch (step) {
     case "welcome":
     case "off-ramp":
