@@ -342,6 +342,7 @@ export function InsurancePolicyStep() {
       <Field
         placeholder="12345-A"
         value={state.policyNumber}
+        inputClassName="text-center"
         onChange={(event) => update({ policyNumber: event.target.value })}
       />
       <div className="mt-3">
@@ -368,6 +369,7 @@ export function InsuranceMemberStep() {
       <Field
         placeholder="E4992104"
         value={state.memberId}
+        inputClassName="text-center"
         onChange={(event) => update({ memberId: event.target.value })}
       />
       <div className="mt-3">
