@@ -28,6 +28,7 @@ import {
   InsuranceMemberStep,
   InsurancePolicyStep,
   InsuranceProviderStep,
+  PaymentIntroStep,
   PaymentStep,
   RegistrationNumberStep,
   ScanCardStep,
@@ -92,6 +93,8 @@ export function StepView({ step }: { step: StepId }) {
       return <InsurancePolicyStep />;
     case "insurance-member":
       return <InsuranceMemberStep />;
+    case "payment-intro":
+      return <PaymentIntroStep />;
     case "payment":
       return <PaymentStep />;
     case "checkpoint":

@@ -4,10 +4,13 @@ import { useState } from "react";
 import {
   Camera,
   CheckCircle2,
+  Clock,
   CreditCard,
+  HeartPulse,
   Lock,
   Pencil,
   ScanLine,
+  Stethoscope,
 } from "lucide-react";
 import { OnboardingShell, PhoneFrame } from "@/components/onboarding/shell";
 import {
@@ -384,6 +387,56 @@ function formatCardNumber(value: string) {
     .replace(/\D/g, "")
     .slice(0, 16)
     .replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
+export function PaymentIntroStep() {
+  const { goNext } = useStepNav("payment-intro");
+
+  return (
+    <OnboardingShell
+      step="payment-intro"
+      title="No insurance? No problem."
+      subtitle="Enter your payment information to cover visit costs. You will only be charged after you have successfully completed a visit."
+      footer={
+        <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
+      }
+    >
+      <ol className="relative space-y-6">
+        <span className="absolute top-6 bottom-6 left-[22px] w-px bg-action" />
+        {[
+          {
+            icon: Stethoscope,
+            title: "$90 per Visit",
+            body: "With a doctor",
+          },
+          {
+            icon: HeartPulse,
+            title: "$50 per Visit",
+            body: "With a nurse practitioner",
+          },
+          {
+            icon: Clock,
+            title: "$70 late cancellation fee",
+            body: "For missing or cancelling appointments with less than 24h notice",
+          },
+        ].map((item) => (
+          <li key={item.title} className="relative flex items-start gap-3">
+            <IconWell className="z-10">
+              <item.icon className="size-5" strokeWidth={1.8} />
+            </IconWell>
+            <div className="pt-0.5">
+              <p className="text-[16px] leading-[22px] font-semibold text-ink">
+                {item.title}
+              </p>
+              <p className="mt-1 text-[14px] leading-[18px] text-body">
+                {item.body}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </OnboardingShell>
+  );
 }
 
 export function PaymentStep() {

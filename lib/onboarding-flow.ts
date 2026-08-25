@@ -21,6 +21,7 @@ export const STEP_IDS = [
   "insurance-provider",
   "insurance-policy",
   "insurance-member",
+  "payment-intro",
   "payment",
   "checkpoint",
   "pronouns",
@@ -51,6 +52,7 @@ const TRIAGE_PHASE = 2;
 const ACCOUNT_PHASE = 5;
 const PUBLIC_INSURANCE_PHASE = 7;
 const PRIVATE_INSURANCE_PHASE = 3;
+const PAYMENT_PHASE = 2;
 const PHASE2 = 8;
 
 export function getProgress(
@@ -103,8 +105,10 @@ export function getProgress(
       return { current: 2, total: PRIVATE_INSURANCE_PHASE };
     case "insurance-member":
       return { current: 3, total: PRIVATE_INSURANCE_PHASE };
+    case "payment-intro":
+      return { current: 1, total: PAYMENT_PHASE };
     case "payment":
-      return { current: 4, total: ACCOUNT_PHASE };
+      return { current: 2, total: PAYMENT_PHASE };
     case "checkpoint":
       return { current: 5, total: ACCOUNT_PHASE };
     case "pronouns":
@@ -178,7 +182,7 @@ export function getNextStep(
     case "sex":
       if (state.coverage === "provincial") return "confirm-info";
       if (state.coverage === "private") return "insurance-provider";
-      return "payment";
+      return "payment-intro";
     case "scan-card":
       return "issued-province";
     case "issued-province":
@@ -190,6 +194,8 @@ export function getNextStep(
     case "confirm-info":
     case "payment":
       return "checkpoint";
+    case "payment-intro":
+      return "payment";
     case "insurance-provider":
       return "insurance-policy";
     case "insurance-policy":
@@ -270,8 +276,10 @@ export function getPrevStep(
       return "insurance-provider";
     case "insurance-member":
       return "insurance-policy";
-    case "payment":
+    case "payment-intro":
       return "sex";
+    case "payment":
+      return "payment-intro";
     case "checkpoint":
       if (state.coverage === "provincial") return "confirm-info";
       if (state.coverage === "private") return "insurance-member";
