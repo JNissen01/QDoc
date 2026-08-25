@@ -422,7 +422,7 @@ export function PaymentIntroStep() {
         ].map((item) => (
           <li key={item.title} className="relative flex items-start gap-3">
             <IconWell className="z-10 size-[4.125rem] rounded-[0.75rem]">
-              <item.icon className="size-6" strokeWidth={1.8} />
+              <item.icon className="size-[2.125rem]" strokeWidth={1.8} />
             </IconWell>
             <div className="pt-0.5">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
