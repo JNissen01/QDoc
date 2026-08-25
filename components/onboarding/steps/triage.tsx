@@ -27,7 +27,7 @@ export function ServiceAreaStep() {
         </PrimaryButton>
       }
     >
-      <div className="space-y-3">
+      <div>
         <div className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3">
           <MapPin
             className="size-5 shrink-0 text-action"
@@ -38,18 +38,20 @@ export function ServiceAreaStep() {
             Manitoba, Ontario, Nunavut
           </span>
         </div>
-        <SelectorCard
-          selected={state.inServiceArea === true}
-          title="Yes"
-          leading={<RadioDot selected={state.inServiceArea === true} />}
-          onClick={() => update({ inServiceArea: true })}
-        />
-        <SelectorCard
-          selected={state.inServiceArea === false}
-          title="No"
-          leading={<RadioDot selected={state.inServiceArea === false} />}
-          onClick={() => update({ inServiceArea: false })}
-        />
+        <div className="mt-8 space-y-3">
+          <SelectorCard
+            selected={state.inServiceArea === true}
+            title="Yes"
+            leading={<RadioDot selected={state.inServiceArea === true} />}
+            onClick={() => update({ inServiceArea: true })}
+          />
+          <SelectorCard
+            selected={state.inServiceArea === false}
+            title="No"
+            leading={<RadioDot selected={state.inServiceArea === false} />}
+            onClick={() => update({ inServiceArea: false })}
+          />
+        </div>
       </div>
     </OnboardingShell>
   );
