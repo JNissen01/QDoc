@@ -166,12 +166,16 @@ export function RadioDot({ selected }: { selected: boolean }) {
   return (
     <span
       className={cn(
-        "flex size-5 shrink-0 items-center justify-center rounded-full border",
-        selected ? "border-action" : "border-line",
+        "flex size-5 shrink-0 items-center justify-center rounded-full bg-white",
+        selected ? "border-action" : "border border-line",
       )}
-    >
-      {selected ? <span className="size-2.5 rounded-full bg-white" /> : null}
-    </span>
+      style={
+        selected
+          ? { borderWidth: 2, borderStyle: "solid" }
+          : undefined
+      }
+      aria-hidden
+    />
   );
 }
 
