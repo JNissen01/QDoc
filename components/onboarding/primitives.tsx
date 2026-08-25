@@ -138,7 +138,7 @@ export function SelectorCard({
       onClick={onClick}
       className={cn(
         "flex min-h-[70px] w-full items-center gap-3 rounded-[14px] border bg-white px-4 py-3 text-left transition-colors",
-        selected ? "border-action bg-tint" : "border-line",
+        selected ? "border-action bg-white" : "border-line",
       )}
     >
       {leading}
@@ -166,8 +166,8 @@ export function RadioDot({ selected }: { selected: boolean }) {
   return (
     <span
       className={cn(
-        "flex size-5 shrink-0 items-center justify-center rounded-full bg-white",
-        selected ? "border-action" : "border border-line",
+        "flex size-5 shrink-0 items-center justify-center rounded-full",
+        selected ? "border-action bg-action" : "border border-line bg-white",
       )}
       style={
         selected
