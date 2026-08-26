@@ -280,10 +280,21 @@ export function Chip({
   );
 }
 
-export function InfoNote({ children }: { children: ReactNode }) {
+export function InfoNote({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <p className="flex items-start gap-2 text-[14px] leading-[18px] text-action">
-      <span className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-action text-[10px] font-semibold">
+    <p
+      className={cn(
+        "flex items-start gap-2 text-[14px] leading-[18px] text-action",
+        className,
+      )}
+    >
+      <span className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-current text-[10px] font-semibold">
         i
       </span>
       <span>{children}</span>

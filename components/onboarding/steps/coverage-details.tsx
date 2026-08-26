@@ -9,6 +9,7 @@ import {
   HeartPulse,
   Lock,
   Pencil,
+  Scan,
   ScanLine,
   Stethoscope,
 } from "lucide-react";
@@ -16,8 +17,8 @@ import { OnboardingShell, PhoneFrame } from "@/components/onboarding/shell";
 import {
   Field,
   GhostButton,
-  HighlightBanner,
   IconWell,
+  InfoNote,
   LockNote,
   PrimaryButton,
   RadioDot,
@@ -90,11 +91,10 @@ export function ScanCardStep() {
         </div>
       }
     >
-      <ol className="relative space-y-6">
-        <span className="absolute top-6 bottom-6 left-[22px] w-px bg-action" />
+      <ol className="relative space-y-16">
         {[
           {
-            icon: Camera,
+            icon: Scan,
             title: "Scan your card",
             body: "Use your camera to scan the front of your health card",
           },
@@ -108,12 +108,24 @@ export function ScanCardStep() {
             title: "You review and confirm",
             body: "Review your information carefully before continuing",
           },
-        ].map((item) => (
-          <li key={item.title} className="relative flex items-start gap-3">
-            <IconWell className="z-10">
-              <item.icon className="size-5" strokeWidth={1.8} />
-            </IconWell>
-            <div className="pt-0.5">
+        ].map((item, index, items) => (
+          <li
+            key={item.title}
+            className="relative flex w-full items-start justify-start gap-5 self-stretch"
+          >
+            <span className="relative shrink-0">
+              <IconWell className="relative z-10 size-16 rounded-[0.75rem] border-2 border-line">
+                <item.icon className="size-8" strokeWidth={1.8} />
+              </IconWell>
+              {index < items.length - 1 ? (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute top-8 left-1/2 z-0 w-px -translate-x-1/2 bg-action"
+                  style={{ height: "calc(2rem + 64px + 2rem)" }}
+                />
+              ) : null}
+            </span>
+            <div className="min-w-0 flex-1 pt-3">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
                 {item.title}
               </p>
@@ -124,10 +136,10 @@ export function ScanCardStep() {
           </li>
         ))}
       </ol>
-      <div className="mt-8">
-        <HighlightBanner>
+      <div className="mt-9">
+        <InfoNote className="text-caption">
           OCR Feature is 100% secure and all extracted data is encrypted
-        </HighlightBanner>
+        </InfoNote>
       </div>
     </OnboardingShell>
   );
