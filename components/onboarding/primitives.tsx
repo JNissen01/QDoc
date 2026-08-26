@@ -81,12 +81,14 @@ export function StepFooter({
   children,
   onSkip,
   skipLabel = "Skip this step",
+  hideSkip = false,
 }: {
   children: ReactNode;
   onSkip?: () => void;
   skipLabel?: string;
+  hideSkip?: boolean;
 }) {
-  if (!onSkip) return children;
+  if (!onSkip || hideSkip) return children;
 
   return (
     <div className="space-y-2">

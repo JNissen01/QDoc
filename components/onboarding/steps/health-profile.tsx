@@ -120,6 +120,14 @@ function emptyMedication(name = ""): Medication {
   };
 }
 
+function isMedicationComplete(medication: Medication) {
+  return Boolean(
+    medication.name.trim() &&
+      medication.dosage.trim() &&
+      medication.frequency.trim(),
+  );
+}
+
 function isPresetDosage(value: string) {
   return MEDICATION_DOSAGES.includes(value);
 }
@@ -369,7 +377,7 @@ function MedicationEntryCard({
       <button
         type="button"
         className="mt-5 inline-flex w-full items-center justify-center gap-2 text-[16px] font-semibold text-action disabled:text-caption"
-        disabled={!draft.name.trim()}
+        disabled={!isMedicationComplete(draft)}
         onClick={onSave}
       >
         <span className="flex size-6 items-center justify-center rounded-full bg-action text-white">
@@ -450,7 +458,7 @@ export function MedicationsStep() {
   }
 
   function saveDraft() {
-    if (!draft?.name.trim()) return;
+    if (!draft || !isMedicationComplete(draft)) return;
     const next: Medication = {
       ...draft,
       name: draft.name.trim(),
@@ -492,8 +500,13 @@ export function MedicationsStep() {
       title="What medications are you currently taking?"
       subtitle="Enter the name, dosage and frequency of your current medications or scan the label to enter automatically."
       footer={
-        <StepFooter onSkip={() => goNext()}>
-          <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
+        <StepFooter hideSkip>
+          <PrimaryButton
+            disabled={state.medications.length === 0}
+            onClick={() => goNext()}
+          >
+            Continue
+          </PrimaryButton>
         </StepFooter>
       }
     >
