@@ -180,8 +180,8 @@ export function BiometricsStep() {
                 onClick={() => update({ bloodType: type })}
                 className={
                   state.bloodType === type
-                    ? "rounded-full bg-action px-3.5 py-2 text-[14px] font-medium text-white"
-                    : "rounded-full border border-line bg-white px-3.5 py-2 text-[14px] font-medium text-ink"
+                    ? "rounded-[0.625rem] bg-action px-3.5 py-2 text-[14px] font-medium text-white"
+                    : "rounded-[0.625rem] border border-line bg-white px-3.5 py-2 text-[14px] font-medium text-ink"
                 }
               >
                 {type === "unknown" ? "Don’t know" : type}
