@@ -402,7 +402,6 @@ export function PaymentIntroStep() {
       }
     >
       <ol className="relative space-y-[62px]">
-        <span className="absolute top-[2.0625rem] bottom-[2.0625rem] left-[2.0625rem] w-px bg-action" />
         {[
           {
             icon: Stethoscope,
@@ -419,12 +418,26 @@ export function PaymentIntroStep() {
             title: "$70 late cancellation fee",
             body: "For missing or cancelling appointments with less than 24h notice",
           },
-        ].map((item) => (
-          <li key={item.title} className="relative flex items-center gap-3">
-            <IconWell className="z-10 size-[4.125rem] rounded-[0.75rem] border-2 border-line">
-              <item.icon className="size-[2.125rem]" strokeWidth={1.8} />
-            </IconWell>
-            <div className="pt-0.5">
+        ].map((item, index, items) => (
+          <li
+            key={item.title}
+            className="relative flex w-full items-center justify-center gap-5 self-stretch"
+          >
+            <span className="relative shrink-0">
+              <IconWell className="relative z-10 size-[4.125rem] rounded-[0.75rem] border-2 border-line">
+                <item.icon className="size-[2.125rem]" strokeWidth={1.8} />
+              </IconWell>
+              {index < items.length - 1 ? (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute top-[2.0625rem] left-1/2 z-0 w-px -translate-x-1/2 bg-action"
+                  style={{
+                    height: "calc(2.0625rem + 62px + 2.0625rem)",
+                  }}
+                />
+              ) : null}
+            </span>
+            <div className="w-[15rem] shrink-0 pt-0.5">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
                 {item.title}
               </p>
