@@ -18,6 +18,7 @@ export function CheckpointStep() {
   return (
     <OnboardingShell
       step="checkpoint"
+      showExit={false}
       title="You’re verified and ready for care"
       subtitle="You can book a visit now, or take a few more minutes to add your clinical background."
       footer={
