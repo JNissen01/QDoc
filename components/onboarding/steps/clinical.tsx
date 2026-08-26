@@ -108,7 +108,7 @@ function MeasurementSystemToggle({
     <div>
       <p className="mb-2 text-[13px] leading-4 text-ink">Measurement System</p>
       <div
-        className="flex overflow-hidden rounded-[14px] border border-line bg-white"
+        className="flex h-12 shrink-0 items-center self-stretch rounded-xl border border-line bg-white p-1"
         role="group"
         aria-label="Measurement System"
       >
@@ -121,8 +121,8 @@ function MeasurementSystemToggle({
               aria-pressed={selected}
               onClick={() => onChange(option.value)}
               className={cn(
-                "flex-1 px-2 py-3.5 text-center text-[14px] leading-[18px] font-medium transition-colors",
-                selected ? "bg-action text-white" : "bg-white text-ink",
+                "flex h-full flex-1 items-center justify-center rounded-lg px-2 text-center text-[14px] leading-[18px] font-medium transition-colors",
+                selected ? "bg-secondary text-ink" : "bg-transparent text-ink",
               )}
             >
               {option.label}
