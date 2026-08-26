@@ -33,11 +33,14 @@ export function PharmacyStep() {
       }
     >
       <SearchField
-        className="mb-4"
+        className="mb-3"
         placeholder="Search by name or city"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
+      <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+        Pharmacies near you
+      </p>
       <div className="space-y-3">
         {results.length === 0 ? (
           <p className="rounded-[14px] border border-line bg-white px-4 py-6 text-[14px] text-caption">
