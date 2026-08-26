@@ -103,11 +103,14 @@ export function FamilyDoctorStep() {
       {state.hasFamilyDoctor ? (
         <div className="mt-6">
           <SearchField
-            className="mb-4"
+            className="mb-3"
             placeholder="Search clinics"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
+          <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+            Clinics near you
+          </p>
           <div className="space-y-3">
             {results.map((clinic) => (
               <SelectorCard
