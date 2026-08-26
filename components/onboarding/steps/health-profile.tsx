@@ -414,7 +414,7 @@ function MedicationEntryCard({
           ) : (
             <button
               type="button"
-              className="mt-3 text-[15px] font-semibold text-action"
+              className="mt-3 text-[15px] font-semibold text-body"
               onClick={() => {
                 if (draft.dosage && !isPresetDosage(draft.dosage)) {
                   setCustomDosage(draft.dosage);
@@ -495,7 +495,7 @@ function MedicationEntryCard({
           ) : (
             <button
               type="button"
-              className="mt-3 text-[15px] font-semibold text-action"
+              className="mt-3 text-[15px] font-semibold text-body"
               onClick={() => {
                 if (draft.frequency && !isPresetFrequency(draft.frequency)) {
                   setCustomFrequency(draft.frequency);
