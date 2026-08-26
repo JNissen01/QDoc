@@ -19,18 +19,6 @@ export const MOCK_PHARMACIES: Pharmacy[] = [
     address: "50 Selkirk Ave, Thompson, MB",
     phone: "204-677-2340",
   },
-  {
-    id: "shoppers-kenora",
-    name: "Shoppers Drug Mart",
-    address: "100 Matheson St S, Kenora, ON",
-    phone: "807-468-9871",
-  },
-  {
-    id: "arctic-iqaluit",
-    name: "Arctic Pharmacy",
-    address: "1085 Mivvik St, Iqaluit, NU",
-    phone: "867-979-2345",
-  },
 ];
 
 export const MOCK_CLINICS: Clinic[] = [
