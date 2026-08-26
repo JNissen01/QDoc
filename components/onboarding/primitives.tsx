@@ -344,7 +344,7 @@ export function InfoNote({
 }: {
   children: ReactNode;
   className?: string;
-  size?: 16;
+  size?: 14 | 16;
   align?: "start" | "end";
 }) {
   return (
@@ -361,11 +361,13 @@ export function InfoNote({
     >
       <span
         className={cn(
-          "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-current text-[10px] leading-none font-semibold",
+          "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-current leading-none font-semibold",
           !align && "mt-0.5",
-          size === 16
-            ? "box-border size-[16px] h-[16px] w-[16px]"
-            : "size-4",
+          size === 14
+            ? "box-border size-[14px] h-[14px] w-[14px] text-[9px]"
+            : size === 16
+              ? "box-border size-[16px] h-[16px] w-[16px] text-[10px]"
+              : "size-4 text-[10px]",
         )}
       >
         i
