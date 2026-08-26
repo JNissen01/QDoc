@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { cn } from "@/lib/utils";
+import { InfoIcon } from "@/components/brand/info-icon";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -202,7 +203,7 @@ export function SelectorCard({
         <span
           className={cn(
             "block text-[16px] leading-[22px] font-medium",
-            selected && variant === "radio" ? "text-action" : "text-ink",
+            selected ? "text-action" : "text-ink",
           )}
         >
           {title}
@@ -339,12 +340,10 @@ export function Chip({
 export function InfoNote({
   children,
   className,
-  size,
   align,
 }: {
   children: ReactNode;
   className?: string;
-  size?: 14 | 16;
   align?: "start" | "end";
 }) {
   return (
@@ -359,19 +358,7 @@ export function InfoNote({
         className,
       )}
     >
-      <span
-        className={cn(
-          "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-current leading-none font-semibold",
-          !align && "mt-0.5",
-          size === 14
-            ? "box-border size-[14px] h-[14px] w-[14px] text-[9px]"
-            : size === 16
-              ? "box-border size-[16px] h-[16px] w-[16px] text-[10px]"
-              : "size-4 text-[10px]",
-        )}
-      >
-        i
-      </span>
+      <InfoIcon className={cn("size-4 shrink-0", !align && "mt-0.5")} />
       <span>{children}</span>
     </p>
   );
