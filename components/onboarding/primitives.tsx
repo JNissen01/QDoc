@@ -340,21 +340,25 @@ export function InfoNote({
   children,
   className,
   size,
+  align,
 }: {
   children: ReactNode;
   className?: string;
   size?: 16;
+  align?: "center";
 }) {
   return (
     <p
       className={cn(
-        "flex items-start gap-2 text-[14px] leading-[18px] text-action",
+        "flex gap-2 text-[14px] leading-[18px] text-action",
+        align === "center" ? "items-center justify-center" : "items-start",
         className,
       )}
     >
       <span
         className={cn(
-          "mt-0.5 inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-current text-[10px] leading-none font-semibold",
+          "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-current text-[10px] leading-none font-semibold",
+          align !== "center" && "mt-0.5",
           size === 16
             ? "box-border size-[16px] h-[16px] w-[16px]"
             : "size-4",
