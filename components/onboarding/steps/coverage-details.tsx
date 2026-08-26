@@ -94,7 +94,7 @@ export function ScanCardStep() {
       <ol className="relative space-y-16">
         {[
           {
-            icon: Scan,
+            icon: ScanLine,
             title: "Scan your card",
             body: "Use your camera to scan the front of your health card",
           },
