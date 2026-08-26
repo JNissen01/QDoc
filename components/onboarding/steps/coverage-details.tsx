@@ -7,7 +7,6 @@ import {
   CreditCard,
   HeartPulse,
   Pencil,
-  Scan,
   ScanLine,
   Stethoscope,
 } from "lucide-react";
