@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   Camera,
-  CheckCircle2,
   Clock,
   CreditCard,
   HeartPulse,
@@ -13,6 +12,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 import { ScanCardLockIcon } from "@/components/brand/scan-card-lock-icon";
+import { VerifiedCheckIcon } from "@/components/brand/verified-check-icon";
 import { OnboardingShell, PhoneFrame } from "@/components/onboarding/shell";
 import {
   Field,
@@ -105,9 +105,10 @@ export function ScanCardStep() {
             iconClassName: "size-[34px]",
           },
           {
-            icon: CheckCircle2,
+            icon: VerifiedCheckIcon,
             title: "You review and confirm",
             body: "Review your information carefully before continuing",
+            iconClassName: "size-[34px]",
           },
         ].map((item, index, items) => (
           <li
