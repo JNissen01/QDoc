@@ -401,7 +401,7 @@ export function PaymentIntroStep() {
         <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
       }
     >
-      <ol className="relative space-y-6">
+      <ol className="relative space-y-[62px]">
         <span className="absolute top-[2.0625rem] bottom-[2.0625rem] left-[2.0625rem] w-px bg-action" />
         {[
           {
