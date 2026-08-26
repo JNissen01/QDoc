@@ -421,7 +421,7 @@ export function PaymentIntroStep() {
         ].map((item, index, items) => (
           <li
             key={item.title}
-            className="relative flex w-full items-center justify-center gap-5 self-stretch"
+            className="relative flex w-full items-center justify-start gap-5 self-stretch"
           >
             <span className="relative shrink-0">
               <IconWell className="relative z-10 size-[4.125rem] rounded-[0.75rem] border-2 border-line">
@@ -437,7 +437,7 @@ export function PaymentIntroStep() {
                 />
               ) : null}
             </span>
-            <div className="w-[15rem] shrink-0 pt-0.5">
+            <div className="min-w-0 flex-1 pt-0.5">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
                 {item.title}
               </p>
