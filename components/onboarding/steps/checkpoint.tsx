@@ -23,7 +23,7 @@ export function CheckpointStep() {
       footer={
         <StepFooter onSkip={() => goTo("dashboard")} skipLabel="Skip to dashboard">
           <PrimaryButton onClick={() => goNext()}>
-            Continue clinical profile
+            Continue to medical profile
           </PrimaryButton>
         </StepFooter>
       }
