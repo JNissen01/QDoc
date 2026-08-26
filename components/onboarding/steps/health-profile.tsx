@@ -514,8 +514,8 @@ function MedicationEntryCard({
         disabled={!isMedicationComplete(draft)}
         onClick={onSave}
       >
-        <span className="flex size-6 items-center justify-center rounded-full bg-action text-white">
-          <Plus className="size-4" strokeWidth={2.5} />
+        <span className="flex size-5 items-center justify-center rounded-full bg-action text-white">
+          <Plus className="size-3" strokeWidth={2.5} />
         </span>
         Add medication
       </button>
