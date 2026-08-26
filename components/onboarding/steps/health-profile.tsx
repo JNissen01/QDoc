@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ArrowRight, Pencil, ScanLine, Search, Trash2, X } from "lucide-react";
 import { CirclePlusIcon } from "@/components/brand/circle-plus-icon";
 import { OnboardingShell } from "@/components/onboarding/shell";
@@ -14,6 +14,14 @@ import {
   SelectorCard,
   StepFooter,
 } from "@/components/onboarding/primitives";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import {
   COMMON_ALLERGIES,
@@ -57,20 +65,48 @@ const HISTORY_OPTIONS: {
   { value: "none", title: "None of these apply to me" },
 ];
 
+const UNDEVELOPED_HISTORY_CATEGORIES = new Set<HistoryCategory>([
+  "allergies",
+  "conditions",
+  "surgeries",
+]);
+
+function selectableHistoryCategories(categories: HistoryCategory[]) {
+  return categories.filter(
+    (category) => !UNDEVELOPED_HISTORY_CATEGORIES.has(category),
+  );
+}
+
 export function MedicalHistoryStep() {
   const { state, update, goNext } = useStepNav("medical-history");
-  const selected = state.historyCategories;
+  const selected = selectableHistoryCategories(state.historyCategories);
+  const [undevelopedOpen, setUndevelopedOpen] = useState(false);
 
-  function toggle(category: HistoryCategory) {
+  useEffect(() => {
+    const cleaned = selectableHistoryCategories(state.historyCategories);
+    if (cleaned.length !== state.historyCategories.length) {
+      update({ historyCategories: cleaned });
+    }
+  }, [state.historyCategories, update]);
+
+  function persistSelectable(next: HistoryCategory[]) {
+    update({ historyCategories: selectableHistoryCategories(next) });
+  }
+
+  function handleSelect(category: HistoryCategory) {
+    if (UNDEVELOPED_HISTORY_CATEGORIES.has(category)) {
+      setUndevelopedOpen(true);
+      return;
+    }
     if (category === "none") {
-      update({ historyCategories: selected.includes("none") ? [] : ["none"] });
+      persistSelectable(selected.includes("none") ? [] : ["none"]);
       return;
     }
     const withoutNone = selected.filter((item) => item !== "none");
     const next = withoutNone.includes(category)
       ? withoutNone.filter((item) => item !== category)
       : [...withoutNone, category];
-    update({ historyCategories: next });
+    persistSelectable(next);
   }
 
   return (
@@ -99,7 +135,7 @@ export function MedicalHistoryStep() {
             leading={<CheckBox selected={selected.includes(option.value)} />}
             trailing={null}
             variant="choice"
-            onClick={() => toggle(option.value)}
+            onClick={() => handleSelect(option.value)}
           />
         ))}
       </div>
@@ -108,6 +144,29 @@ export function MedicalHistoryStep() {
           You can always add more later from your profile.
         </InfoNote>
       </div>
+
+      <Dialog open={undevelopedOpen} onOpenChange={setUndevelopedOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="gap-5 rounded-[20px] border border-line bg-white p-6 text-ink ring-0 sm:max-w-sm"
+        >
+          <DialogHeader className="gap-2 text-left">
+            <DialogTitle className="font-sans text-[20px] leading-[26px] font-semibold tracking-normal text-ink">
+              These sections aren’t fully built in this prototype.
+            </DialogTitle>
+            <DialogDescription className="text-[16px] leading-[22px] font-normal text-body">
+              Allergies, ongoing conditions, and past surgeries would follow the
+              same pattern as medications—search, common options, and an
+              expanded card for details. That flow hasn’t been developed yet.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mx-0 mb-0 flex flex-col gap-2 rounded-none border-0 bg-transparent p-0 sm:flex-col sm:justify-stretch">
+            <PrimaryButton onClick={() => setUndevelopedOpen(false)}>
+              Got it
+            </PrimaryButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </OnboardingShell>
   );
 }
