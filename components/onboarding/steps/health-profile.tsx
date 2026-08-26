@@ -233,20 +233,11 @@ function ClearableInput({
             }
           }}
           className={cn(
-            "rounded-[14px] border border-line bg-white py-0 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+            "rounded-[14px] border border-line bg-white py-0 pl-4 pr-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
             size === "compact" ? "h-[42px]" : "h-[70px]",
-            showConfirm ? "pr-[4.5rem]" : "pr-11",
           )}
         />
         <div className="absolute inset-y-0 right-1.5 flex items-center">
-          <button
-            type="button"
-            aria-label={`Close ${label}`}
-            onClick={onClear}
-            className="flex size-7 items-center justify-center text-caption"
-          >
-            <X className="size-4" />
-          </button>
           {showConfirm ? (
             <button
               type="button"
@@ -256,7 +247,16 @@ function ClearableInput({
             >
               <ArrowRight className="size-4" />
             </button>
-          ) : null}
+          ) : (
+            <button
+              type="button"
+              aria-label={`Close ${label}`}
+              onClick={onClear}
+              className="flex size-7 items-center justify-center text-caption"
+            >
+              <X className="size-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>
