@@ -659,7 +659,7 @@ export function MedicationsStep() {
           {listedMedications.map((medication) => (
             <div
               key={medication.id}
-              className="flex items-start justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
             >
               <div>
                 <p className="text-[16px] font-semibold text-ink">
