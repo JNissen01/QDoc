@@ -10,6 +10,7 @@ export type BloodType =
   | "AB-"
   | "O+"
   | "O-";
+export type MeasurementSystem = "metric" | "imperial";
 export type HistoryCategory =
   | "medications"
   | "allergies"
@@ -74,7 +75,10 @@ export type OnboardingState = {
   pharmacy: Pharmacy | null;
   hasFamilyDoctor: boolean | null;
   familyDoctor: Clinic | null;
+  measurementSystem: MeasurementSystem;
+  /** Height in centimeters (canonical). Converted for imperial display. */
   height: string;
+  /** Weight in kilograms (canonical). Converted for imperial display. */
   weight: string;
   bloodType: BloodType;
   historyCategories: HistoryCategory[];
@@ -118,6 +122,7 @@ export const defaultOnboardingState: OnboardingState = {
   pharmacy: null,
   hasFamilyDoctor: null,
   familyDoctor: null,
+  measurementSystem: "metric",
   height: "",
   weight: "",
   bloodType: "unknown",
