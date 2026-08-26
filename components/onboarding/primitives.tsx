@@ -345,20 +345,24 @@ export function InfoNote({
   children: ReactNode;
   className?: string;
   size?: 16;
-  align?: "end";
+  align?: "start" | "end";
 }) {
   return (
     <p
       className={cn(
         "flex gap-2 text-[14px] leading-[18px] text-action",
-        align === "end" ? "items-center justify-end" : "items-start",
+        align === "end"
+          ? "items-center justify-end"
+          : align === "start"
+            ? "items-center justify-start"
+            : "items-start",
         className,
       )}
     >
       <span
         className={cn(
           "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-current text-[10px] leading-none font-semibold",
-          align !== "end" && "mt-0.5",
+          !align && "mt-0.5",
           size === 16
             ? "box-border size-[16px] h-[16px] w-[16px]"
             : "size-4",
