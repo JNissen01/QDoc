@@ -176,8 +176,8 @@ export function OnboardingShell({
           showCloseButton={false}
           className="gap-5 rounded-[20px] border border-line bg-white p-6 text-ink ring-0 sm:max-w-sm"
         >
-          <DialogHeader className="gap-2 text-left">
-            <DialogTitle className="font-sans text-[20px] leading-[26px] font-semibold tracking-normal text-ink">
+          <DialogHeader className="gap-2 text-center">
+            <DialogTitle className="text-center font-sans text-[20px] leading-[26px] font-semibold tracking-normal text-ink">
               Your progress has been saved
             </DialogTitle>
           </DialogHeader>
