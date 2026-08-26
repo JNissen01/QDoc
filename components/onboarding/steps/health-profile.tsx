@@ -194,12 +194,14 @@ function ClearableInput({
   placeholder,
   onChange,
   onClear,
+  size = "default",
 }: {
   label: string;
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
   onClear: () => void;
+  size?: "default" | "compact";
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -211,14 +213,17 @@ function ClearableInput({
           value={value}
           placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
-          className="h-[70px] rounded-[14px] border border-line bg-white py-0 pr-11 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]"
+          className={cn(
+            "rounded-[14px] border border-line bg-white py-0 pr-11 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+            size === "compact" ? "h-[42px]" : "h-[70px]",
+          )}
         />
         {value ? (
           <button
             type="button"
             aria-label={`Clear ${label}`}
             onClick={onClear}
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-caption"
+            className="absolute top-1/2 right-3 flex h-5 w-5 -translate-y-1/2 items-center justify-center text-caption"
           >
             <X className="size-4" />
           </button>
@@ -292,6 +297,7 @@ function MedicationEntryCard({
             <div className="mt-3">
               <ClearableInput
                 label="Custom Dosage"
+                size="compact"
                 value={customDosage}
                 placeholder="e.g. 10mg"
                 onChange={(value) => {
@@ -334,6 +340,7 @@ function MedicationEntryCard({
             <div className="mt-3">
               <ClearableInput
                 label="Custom Frequency"
+                size="compact"
                 value={customFrequency}
                 placeholder="e.g. Before activity"
                 onChange={(value) => {
