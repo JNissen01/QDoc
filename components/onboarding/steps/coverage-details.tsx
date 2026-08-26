@@ -111,7 +111,7 @@ export function ScanCardStep() {
         ].map((item, index, items) => (
           <li
             key={item.title}
-            className="relative flex w-full items-start justify-start gap-5 self-stretch"
+            className="relative flex w-full items-center justify-start gap-5 self-stretch"
           >
             <span className="relative shrink-0">
               <IconWell className="relative z-10 size-16 rounded-[0.75rem] border-2 border-line">
@@ -125,7 +125,7 @@ export function ScanCardStep() {
                 />
               ) : null}
             </span>
-            <div className="min-w-0 flex-1 pt-3">
+            <div className="min-w-0 flex-1">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
                 {item.title}
               </p>
