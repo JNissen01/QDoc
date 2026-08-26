@@ -2,11 +2,34 @@
 
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { getPrevStep, getProgress, hrefFor, type StepId } from "@/lib/onboarding-flow";
 import { useOnboarding } from "@/components/onboarding/provider";
 import { useFlowPreview } from "@/components/flow/flow-preview-context";
+import { GhostButton, PrimaryButton } from "@/components/onboarding/primitives";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+/** Phase 2 clinical intake — Exit is shown on these steps by default. */
+const MEDICAL_PROFILE_STEPS = new Set<StepId>([
+  "checkpoint",
+  "pronouns",
+  "gender",
+  "pharmacy",
+  "family-doctor",
+  "biometrics",
+  "medical-history",
+  "medications",
+  "allergies",
+  "conditions",
+  "success",
+]);
 
 export function ProgressTracker({
   current,
@@ -79,6 +102,7 @@ export function OnboardingShell({
   footer,
   children,
   hideBack,
+  showExit,
 }: {
   step: StepId;
   title?: string;
@@ -86,11 +110,18 @@ export function OnboardingShell({
   footer?: ReactNode;
   children: ReactNode;
   hideBack?: boolean;
+  /** Opt in/out of the Exit control. Defaults on for medical-profile steps. */
+  showExit?: boolean;
 }) {
   const router = useRouter();
   const { state } = useOnboarding();
   const progress = getProgress(step, state);
   const prev = getPrevStep(step, state);
+  const [exitOpen, setExitOpen] = useState(false);
+
+  const exitEnabled = showExit ?? MEDICAL_PROFILE_STEPS.has(step);
+  const showBack = !hideBack && Boolean(prev);
+  const showNavRow = showBack || exitEnabled;
 
   return (
     <PhoneFrame>
@@ -99,9 +130,22 @@ export function OnboardingShell({
           <ProgressTracker current={progress.current} total={progress.total} />
         ) : null}
 
-        {!hideBack && prev ? (
-          <div className="mt-4">
-            <BackLink onClick={() => router.push(hrefFor(prev))} />
+        {showNavRow ? (
+          <div className="mt-4 flex items-center justify-between gap-3">
+            {showBack && prev ? (
+              <BackLink onClick={() => router.push(hrefFor(prev))} />
+            ) : (
+              <span aria-hidden className="min-w-0" />
+            )}
+            {exitEnabled ? (
+              <button
+                type="button"
+                onClick={() => setExitOpen(true)}
+                className="shrink-0 text-[16px] leading-[22px] font-medium text-action"
+              >
+                Exit
+              </button>
+            ) : null}
           </div>
         ) : null}
 
@@ -127,6 +171,30 @@ export function OnboardingShell({
           {footer}
         </div>
       ) : null}
+
+      <Dialog open={exitOpen} onOpenChange={setExitOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="gap-5 rounded-[20px] border border-line bg-white p-6 text-ink ring-0 sm:max-w-sm"
+        >
+          <DialogHeader className="gap-2 text-left">
+            <DialogTitle className="font-sans text-[20px] leading-[26px] font-semibold tracking-normal text-ink">
+              Your progress has been saved
+            </DialogTitle>
+          </DialogHeader>
+          <DialogFooter className="mx-0 mb-0 flex flex-col gap-2 rounded-none border-0 bg-transparent p-0 sm:flex-col sm:justify-stretch">
+            <PrimaryButton
+              onClick={() => {
+                setExitOpen(false);
+                router.push(hrefFor("dashboard"));
+              }}
+            >
+              Confirm exit
+            </PrimaryButton>
+            <GhostButton onClick={() => setExitOpen(false)}>Back</GhostButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PhoneFrame>
   );
 }
