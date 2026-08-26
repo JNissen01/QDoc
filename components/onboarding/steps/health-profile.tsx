@@ -140,25 +140,65 @@ function SoftChip({
   selected,
   children,
   onClick,
+  onRemove,
+  removeLabel,
 }: {
   selected?: boolean;
   children: ReactNode;
   onClick: () => void;
+  onRemove?: () => void;
+  removeLabel?: string;
 }) {
+  const chipClass = cn(
+    "rounded-[0.625rem] px-3.5 py-2 text-[14px] leading-[18px] font-medium transition-colors",
+    selected
+      ? "bg-action text-white"
+      : "border border-line bg-white text-ink",
+  );
+
+  if (!onRemove) {
+    return (
+      <button
+        type="button"
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={onClick}
+        className={chipClass}
+      >
+        {children}
+      </button>
+    );
+  }
+
   return (
-    <button
-      type="button"
-      onMouseDown={(event) => event.preventDefault()}
-      onClick={onClick}
-      className={cn(
-        "rounded-[0.625rem] px-3.5 py-2 text-[14px] leading-[18px] font-medium transition-colors",
-        selected
-          ? "bg-action text-white"
-          : "border border-line bg-white text-ink",
-      )}
-    >
-      {children}
-    </button>
+    <div className={cn(chipClass, "inline-flex flex-row items-center gap-1")}>
+      <button
+        type="button"
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={onClick}
+        className="min-w-0"
+      >
+        {children}
+      </button>
+      <button
+        type="button"
+        aria-label={removeLabel ?? "Remove"}
+        className={cn(
+          "-mr-0.5 inline-flex shrink-0 items-center justify-center",
+          selected ? "text-white" : "text-ink",
+        )}
+        onMouseDown={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onRemove();
+        }}
+      >
+        <X className="size-3.5" strokeWidth={2.5} />
+      </button>
+    </div>
   );
 }
 
@@ -331,6 +371,12 @@ function MedicationEntryCard({
                   setCustomDosage(draft.dosage);
                   setShowCustomDosage(true);
                 }}
+                onRemove={() => {
+                  setCustomDosage("");
+                  setShowCustomDosage(false);
+                  onChange({ ...draft, dosage: "" });
+                }}
+                removeLabel="Remove custom dosage"
               >
                 {draft.dosage}
               </SoftChip>
@@ -404,6 +450,12 @@ function MedicationEntryCard({
                   setCustomFrequency(draft.frequency);
                   setShowCustomFrequency(true);
                 }}
+                onRemove={() => {
+                  setCustomFrequency("");
+                  setShowCustomFrequency(false);
+                  onChange({ ...draft, frequency: "" });
+                }}
+                removeLabel="Remove custom frequency"
               >
                 {draft.frequency}
               </SoftChip>
