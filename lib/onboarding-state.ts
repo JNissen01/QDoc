@@ -37,8 +37,6 @@ export type Medication = {
   name: string;
   dosage: string;
   frequency: string;
-  reactions: string[];
-  severity: Severity | null;
 };
 
 export type OnboardingState = {

@@ -1,17 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Pencil, Plus, ScanLine, Trash2, X } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Pencil, Plus, ScanLine, Search, Trash2, X } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   CheckBox,
   Chip,
   Field,
-  GhostButton,
   InfoNote,
   PrimaryButton,
   SearchField,
-  SegmentedControl,
   SelectorCard,
   StepFooter,
 } from "@/components/onboarding/primitives";
@@ -19,15 +17,16 @@ import { useStepNav } from "@/components/onboarding/use-step-nav";
 import {
   COMMON_ALLERGIES,
   COMMON_CONDITIONS,
+  COMMON_MEDICATIONS,
   delay,
-  MEDICATION_REACTIONS,
+  MEDICATION_DOSAGES,
+  MEDICATION_FREQUENCIES,
   MOCK_MEDICATION,
 } from "@/lib/mocks";
-import type {
-  HistoryCategory,
-  Medication,
-  Severity,
-} from "@/lib/onboarding-state";
+import type { HistoryCategory, Medication } from "@/lib/onboarding-state";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const HISTORY_OPTIONS: {
   value: HistoryCategory;
@@ -110,30 +109,351 @@ export function MedicalHistoryStep() {
   );
 }
 
-function emptyMedication(): Medication {
+type FrequencyOption = (typeof MEDICATION_FREQUENCIES)[number];
+
+function emptyMedication(name = ""): Medication {
   return {
     id: crypto.randomUUID(),
-    name: "",
+    name,
     dosage: "",
     frequency: "",
-    reactions: [],
-    severity: null,
   };
+}
+
+function isPresetDosage(value: string) {
+  return MEDICATION_DOSAGES.includes(value);
+}
+
+function isPresetFrequency(value: string): value is FrequencyOption {
+  return (MEDICATION_FREQUENCIES as readonly string[]).includes(value);
+}
+
+function SoftChip({
+  selected,
+  children,
+  onClick,
+}: {
+  selected?: boolean;
+  children: ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onMouseDown={(event) => event.preventDefault()}
+      onClick={onClick}
+      className={cn(
+        "rounded-[0.625rem] px-3.5 py-2 text-[14px] leading-[18px] font-medium transition-colors",
+        selected
+          ? "bg-action text-white"
+          : "border border-line bg-white text-ink",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function FrequencySegmented({
+  value,
+  onChange,
+}: {
+  value: FrequencyOption | null;
+  onChange: (value: FrequencyOption) => void;
+}) {
+  return (
+    <div
+      className="flex h-12 shrink-0 items-center self-stretch rounded-[12px] border border-line bg-white p-1"
+      role="group"
+      aria-label="Frequency"
+    >
+      {MEDICATION_FREQUENCIES.map((option) => {
+        const selected = value === option;
+        return (
+          <button
+            key={option}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => onChange(option)}
+            className={cn(
+              "flex h-full flex-1 items-center justify-center rounded-[10px] px-1.5 text-center text-[13px] leading-[16px] font-medium transition-colors",
+              selected ? "bg-action text-white" : "bg-transparent text-ink",
+            )}
+          >
+            {option}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ClearableInput({
+  label,
+  value,
+  placeholder,
+  onChange,
+  onClear,
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+  onClear: () => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <Label className="text-[13px] leading-4 font-normal text-ink">
+        {label}
+      </Label>
+      <div className="relative">
+        <Input
+          value={value}
+          placeholder={placeholder}
+          onChange={(event) => onChange(event.target.value)}
+          className="h-[70px] rounded-[14px] border border-line bg-white py-0 pr-11 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]"
+        />
+        {value ? (
+          <button
+            type="button"
+            aria-label={`Clear ${label}`}
+            onClick={onClear}
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-caption"
+          >
+            <X className="size-4" />
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function MedicationEntryCard({
+  draft,
+  onChange,
+  onDismiss,
+  onSave,
+}: {
+  draft: Medication;
+  onChange: (next: Medication) => void;
+  onDismiss: () => void;
+  onSave: () => void;
+}) {
+  const presetDosage = isPresetDosage(draft.dosage);
+  const presetFrequency = isPresetFrequency(draft.frequency);
+  const [showCustomDosage, setShowCustomDosage] = useState(
+    Boolean(draft.dosage) && !presetDosage,
+  );
+  const [showCustomFrequency, setShowCustomFrequency] = useState(
+    Boolean(draft.frequency) && !presetFrequency,
+  );
+  const [customDosage, setCustomDosage] = useState(
+    presetDosage ? "" : draft.dosage,
+  );
+  const [customFrequency, setCustomFrequency] = useState(
+    presetFrequency ? "" : draft.frequency,
+  );
+
+  return (
+    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <p className="text-[18px] leading-6 font-semibold text-ink">
+          {draft.name}
+        </p>
+        <button
+          type="button"
+          className="shrink-0 text-caption"
+          onClick={onDismiss}
+          aria-label="Cancel medication entry"
+        >
+          <X className="size-5" />
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <p className="mb-2 text-[13px] leading-4 text-ink">Dosage</p>
+          <div className="flex flex-wrap gap-2">
+            {MEDICATION_DOSAGES.map((dosage) => (
+              <SoftChip
+                key={dosage}
+                selected={draft.dosage === dosage && !showCustomDosage}
+                onClick={() => {
+                  setShowCustomDosage(false);
+                  setCustomDosage("");
+                  onChange({ ...draft, dosage });
+                }}
+              >
+                {dosage}
+              </SoftChip>
+            ))}
+          </div>
+          {showCustomDosage ? (
+            <div className="mt-3">
+              <ClearableInput
+                label="Custom Dosage"
+                value={customDosage}
+                placeholder="e.g. 10mg"
+                onChange={(value) => {
+                  setCustomDosage(value);
+                  onChange({ ...draft, dosage: value });
+                }}
+                onClear={() => {
+                  setCustomDosage("");
+                  setShowCustomDosage(false);
+                  onChange({ ...draft, dosage: "" });
+                }}
+              />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="mt-3 text-[15px] font-semibold text-action"
+              onClick={() => setShowCustomDosage(true)}
+            >
+              + Add Custom Dosage
+            </button>
+          )}
+        </div>
+
+        <div>
+          <p className="mb-2 text-[13px] leading-4 text-ink">Frequency</p>
+          <FrequencySegmented
+            value={
+              showCustomFrequency || !presetFrequency
+                ? null
+                : (draft.frequency as FrequencyOption)
+            }
+            onChange={(frequency) => {
+              setShowCustomFrequency(false);
+              setCustomFrequency("");
+              onChange({ ...draft, frequency });
+            }}
+          />
+          {showCustomFrequency ? (
+            <div className="mt-3">
+              <ClearableInput
+                label="Custom Frequency"
+                value={customFrequency}
+                placeholder="e.g. Before activity"
+                onChange={(value) => {
+                  setCustomFrequency(value);
+                  onChange({ ...draft, frequency: value });
+                }}
+                onClear={() => {
+                  setCustomFrequency("");
+                  setShowCustomFrequency(false);
+                  onChange({ ...draft, frequency: "" });
+                }}
+              />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="mt-3 text-[15px] font-semibold text-action"
+              onClick={() => setShowCustomFrequency(true)}
+            >
+              + Add Custom Frequency
+            </button>
+          )}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 text-[16px] font-semibold text-action disabled:text-caption"
+        disabled={!draft.name.trim()}
+        onClick={onSave}
+      >
+        <span className="flex size-6 items-center justify-center rounded-full bg-action text-white">
+          <Plus className="size-4" strokeWidth={2.5} />
+        </span>
+        Add medication
+      </button>
+    </div>
+  );
+}
+
+function MedicationSearchBlock({
+  query,
+  onQueryChange,
+  onCommitName,
+}: {
+  query: string;
+  onQueryChange: (value: string) => void;
+  onCommitName: (name: string) => void;
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+        Medication name
+      </p>
+      <div className="relative">
+        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
+        <Input
+          value={query}
+          placeholder="e.g. Lexapro"
+          onChange={(event) => onQueryChange(event.target.value)}
+          onBlur={() => {
+            const value = query.trim();
+            if (value) onCommitName(value);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              const value = query.trim();
+              if (value) onCommitName(value);
+            }
+          }}
+          className="h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]"
+        />
+      </div>
+      <p className="mt-5 mb-2 text-[13px] leading-4 font-normal text-ink">
+        Common medications
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {COMMON_MEDICATIONS.map((medication) => (
+          <SoftChip
+            key={medication}
+            onClick={() => onCommitName(medication)}
+          >
+            {medication}
+          </SoftChip>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function MedicationsStep() {
   const { state, update, goNext } = useStepNav("medications");
-  const [draft, setDraft] = useState<Medication | null>(
-    state.medications.length === 0 ? emptyMedication() : null,
-  );
+  const [draft, setDraft] = useState<Medication | null>(null);
+  const [query, setQuery] = useState("");
   const [scanning, setScanning] = useState(false);
+
+  function openEntry(name: string, existing?: Medication) {
+    const trimmed = name.trim();
+    if (!trimmed && !existing) return;
+    setQuery("");
+    if (existing) {
+      setDraft({ ...existing });
+      return;
+    }
+    setDraft(emptyMedication(trimmed));
+  }
 
   function saveDraft() {
     if (!draft?.name.trim()) return;
-    const exists = state.medications.some((item) => item.id === draft.id);
+    const next: Medication = {
+      ...draft,
+      name: draft.name.trim(),
+      dosage: draft.dosage.trim(),
+      frequency: draft.frequency.trim(),
+    };
+    const exists = state.medications.some((item) => item.id === next.id);
     const medications = exists
-      ? state.medications.map((item) => (item.id === draft.id ? draft : item))
-      : [...state.medications, draft];
+      ? state.medications.map((item) => (item.id === next.id ? next : item))
+      : [...state.medications, next];
     update({ medications });
     setDraft(null);
   }
@@ -141,14 +461,11 @@ export function MedicationsStep() {
   async function scanMedication() {
     setScanning(true);
     await delay(1000);
-    const scanned: Medication = {
+    setDraft({
       ...emptyMedication(),
       ...MOCK_MEDICATION,
-      reactions: ["Rash"],
-      severity: "moderate",
-    };
-    update({ medications: [...state.medications, scanned] });
-    setDraft(null);
+    });
+    setQuery("");
     setScanning(false);
   }
 
@@ -158,6 +475,10 @@ export function MedicationsStep() {
     });
   }
 
+  const listedMedications = state.medications.filter(
+    (medication) => draft?.id !== medication.id,
+  );
+
   return (
     <OnboardingShell
       step="medications"
@@ -165,7 +486,7 @@ export function MedicationsStep() {
       subtitle="Enter the name, dosage and frequency of your current medications or scan the label to enter automatically."
       footer={
         <StepFooter onSkip={() => goNext()}>
-          <PrimaryButton onClick={() => goNext()}>Next</PrimaryButton>
+          <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
         </StepFooter>
       }
     >
@@ -179,9 +500,9 @@ export function MedicationsStep() {
         {scanning ? "Scanning label…" : "Scan Medication"}
       </button>
 
-      <div className="space-y-3">
-        {state.medications.map((medication) =>
-          draft?.id === medication.id ? null : (
+      {listedMedications.length > 0 && !draft ? (
+        <div className="mb-4 space-y-3">
+          {listedMedications.map((medication) => (
             <div
               key={medication.id}
               className="flex items-start justify-between rounded-[14px] border border-line bg-white px-4 py-3"
@@ -196,11 +517,11 @@ export function MedicationsStep() {
                     .join(" • ")}
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   type="button"
                   aria-label="Edit medication"
-                  onClick={() => setDraft(medication)}
+                  onClick={() => openEntry(medication.name, medication)}
                   className="text-caption"
                 >
                   <Pencil className="size-4" />
@@ -215,90 +536,24 @@ export function MedicationsStep() {
                 </button>
               </div>
             </div>
-          ),
-        )}
-      </div>
+          ))}
+        </div>
+      ) : null}
 
       {draft ? (
-        <div className="mt-4 rounded-[14px] border border-line bg-white p-4 shadow-sm">
-          <div className="mb-3 flex items-center justify-between">
-            <Field
-              className="flex-1"
-              placeholder="Medication name"
-              value={draft.name}
-              onChange={(event) =>
-                setDraft({ ...draft, name: event.target.value })
-              }
-            />
-            <button
-              type="button"
-              className="ml-2 text-caption"
-              onClick={() => setDraft(null)}
-              aria-label="Close"
-            >
-              <X className="size-5" />
-            </button>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Field
-              label="Dosage"
-              placeholder="25mg"
-              value={draft.dosage}
-              onChange={(event) =>
-                setDraft({ ...draft, dosage: event.target.value })
-              }
-            />
-            <Field
-              label="Frequency"
-              placeholder="Twice daily"
-              value={draft.frequency}
-              onChange={(event) =>
-                setDraft({ ...draft, frequency: event.target.value })
-              }
-            />
-          </div>
-          <p className="mt-4 mb-2 text-[14px] text-body">Reaction</p>
-          <div className="flex flex-wrap gap-2">
-            {MEDICATION_REACTIONS.map((reaction) => (
-              <Chip
-                key={reaction}
-                variant="soft"
-                selected={draft.reactions.includes(reaction)}
-                onClick={() => {
-                  const reactions = draft.reactions.includes(reaction)
-                    ? draft.reactions.filter((item) => item !== reaction)
-                    : [...draft.reactions, reaction];
-                  setDraft({ ...draft, reactions });
-                }}
-              >
-                {reaction}
-              </Chip>
-            ))}
-          </div>
-          <p className="mt-2 text-[13px] text-caption">Select all that apply</p>
-          <p className="mt-4 mb-2 text-[14px] text-body">Severity</p>
-          <SegmentedControl<Severity>
-            value={draft.severity}
-            options={[
-              { value: "mild", label: "Mild" },
-              { value: "moderate", label: "Moderate" },
-              { value: "severe", label: "Severe" },
-            ]}
-            onChange={(severity) => setDraft({ ...draft, severity })}
-          />
-          <button
-            type="button"
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 text-[16px] font-semibold text-action"
-            onClick={saveDraft}
-          >
-            <Plus className="size-4" />
-            Add medication
-          </button>
-        </div>
+        <MedicationEntryCard
+          key={draft.id}
+          draft={draft}
+          onChange={setDraft}
+          onDismiss={() => setDraft(null)}
+          onSave={saveDraft}
+        />
       ) : (
-        <GhostButton onClick={() => setDraft(emptyMedication())}>
-          + Add medication
-        </GhostButton>
+        <MedicationSearchBlock
+          query={query}
+          onQueryChange={setQuery}
+          onCommitName={(name) => openEntry(name)}
+        />
       )}
     </OnboardingShell>
   );

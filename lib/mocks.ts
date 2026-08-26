@@ -83,6 +83,28 @@ export const COMMON_CONDITIONS = [
   "Hypertension",
 ];
 
+export const COMMON_MEDICATIONS = [
+  "Lexapro",
+  "Metformin",
+  "Atorvastatin",
+  "Amlodipine",
+  "Omeprazole",
+];
+
+export const MEDICATION_DOSAGES = [
+  "25mg",
+  "50mg",
+  "100mg",
+  "250mg",
+  "500mg",
+];
+
+export const MEDICATION_FREQUENCIES = [
+  "Once daily",
+  "Twice daily",
+  "As needed",
+] as const;
+
 export const MEDICATION_REACTIONS = [
   "Rash",
   "Swelling",
