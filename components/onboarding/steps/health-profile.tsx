@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ArrowRight, Pencil, Plus, ScanLine, Search, Trash2, X } from "lucide-react";
+import { ArrowRight, Pencil, ScanLine, Search, Trash2, X } from "lucide-react";
+import { CirclePlusIcon } from "@/components/brand/circle-plus-icon";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   CheckBox,
@@ -514,9 +515,7 @@ function MedicationEntryCard({
         disabled={!isMedicationComplete(draft)}
         onClick={onSave}
       >
-        <span className="flex size-[18px] items-center justify-center rounded-full bg-action text-white">
-          <Plus className="size-[11px]" strokeWidth={2.5} />
-        </span>
+        <CirclePlusIcon className="size-5" />
         Add medication
       </button>
     </div>
