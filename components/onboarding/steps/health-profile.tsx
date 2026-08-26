@@ -13,6 +13,7 @@ import {
   SearchField,
   SegmentedControl,
   SelectorCard,
+  StepFooter,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import {
@@ -78,12 +79,14 @@ export function MedicalHistoryStep() {
       title="What does your medical history look like?"
       subtitle="Select all categories that apply to your medical history. We will only ask about what’s relevant to you."
       footer={
-        <PrimaryButton
-          disabled={selected.length === 0}
-          onClick={() => goNext()}
-        >
-          Continue
-        </PrimaryButton>
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton
+            disabled={selected.length === 0}
+            onClick={() => goNext()}
+          >
+            Continue
+          </PrimaryButton>
+        </StepFooter>
       }
     >
       <div className="space-y-3">
@@ -160,7 +163,11 @@ export function MedicationsStep() {
       step="medications"
       title="What medications are you currently taking?"
       subtitle="Enter the name, dosage and frequency of your current medications or scan the label to enter automatically."
-      footer={<PrimaryButton onClick={() => goNext()}>Next</PrimaryButton>}
+      footer={
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton onClick={() => goNext()}>Next</PrimaryButton>
+        </StepFooter>
+      }
     >
       <button
         type="button"
@@ -322,7 +329,11 @@ export function AllergiesStep() {
       step="allergies"
       title="Any allergies we should know about?"
       subtitle="Search or pick common allergens. You can skip this if nothing applies."
-      footer={<PrimaryButton onClick={() => goNext()}>Next</PrimaryButton>}
+      footer={
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton onClick={() => goNext()}>Next</PrimaryButton>
+        </StepFooter>
+      }
     >
       <div>
         <p className="mb-2 text-[13px] leading-4 font-normal text-body">Allergen</p>
@@ -393,7 +404,11 @@ export function ConditionsStep() {
       step="conditions"
       title="Conditions and surgeries"
       subtitle="Add only what you want your provider to see for this visit."
-      footer={<PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>}
+      footer={
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
+        </StepFooter>
+      }
     >
       <div className="space-y-6 text-left">
         {showConditions ? (

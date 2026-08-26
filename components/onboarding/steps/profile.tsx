@@ -8,6 +8,7 @@ import {
   PrimaryButton,
   RadioDot,
   SelectorCard,
+  StepFooter,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { MOCK_LOCATION } from "@/lib/mocks";
@@ -112,6 +113,7 @@ function RadioQuestion({
   customLabel,
   customPlaceholder,
   ctaLabel = "Continue",
+  allowSkip = false,
 }: {
   step: StepId;
   title: string;
@@ -122,6 +124,7 @@ function RadioQuestion({
   customLabel?: string;
   customPlaceholder?: string;
   ctaLabel?: string;
+  allowSkip?: boolean;
 }) {
   const { update, goNext } = useStepNav(step);
   const listed = options.includes(value);
@@ -133,9 +136,11 @@ function RadioQuestion({
       title={title}
       subtitle={subtitle || undefined}
       footer={
-        <PrimaryButton disabled={!value.trim()} onClick={() => goNext()}>
-          {ctaLabel}
-        </PrimaryButton>
+        <StepFooter onSkip={allowSkip ? () => goNext() : undefined}>
+          <PrimaryButton disabled={!value.trim()} onClick={() => goNext()}>
+            {ctaLabel}
+          </PrimaryButton>
+        </StepFooter>
       }
     >
       <div className="space-y-3">
@@ -173,6 +178,7 @@ export function PronounsStep() {
       field="pronouns"
       customLabel="Something else"
       customPlaceholder="Enter your pronouns"
+      allowSkip
     />
   );
 }
@@ -187,6 +193,7 @@ export function GenderStep() {
       options={GENDERS}
       value={state.gender}
       field="gender"
+      allowSkip
     />
   );
 }

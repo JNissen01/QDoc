@@ -2,7 +2,7 @@
 
 import { CheckCircle2 } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
-import { GhostButton, PrimaryButton } from "@/components/onboarding/primitives";
+import { PrimaryButton, StepFooter } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 
 export function CheckpointStep() {
@@ -21,14 +21,11 @@ export function CheckpointStep() {
       title="You’re verified and ready for care"
       subtitle="You can book a visit now, or take a few more minutes to add your clinical background."
       footer={
-        <div className="space-y-2">
+        <StepFooter onSkip={() => goTo("dashboard")} skipLabel="Skip to dashboard">
           <PrimaryButton onClick={() => goNext()}>
             Continue clinical profile
           </PrimaryButton>
-          <GhostButton onClick={() => goTo("dashboard")}>
-            Skip to dashboard
-          </GhostButton>
-        </div>
+        </StepFooter>
       }
     >
       <ul className="space-y-3">

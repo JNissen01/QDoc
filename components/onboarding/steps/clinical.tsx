@@ -7,6 +7,7 @@ import {
   RadioDot,
   SearchField,
   SelectorCard,
+  StepFooter,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { filterByQuery, MOCK_CLINICS, MOCK_PHARMACIES } from "@/lib/mocks";
@@ -148,9 +149,11 @@ export function PharmacyStep() {
       title="Preferred pharmacy"
       subtitle="We’ll send prescriptions here when your provider writes one."
       footer={
-        <PrimaryButton disabled={!state.pharmacy} onClick={() => goNext()}>
-          Continue
-        </PrimaryButton>
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton disabled={!state.pharmacy} onClick={() => goNext()}>
+            Continue
+          </PrimaryButton>
+        </StepFooter>
       }
     >
       <SearchField
@@ -200,9 +203,11 @@ export function FamilyDoctorStep() {
       title="Do you have a family doctor?"
       subtitle="Optional. If you have one, we can keep their clinic on file for referrals."
       footer={
-        <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
-          Continue
-        </PrimaryButton>
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
+            Continue
+          </PrimaryButton>
+        </StepFooter>
       }
     >
       <div className="space-y-3">
@@ -287,7 +292,11 @@ export function BiometricsStep() {
       step="biometrics"
       title="A few basics about your body"
       subtitle="Height, weight, and blood type help your provider dose and document accurately. You can skip any field you don’t know."
-      footer={<PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>}
+      footer={
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
+        </StepFooter>
+      }
     >
       <div className="space-y-4 text-left">
         <MeasurementSystemToggle

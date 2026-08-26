@@ -63,6 +63,39 @@ export function GhostButton({
   );
 }
 
+/** Centered secondary link under a primary CTA (matches Checkpoint skip). */
+export function SkipStepLink({
+  className,
+  children = "Skip this step",
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & { children?: ReactNode }) {
+  return (
+    <GhostButton className={className} {...props}>
+      {children}
+    </GhostButton>
+  );
+}
+
+/** Primary CTA + optional skip link with Checkpoint spacing. */
+export function StepFooter({
+  children,
+  onSkip,
+  skipLabel = "Skip this step",
+}: {
+  children: ReactNode;
+  onSkip?: () => void;
+  skipLabel?: string;
+}) {
+  if (!onSkip) return children;
+
+  return (
+    <div className="space-y-2">
+      {children}
+      <SkipStepLink onClick={onSkip}>{skipLabel}</SkipStepLink>
+    </div>
+  );
+}
+
 export function SearchField({
   className,
   inputClassName,
