@@ -108,7 +108,7 @@ function MeasurementSystemToggle({
     <div>
       <p className="mb-2 text-[13px] leading-4 text-ink">Measurement System</p>
       <div
-        className="flex h-12 shrink-0 items-center self-stretch rounded-xl border border-line bg-white p-1"
+        className="flex h-12 shrink-0 items-center self-stretch rounded-[12px] border border-line bg-white p-1"
         role="group"
         aria-label="Measurement System"
       >
