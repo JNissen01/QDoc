@@ -37,16 +37,6 @@ export const MOCK_CLINICS: Clinic[] = [
     name: "NorWest Co-op Community Health",
     address: "103-61 Tyndall Ave, Winnipeg, MB",
   },
-  {
-    id: "lake-of-woods",
-    name: "Lake of the Woods Clinic",
-    address: "21 Sylvan St, Kenora, ON",
-  },
-  {
-    id: "iqaluit-health",
-    name: "Iqaluit Public Health",
-    address: "1084 Mivvik St, Iqaluit, NU",
-  },
 ];
 
 export const MOCK_LOCATION = {
