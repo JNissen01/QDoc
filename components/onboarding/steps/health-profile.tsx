@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Pencil, Plus, ScanLine, Search, Trash2, X } from "lucide-react";
+import { ArrowRight, Pencil, Plus, ScanLine, Search, Trash2, X } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   CheckBox,
@@ -202,6 +202,7 @@ function ClearableInput({
   placeholder,
   onChange,
   onClear,
+  onConfirm,
   size = "default",
 }: {
   label: string;
@@ -209,8 +210,12 @@ function ClearableInput({
   placeholder: string;
   onChange: (value: string) => void;
   onClear: () => void;
+  onConfirm?: () => void;
   size?: "default" | "compact";
 }) {
+  const hasValue = value.trim().length > 0;
+  const showConfirm = Boolean(onConfirm) && hasValue;
+
   return (
     <div className="flex flex-col gap-2">
       <Label className="text-[13px] leading-4 font-normal text-ink">
@@ -221,21 +226,38 @@ function ClearableInput({
           value={value}
           placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && showConfirm) {
+              event.preventDefault();
+              onConfirm?.();
+            }
+          }}
           className={cn(
-            "rounded-[14px] border border-line bg-white py-0 pr-11 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+            "rounded-[14px] border border-line bg-white py-0 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
             size === "compact" ? "h-[42px]" : "h-[70px]",
+            showConfirm ? "pr-[4.5rem]" : "pr-11",
           )}
         />
-        {value ? (
+        <div className="absolute inset-y-0 right-1.5 flex items-center">
           <button
             type="button"
-            aria-label={`Clear ${label}`}
+            aria-label={`Close ${label}`}
             onClick={onClear}
-            className="absolute top-1/2 right-3 flex h-5 w-5 -translate-y-1/2 items-center justify-center text-caption"
+            className="flex size-7 items-center justify-center text-caption"
           >
             <X className="size-4" />
           </button>
-        ) : null}
+          {showConfirm ? (
+            <button
+              type="button"
+              aria-label={`Confirm ${label}`}
+              onClick={onConfirm}
+              className="flex size-7 items-center justify-center text-action"
+            >
+              <ArrowRight className="size-4" />
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -300,6 +322,19 @@ function MedicationEntryCard({
                 {dosage}
               </SoftChip>
             ))}
+            {!showCustomDosage &&
+            draft.dosage &&
+            !isPresetDosage(draft.dosage) ? (
+              <SoftChip
+                selected
+                onClick={() => {
+                  setCustomDosage(draft.dosage);
+                  setShowCustomDosage(true);
+                }}
+              >
+                {draft.dosage}
+              </SoftChip>
+            ) : null}
           </div>
           {showCustomDosage ? (
             <div className="mt-3">
@@ -315,7 +350,17 @@ function MedicationEntryCard({
                 onClear={() => {
                   setCustomDosage("");
                   setShowCustomDosage(false);
-                  onChange({ ...draft, dosage: "" });
+                  onChange({
+                    ...draft,
+                    dosage: isPresetDosage(draft.dosage) ? draft.dosage : "",
+                  });
+                }}
+                onConfirm={() => {
+                  const value = customDosage.trim();
+                  if (!value) return;
+                  setCustomDosage(value);
+                  setShowCustomDosage(false);
+                  onChange({ ...draft, dosage: value });
                 }}
               />
             </div>
@@ -323,7 +368,12 @@ function MedicationEntryCard({
             <button
               type="button"
               className="mt-3 text-[15px] font-semibold text-action"
-              onClick={() => setShowCustomDosage(true)}
+              onClick={() => {
+                if (draft.dosage && !isPresetDosage(draft.dosage)) {
+                  setCustomDosage(draft.dosage);
+                }
+                setShowCustomDosage(true);
+              }}
             >
               + Add Custom Dosage
             </button>
@@ -344,6 +394,21 @@ function MedicationEntryCard({
               onChange({ ...draft, frequency });
             }}
           />
+          {!showCustomFrequency &&
+          draft.frequency &&
+          !isPresetFrequency(draft.frequency) ? (
+            <div className="mt-2 flex flex-wrap gap-2">
+              <SoftChip
+                selected
+                onClick={() => {
+                  setCustomFrequency(draft.frequency);
+                  setShowCustomFrequency(true);
+                }}
+              >
+                {draft.frequency}
+              </SoftChip>
+            </div>
+          ) : null}
           {showCustomFrequency ? (
             <div className="mt-3">
               <ClearableInput
@@ -358,7 +423,19 @@ function MedicationEntryCard({
                 onClear={() => {
                   setCustomFrequency("");
                   setShowCustomFrequency(false);
-                  onChange({ ...draft, frequency: "" });
+                  onChange({
+                    ...draft,
+                    frequency: isPresetFrequency(draft.frequency)
+                      ? draft.frequency
+                      : "",
+                  });
+                }}
+                onConfirm={() => {
+                  const value = customFrequency.trim();
+                  if (!value) return;
+                  setCustomFrequency(value);
+                  setShowCustomFrequency(false);
+                  onChange({ ...draft, frequency: value });
                 }}
               />
             </div>
@@ -366,7 +443,12 @@ function MedicationEntryCard({
             <button
               type="button"
               className="mt-3 text-[15px] font-semibold text-action"
-              onClick={() => setShowCustomFrequency(true)}
+              onClick={() => {
+                if (draft.frequency && !isPresetFrequency(draft.frequency)) {
+                  setCustomFrequency(draft.frequency);
+                }
+                setShowCustomFrequency(true);
+              }}
             >
               + Add Custom Frequency
             </button>
