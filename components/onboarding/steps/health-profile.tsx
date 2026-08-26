@@ -151,10 +151,10 @@ function SoftChip({
   removeLabel?: string;
 }) {
   const chipClass = cn(
-    "rounded-[0.625rem] px-3.5 py-2 text-[14px] leading-[18px] font-medium transition-colors",
+    "rounded-[0.625rem] px-3.5 py-2 text-[14px] leading-[18px] transition-colors",
     selected
-      ? "bg-action text-white"
-      : "border border-line bg-white text-ink",
+      ? "bg-action font-medium text-white"
+      : "border border-line bg-white font-normal text-ink",
   );
 
   if (!onRemove) {
