@@ -7,12 +7,12 @@ import {
   Clock,
   CreditCard,
   HeartPulse,
-  Lock,
   Pencil,
   Scan,
   ScanLine,
   Stethoscope,
 } from "lucide-react";
+import { ScanCardLockIcon } from "@/components/brand/scan-card-lock-icon";
 import { OnboardingShell, PhoneFrame } from "@/components/onboarding/shell";
 import {
   Field,
@@ -99,9 +99,10 @@ export function ScanCardStep() {
             body: "Use your camera to scan the front of your health card",
           },
           {
-            icon: Lock,
+            icon: ScanCardLockIcon,
             title: "We extract securely",
             body: "OCR technology securely extracts only key information",
+            iconClassName: "size-[34px]",
           },
           {
             icon: CheckCircle2,
@@ -115,7 +116,10 @@ export function ScanCardStep() {
           >
             <span className="relative shrink-0">
               <IconWell className="relative z-10 size-16 rounded-[0.75rem] border-2 border-line">
-                <item.icon className="size-8" strokeWidth={1.8} />
+                <item.icon
+                  className={item.iconClassName ?? "size-8"}
+                  {...(!("iconClassName" in item) ? { strokeWidth: 1.8 } : {})}
+                />
               </IconWell>
               {index < items.length - 1 ? (
                 <span
