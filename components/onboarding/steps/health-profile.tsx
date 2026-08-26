@@ -628,6 +628,7 @@ export function MedicationsStep() {
   const listedMedications = state.medications.filter(
     (medication) => draft?.id !== medication.id,
   );
+  const canContinue = state.medications.some(isMedicationComplete);
 
   return (
     <OnboardingShell
@@ -635,11 +636,8 @@ export function MedicationsStep() {
       title="What medications are you currently taking?"
       subtitle="Enter the name, dosage and frequency of your current medications or scan the label to enter automatically."
       footer={
-        <StepFooter hideSkip>
-          <PrimaryButton
-            disabled={state.medications.length === 0}
-            onClick={() => goNext()}
-          >
+        <StepFooter hideSkip disabled={!canContinue}>
+          <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
             Continue
           </PrimaryButton>
         </StepFooter>

@@ -1,7 +1,14 @@
 "use client";
 
 import { Check, Search, type LucideIcon } from "lucide-react";
-import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from "react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  type ButtonHTMLAttributes,
+  type ComponentProps,
+  type ReactNode,
+} from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +16,7 @@ import { Label } from "@/components/ui/label";
 export function PrimaryButton({
   className,
   children,
+  disabled,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNode }) {
   return (
@@ -19,6 +27,7 @@ export function PrimaryButton({
         className,
       )}
       {...props}
+      disabled={disabled}
     >
       {children}
     </button>
@@ -76,23 +85,35 @@ export function SkipStepLink({
   );
 }
 
+function withDisabled(children: ReactNode, disabled?: boolean) {
+  if (disabled === undefined) return children;
+  return Children.map(children, (child) => {
+    if (!isValidElement<{ disabled?: boolean }>(child)) return child;
+    return cloneElement(child, { disabled });
+  });
+}
+
 /** Primary CTA + optional skip link with Checkpoint spacing. */
 export function StepFooter({
   children,
   onSkip,
   skipLabel = "Skip this step",
   hideSkip = false,
+  disabled,
 }: {
   children: ReactNode;
   onSkip?: () => void;
   skipLabel?: string;
   hideSkip?: boolean;
+  disabled?: boolean;
 }) {
-  if (!onSkip || hideSkip) return children;
+  const cta = withDisabled(children, disabled);
+
+  if (!onSkip || hideSkip) return cta;
 
   return (
     <div className="space-y-2">
-      {children}
+      {cta}
       <SkipStepLink onClick={onSkip}>{skipLabel}</SkipStepLink>
     </div>
   );
