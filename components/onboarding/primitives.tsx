@@ -340,8 +340,8 @@ export function Chip({
 export function InfoNote({
   children,
   className,
-  align,
-  tone = "action",
+  align = "start",
+  tone = "tertiary",
 }: {
   children: ReactNode;
   className?: string;
@@ -351,17 +351,13 @@ export function InfoNote({
   return (
     <p
       className={cn(
-        "flex gap-2 text-[14px] leading-[18px]",
-        tone === "tertiary" ? "text-caption" : "text-action",
-        align === "end"
-          ? "items-center justify-end"
-          : align === "start"
-            ? "items-center justify-start"
-            : "items-start",
+        "flex gap-2 text-[14px] leading-[18px] items-center",
+        tone === "action" ? "text-action" : "text-caption",
+        align === "end" ? "justify-end" : "justify-start",
         className,
       )}
     >
-      <InfoIcon className={cn("size-4 shrink-0", !align && "mt-0.5")} />
+      <InfoIcon className="size-4 shrink-0" />
       <span>{children}</span>
     </p>
   );
@@ -369,18 +365,19 @@ export function InfoNote({
 
 export function LockNote({ children }: { children: ReactNode }) {
   return (
-    <p className="flex items-center gap-2 text-[14px] leading-[18px] text-caption">
+    <p className="flex items-center justify-start gap-2 text-[14px] leading-[18px] text-caption">
       <svg
         viewBox="0 0 24 24"
-        className="size-4"
+        className="size-4 shrink-0"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
+        aria-hidden
       >
         <rect x="5" y="11" width="14" height="10" rx="2" />
         <path d="M8 11V8a4 4 0 0 1 8 0v3" />
       </svg>
-      {children}
+      <span>{children}</span>
     </p>
   );
 }

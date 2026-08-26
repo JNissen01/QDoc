@@ -141,7 +141,7 @@ export function ScanCardStep() {
         ))}
       </ol>
       <div className="mt-9">
-        <InfoNote className="text-caption">
+        <InfoNote>
           OCR Feature is 100% secure and all extracted data is encrypted
         </InfoNote>
       </div>
