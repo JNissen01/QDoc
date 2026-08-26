@@ -104,7 +104,9 @@ export function MedicalHistoryStep() {
         ))}
       </div>
       <div className="mt-5">
-        <InfoNote>You can always add more later from your profile.</InfoNote>
+        <InfoNote size={16}>
+          You can always add more later from your profile.
+        </InfoNote>
       </div>
     </OnboardingShell>
   );

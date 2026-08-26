@@ -339,9 +339,11 @@ export function Chip({
 export function InfoNote({
   children,
   className,
+  size,
 }: {
   children: ReactNode;
   className?: string;
+  size?: 16;
 }) {
   return (
     <p
@@ -350,7 +352,14 @@ export function InfoNote({
         className,
       )}
     >
-      <span className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-current text-[10px] font-semibold">
+      <span
+        className={cn(
+          "mt-0.5 inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-current text-[10px] leading-none font-semibold",
+          size === 16
+            ? "box-border size-[16px] h-[16px] w-[16px]"
+            : "size-4",
+        )}
+      >
         i
       </span>
       <span>{children}</span>
