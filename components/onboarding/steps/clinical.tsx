@@ -123,7 +123,7 @@ function MeasurementSystemToggle({
               onClick={() => onChange(option.value)}
               className={cn(
                 "flex h-full flex-1 items-center justify-center rounded-[10px] px-2 text-center text-[14px] leading-[18px] font-medium transition-colors",
-                selected ? "bg-action text-white" : "bg-transparent text-ink",
+                selected ? "bg-secondary text-ink" : "bg-transparent text-ink",
               )}
             >
               {option.label}
