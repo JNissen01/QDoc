@@ -511,12 +511,14 @@ function MedicationEntryCard({
 
       <button
         type="button"
-        className="mt-5 inline-flex w-full items-center justify-center gap-2 text-[16px] font-semibold text-action disabled:text-caption"
+        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
         disabled={!isMedicationComplete(draft)}
         onClick={onSave}
       >
-        <CirclePlusIcon className="size-5" />
-        Add medication
+        <span className="inline-flex items-center justify-center gap-2">
+          <CirclePlusIcon className="size-5 shrink-0" />
+          Add medication
+        </span>
       </button>
     </div>
   );
