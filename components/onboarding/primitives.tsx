@@ -341,15 +341,18 @@ export function InfoNote({
   children,
   className,
   align,
+  tone = "action",
 }: {
   children: ReactNode;
   className?: string;
   align?: "start" | "end";
+  tone?: "action" | "tertiary";
 }) {
   return (
     <p
       className={cn(
-        "flex gap-2 text-[14px] leading-[18px] text-action",
+        "flex gap-2 text-[14px] leading-[18px]",
+        tone === "tertiary" ? "text-caption" : "text-action",
         align === "end"
           ? "items-center justify-end"
           : align === "start"

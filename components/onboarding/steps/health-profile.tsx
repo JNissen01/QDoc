@@ -140,7 +140,7 @@ export function MedicalHistoryStep() {
         ))}
       </div>
       <div className="mt-5">
-        <InfoNote align="start">
+        <InfoNote align="start" tone="tertiary">
           You can always add more later from your profile.
         </InfoNote>
       </div>
