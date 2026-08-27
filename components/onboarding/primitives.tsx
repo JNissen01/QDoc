@@ -222,13 +222,24 @@ export function SelectorCard({
 export function RadioDot({ selected }: { selected: boolean }) {
   if (selected) {
     return (
-      <span
-        className="flex size-5 shrink-0 items-center justify-center rounded-full border-[#4258C7] bg-white"
-        style={{ borderWidth: 2, borderStyle: "solid" }}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="17"
+        height="17"
+        viewBox="0 0 17 17"
+        fill="none"
+        className="size-[17px] shrink-0"
         aria-hidden
       >
-        <span className="size-2.5 rounded-full bg-[#4258C7]" />
-      </span>
+        <path
+          d="M8.33333 0C3.73333 0 0 3.73333 0 8.33333C0 12.9333 3.73333 16.6667 8.33333 16.6667C12.9333 16.6667 16.6667 12.9333 16.6667 8.33333C16.6667 3.73333 12.9333 0 8.33333 0ZM8.33333 15C4.65 15 1.66667 12.0167 1.66667 8.33333C1.66667 4.65 4.65 1.66667 8.33333 1.66667C12.0167 1.66667 15 4.65 15 8.33333C15 12.0167 12.0167 15 8.33333 15Z"
+          fill="#4258C7"
+        />
+        <path
+          d="M8.33333 12.5C10.6345 12.5 12.5 10.6345 12.5 8.33333C12.5 6.03215 10.6345 4.16667 8.33333 4.16667C6.03215 4.16667 4.16667 6.03215 4.16667 8.33333C4.16667 10.6345 6.03215 12.5 8.33333 12.5Z"
+          fill="#4258C7"
+        />
+      </svg>
     );
   }
 
