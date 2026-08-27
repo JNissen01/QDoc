@@ -104,7 +104,7 @@ export function getProgress(
     case "payment":
       return { current: 2, total: PAYMENT_PHASE };
     case "checkpoint":
-      return { current: 6, total: ACCOUNT_PHASE };
+      return { current: 0, total: ACCOUNT_PHASE, hidden: true };
     case "pronouns":
       return { current: 2, total: PHASE2 };
     case "medical-history":

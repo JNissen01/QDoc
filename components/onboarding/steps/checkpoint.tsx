@@ -23,49 +23,70 @@ function CheckpointCheckIcon({ className }: { className?: string }) {
   );
 }
 
-export function CheckpointStep() {
-  const { state, goNext, goTo } = useStepNav("checkpoint");
+function IncompleteRingIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="9" stroke="#E5B83D" strokeWidth="2" />
+    </svg>
+  );
+}
 
-  const coverageLabel =
-    state.coverage === "provincial"
-      ? "Health card connected"
-      : state.coverage === "private"
-        ? "MSH insurance added"
-        : "Payment method saved";
+const COMPLETED_ITEMS = [
+  "Account secured",
+  "Profile established",
+  "Insurance validated",
+] as const;
+
+export function CheckpointStep() {
+  const { goNext, goTo } = useStepNav("checkpoint");
 
   return (
     <OnboardingShell
       step="checkpoint"
+      hideBack
       showExit={false}
-      title="You’re verified and ready for care"
-      subtitle="You can book a visit now, or take a few more minutes to add your clinical background."
+      title="Your account is complete but there is still information needed before your first visit"
+      subtitle="This step is not required right now, but you will have to complete your medical profile in order to book a visit with one of our care providers."
       footer={
-        <StepFooter onSkip={() => goTo("dashboard")} skipLabel="Skip to dashboard">
+        <StepFooter onSkip={() => goTo("dashboard")} skipLabel="Go to Dashboard">
           <PrimaryButton onClick={() => goNext()}>
-            Continue to medical profile
+            Complete Medical Profile
           </PrimaryButton>
         </StepFooter>
       }
     >
       <ul className="space-y-3">
-        {[
-          coverageLabel,
-          "Account secured with email confirmation",
-          "Address on file for visits",
-        ].map((item) => (
+        {COMPLETED_ITEMS.map((item) => (
           <li
             key={item}
-            className="flex min-h-[70px] items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3"
+            className="flex min-h-[70px] items-center justify-between gap-3 rounded-[14px] border border-line bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]"
           >
-            <CheckpointCheckIcon className="size-5 shrink-0" />
             <span className="text-[16px] font-medium text-ink">{item}</span>
+            <CheckpointCheckIcon className="size-6 shrink-0" />
           </li>
         ))}
       </ul>
-      <p className="mt-6 text-[14px] leading-[18px] text-caption">
-        Phase 2 is optional. You can add pharmacy, history, and medications
-        later from your profile.
+
+      <p className="mt-6 mb-3 text-[16px] font-semibold leading-[22px] text-ink">
+        Incomplete
       </p>
+
+      <ul className="space-y-3">
+        <li className="flex min-h-[70px] items-center justify-between gap-3 rounded-[14px] border border-line bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]">
+          <span className="text-[16px] font-medium text-caption">
+            Medical profile
+          </span>
+          <IncompleteRingIcon className="size-6 shrink-0" />
+        </li>
+      </ul>
     </OnboardingShell>
   );
 }
