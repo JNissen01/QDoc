@@ -54,7 +54,7 @@ export function CheckpointStep() {
       hideBack
       showExit={false}
       title="Your account is complete but there is still information needed before your first visit"
-      subtitle="This step is not required right now, but you will have to complete your medical profile in order to book a visit with one of our care providers."
+      subtitle="This step is not required right now, but there may be more information needed before your first visit"
       footer={
         <StepFooter onSkip={() => goTo("dashboard")} skipLabel="Go to Dashboard">
           <PrimaryButton onClick={() => goNext()}>
