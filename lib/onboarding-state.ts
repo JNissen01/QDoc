@@ -50,7 +50,6 @@ export type OnboardingState = {
   lastName: string;
   dob: string;
   pronouns: string;
-  gender: string;
   sex: string;
   phone: string;
   address: string;
@@ -96,7 +95,6 @@ export const defaultOnboardingState: OnboardingState = {
   lastName: "",
   dob: "",
   pronouns: "",
-  gender: "",
   sex: "",
   phone: "",
   address: "",

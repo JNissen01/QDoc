@@ -10,10 +10,9 @@ export const STEP_IDS = [
   "confirm-email",
   "password",
   "name",
-  "gender",
+  "sex",
   "address",
   "dob",
-  "sex",
   "scan-card",
   "issued-province",
   "registration-number",
@@ -48,7 +47,7 @@ export type ProgressMeta = {
 
 const TRIAGE_PHASE = 2;
 const ACCOUNT_PHASE = 6;
-const PUBLIC_INSURANCE_PHASE = 7;
+const PUBLIC_INSURANCE_PHASE = 6;
 const PRIVATE_INSURANCE_PHASE = 3;
 const PAYMENT_PHASE = 2;
 const PHASE2 = 7;
@@ -74,7 +73,7 @@ export function getProgress(
       return { current: 3, total: ACCOUNT_PHASE };
     case "name":
       return { current: 4, total: ACCOUNT_PHASE };
-    case "gender":
+    case "sex":
       return { current: 5, total: ACCOUNT_PHASE };
     case "address":
       return { current: 6, total: ACCOUNT_PHASE };
@@ -87,18 +86,13 @@ export function getProgress(
     case "health-card":
       return { current: 3, total: PUBLIC_INSURANCE_PHASE };
     case "dob":
-      // Public path (and /flow previews with unset coverage) uses the 7-step tracker.
+      // Public path uses the insurance tracker; private/uninsured keeps a light account-style bar.
       if (state?.coverage === "private" || state?.coverage === "uninsured") {
         return { current: 1, total: ACCOUNT_PHASE };
       }
       return { current: 4, total: PUBLIC_INSURANCE_PHASE };
-    case "sex":
-      if (state?.coverage === "private" || state?.coverage === "uninsured") {
-        return { current: 1, total: ACCOUNT_PHASE };
-      }
-      return { current: 5, total: PUBLIC_INSURANCE_PHASE };
     case "confirm-info":
-      return { current: 6, total: PUBLIC_INSURANCE_PHASE };
+      return { current: 5, total: PUBLIC_INSURANCE_PHASE };
     case "insurance-provider":
       return { current: 1, total: PRIVATE_INSURANCE_PHASE };
     case "insurance-policy":
@@ -154,16 +148,14 @@ export function getNextStep(
     case "password":
       return "name";
     case "name":
-      return "gender";
-    case "gender":
+      return "sex";
+    case "sex":
       return "address";
     case "address":
-      // Public insurance collects DOB + sex inside its own 7-step cluster.
+      // Public insurance collects DOB inside its own cluster; sex is already captured in account.
       if (state.coverage === "provincial") return "scan-card";
       return "dob";
     case "dob":
-      return "sex";
-    case "sex":
       if (state.coverage === "provincial") return "confirm-info";
       if (state.coverage === "private") return "insurance-provider";
       return "payment-intro";
@@ -229,10 +221,10 @@ export function getPrevStep(
       return "confirm-email";
     case "name":
       return "password";
-    case "gender":
+    case "sex":
       return "name";
     case "address":
-      return "gender";
+      return "sex";
     case "scan-card":
       return "address";
     case "issued-province":
@@ -244,18 +236,16 @@ export function getPrevStep(
     case "dob":
       if (state.coverage === "provincial") return "health-card";
       return "address";
-    case "sex":
-      return "dob";
     case "confirm-info":
-      return "sex";
+      return "dob";
     case "insurance-provider":
-      return "sex";
+      return "dob";
     case "insurance-policy":
       return "insurance-provider";
     case "insurance-member":
       return "insurance-policy";
     case "payment-intro":
-      return "sex";
+      return "dob";
     case "payment":
       return "payment-intro";
     case "checkpoint":

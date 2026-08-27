@@ -17,7 +17,6 @@ import type { StepId } from "@/lib/onboarding-flow";
 import { cn } from "@/lib/utils";
 
 const PRONOUNS = ["She/her", "He/him", "They/them", "Prefer not to say"];
-const GENDERS = ["Woman", "Man", "Non-binary", "Prefer not to say"];
 const SEXES = ["Male", "Female", "Intersex", "Prefer not to say"];
 
 export function NameStep() {
@@ -120,7 +119,7 @@ function RadioQuestion({
   subtitle: string;
   options: string[];
   value: string;
-  field: "pronouns" | "gender" | "sex";
+  field: "pronouns" | "sex";
   customLabel?: string;
   customPlaceholder?: string;
   ctaLabel?: string;
@@ -183,32 +182,13 @@ export function PronounsStep() {
   );
 }
 
-export function GenderStep() {
-  const { state } = useStepNav("gender");
-  return (
-    <RadioQuestion
-      step="gender"
-      title="How do you identify yourself?"
-      subtitle="Select the option that best describes you."
-      options={GENDERS}
-      value={state.gender}
-      field="gender"
-    />
-  );
-}
-
 export function SexStep() {
   const { state } = useStepNav("sex");
-  const provincial = state.coverage === "provincial";
   return (
     <RadioQuestion
       step="sex"
       title="What sex were you assigned at birth?"
-      subtitle={
-        provincial
-          ? ""
-          : "This helps your provider with clinical decisions."
-      }
+      subtitle="This helps your provider with clinical decisions."
       options={SEXES}
       value={state.sex}
       field="sex"

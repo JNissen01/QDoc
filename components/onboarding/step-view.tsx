@@ -17,7 +17,6 @@ import {
 import {
   AddressStep,
   DobStep,
-  GenderStep,
   NameStep,
   PronounsStep,
   SexStep,
@@ -67,16 +66,14 @@ export function StepView({ step }: { step: StepId }) {
       return <PasswordStep />;
     case "name":
       return <NameStep />;
+    case "sex":
+      return <SexStep />;
     case "address":
       return <AddressStep />;
     case "dob":
       return <DobStep />;
     case "pronouns":
       return <PronounsStep />;
-    case "gender":
-      return <GenderStep />;
-    case "sex":
-      return <SexStep />;
     case "scan-card":
       return <ScanCardStep />;
     case "registration-number":

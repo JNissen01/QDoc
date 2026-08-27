@@ -83,15 +83,14 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
     note: "Password · 3/6",
   },
   name: { title: "Legal name", note: "4/6" },
-  gender: { title: "Gender", note: "5/6" },
+  sex: {
+    title: "Sex assigned at birth",
+    note: "5/6 · account phase",
+  },
   address: { title: "Address", note: "6/6 · end of account phase" },
   dob: {
     title: "Date of birth",
-    note: "Public path 4/7 · also private/uninsured",
-  },
-  sex: {
-    title: "Sex assigned at birth",
-    note: "Public path 5/7 · also private/uninsured",
+    note: "Public path 4/6 · also private/uninsured",
   },
   "scan-card": {
     title: "Scan intro",
@@ -99,19 +98,19 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
   },
   "issued-province": {
     title: "Issuing province",
-    note: "1 of 7",
+    note: "1 of 6",
   },
   "registration-number": {
     title: "Registration number",
-    note: "2 of 7",
+    note: "2 of 6",
   },
   "health-card": {
     title: "Health card number",
-    note: "3 of 7",
+    note: "3 of 6",
   },
   "confirm-info": {
     title: "Confirm information",
-    note: "6 of 7",
+    note: "5 of 6",
   },
   "insurance-provider": {
     title: "Insurance provider",
@@ -151,14 +150,13 @@ const SECTION_BY_STEP: Record<StepId | "dashboard", FlowSectionId> = {
   "confirm-email": "account",
   password: "account",
   name: "account",
-  gender: "account",
+  sex: "account",
   address: "account",
   "scan-card": "public-insurance",
   "issued-province": "public-insurance",
   "registration-number": "public-insurance",
   "health-card": "public-insurance",
   dob: "public-insurance",
-  sex: "public-insurance",
   "confirm-info": "public-insurance",
   "insurance-provider": "private-insurance",
   "insurance-policy": "private-insurance",
@@ -185,7 +183,7 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
     "confirm-email",
     "password",
     "name",
-    "gender",
+    "sex",
     "address",
   ],
   "public-insurance": [
@@ -194,7 +192,6 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
     "registration-number",
     "health-card",
     "dob",
-    "sex",
     "confirm-info",
   ],
   "private-insurance": [
