@@ -52,7 +52,7 @@ export function DashboardScreen() {
             type="button"
             aria-label="Settings"
             aria-describedby="dashboard-settings-note"
-            className="text-ink"
+            className="text-caption"
           >
             <Settings className="size-6" strokeWidth={2} />
           </button>
