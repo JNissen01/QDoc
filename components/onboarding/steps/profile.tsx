@@ -188,7 +188,7 @@ export function GenderStep() {
   return (
     <RadioQuestion
       step="gender"
-      title="What is your gender?"
+      title="How do you identify yourself?"
       subtitle="Select the option that best describes you."
       options={GENDERS}
       value={state.gender}
