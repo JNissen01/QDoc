@@ -4,6 +4,22 @@ A clickable prototype of the **QDoc** virtual care onboarding flow. QDoc connect
 
 The flow ends on a lightweight dashboard that matches the current design and may still change.
 
+## Share the prototype
+
+**Easiest for reviewers:** deploy to [Vercel](https://vercel.com) and send the public URL.
+
+```bash
+npm i -g vercel
+vercel login
+vercel --prod
+```
+
+Then share:
+- `/` — start of the onboarding flow  
+- `/flow` — clickable map of every screen  
+
+No backend or API keys are required. Reviewer data stays in their browser.
+
 ## Run locally
 
 ```bash
