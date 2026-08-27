@@ -40,8 +40,6 @@ import {
   PharmacyStep,
 } from "@/components/onboarding/steps/clinical";
 import {
-  AllergiesStep,
-  ConditionsStep,
   MedicalHistoryStep,
   MedicationsStep,
 } from "@/components/onboarding/steps/health-profile";
@@ -109,10 +107,6 @@ export function StepView({ step }: { step: StepId }) {
       return <MedicalHistoryStep />;
     case "medications":
       return <MedicationsStep />;
-    case "allergies":
-      return <AllergiesStep />;
-    case "conditions":
-      return <ConditionsStep />;
     case "success":
       return <SuccessStep />;
   }

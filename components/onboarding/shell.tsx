@@ -25,8 +25,6 @@ const MEDICAL_PROFILE_STEPS = new Set<StepId>([
   "biometrics",
   "medical-history",
   "medications",
-  "allergies",
-  "conditions",
   "success",
 ]);
 

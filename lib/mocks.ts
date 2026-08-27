@@ -65,24 +65,6 @@ export const MOCK_PAYMENT_CARD = {
   cardCvv: "123",
 };
 
-export const COMMON_ALLERGIES = [
-  "Peanuts",
-  "Latex",
-  "Penicillin",
-  "Shellfish",
-  "Pollen",
-  "Bee Stings",
-];
-
-export const COMMON_CONDITIONS = [
-  "Anxiety",
-  "Depression",
-  "ADHD",
-  "Asthma",
-  "Diabetes",
-  "Hypertension",
-];
-
 export const COMMON_MEDICATIONS = [
   "Lexapro",
   "Metformin",

@@ -31,8 +31,6 @@ export const STEP_IDS = [
   "biometrics",
   "medical-history",
   "medications",
-  "allergies",
-  "conditions",
   "success",
 ] as const;
 
@@ -124,8 +122,6 @@ export function getProgress(
     case "medical-history":
       return { current: 6, total: PHASE2 };
     case "medications":
-    case "allergies":
-    case "conditions":
       return { current: 7, total: PHASE2 };
     case "success":
       return { current: 8, total: PHASE2 };
@@ -142,10 +138,6 @@ function clinicalFollowUps(state: OnboardingState): StepId[] {
   }
   const steps: StepId[] = [];
   if (hasCategory(state, "medications")) steps.push("medications");
-  if (hasCategory(state, "allergies")) steps.push("allergies");
-  if (hasCategory(state, "conditions") || hasCategory(state, "surgeries")) {
-    steps.push("conditions");
-  }
   steps.push("success");
   return steps;
 }
@@ -216,15 +208,7 @@ export function getNextStep(
       return "medical-history";
     case "medical-history":
       return clinicalFollowUps(state)[0] ?? "success";
-    case "medications": {
-      const steps = clinicalFollowUps(state);
-      return steps[steps.indexOf("medications") + 1] ?? "success";
-    }
-    case "allergies": {
-      const steps = clinicalFollowUps(state);
-      return steps[steps.indexOf("allergies") + 1] ?? "success";
-    }
-    case "conditions":
+    case "medications":
       return "success";
     case "success":
       return "dashboard";
@@ -297,14 +281,6 @@ export function getPrevStep(
     case "medical-history":
       return "biometrics";
     case "medications":
-      return "medical-history";
-    case "allergies":
-      return hasCategory(state, "medications")
-        ? "medications"
-        : "medical-history";
-    case "conditions":
-      if (hasCategory(state, "allergies")) return "allergies";
-      if (hasCategory(state, "medications")) return "medications";
       return "medical-history";
     case "success": {
       const steps = clinicalFollowUps(state);
