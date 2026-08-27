@@ -53,7 +53,7 @@ export function CheckpointStep() {
       step="checkpoint"
       hideBack
       showExit={false}
-      title="Your account is complete but there is still information needed before your first visit"
+      title="Your account has been created successfully!"
       subtitle="This step is not required right now, but there may be more information needed before your first visit"
       footer={
         <StepFooter onSkip={() => goTo("dashboard")} skipLabel="Go to Dashboard">
