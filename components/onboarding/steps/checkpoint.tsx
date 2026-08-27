@@ -67,7 +67,7 @@ export function CheckpointStep() {
         {COMPLETED_ITEMS.map((item) => (
           <li
             key={item}
-            className="flex min-h-[70px] items-center justify-between gap-3 rounded-[14px] border border-line bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]"
+            className="flex min-h-[70px] items-center justify-between gap-3 rounded-[14px] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]"
           >
             <span className="text-[16px] font-medium text-ink">{item}</span>
             <CheckpointCheckIcon className="size-6 shrink-0" />
@@ -80,7 +80,7 @@ export function CheckpointStep() {
       </p>
 
       <ul className="space-y-3">
-        <li className="flex min-h-[70px] items-center justify-between gap-3 rounded-[14px] border border-line bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]">
+        <li className="flex min-h-[70px] items-center justify-between gap-3 rounded-[14px] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]">
           <span className="text-[16px] font-medium text-caption">
             Medical profile
           </span>
