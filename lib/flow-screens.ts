@@ -80,7 +80,7 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
   "confirm-email": { title: "Confirm your email", note: "5-digit code · 2/6" },
   password: {
     title: "Create a password",
-    note: "Username + password · 3/6",
+    note: "Password · 3/6",
   },
   name: { title: "Legal name", note: "4/6" },
   gender: { title: "Gender", note: "5/6" },
