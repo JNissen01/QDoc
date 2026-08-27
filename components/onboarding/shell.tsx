@@ -20,10 +20,10 @@ import {
 const MEDICAL_PROFILE_STEPS = new Set<StepId>([
   "biometrics",
   "pronouns",
-  "pharmacy",
-  "family-doctor",
   "medical-history",
   "medications",
+  "pharmacy",
+  "family-doctor",
   "success",
 ]);
 
