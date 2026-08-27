@@ -342,7 +342,7 @@ export function BiometricsStep() {
                 className={
                   state.bloodType === type
                     ? "rounded-[0.625rem] bg-action px-3.5 py-2 text-[14px] font-medium text-white"
-                    : "rounded-[0.625rem] border border-line bg-white px-3.5 py-2 text-[14px] font-medium text-ink"
+                    : "rounded-[0.625rem] border border-line bg-white px-3.5 py-2 text-[14px] font-normal text-ink"
                 }
               >
                 {type === "unknown" ? "Don’t know" : type}

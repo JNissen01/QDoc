@@ -264,10 +264,10 @@ export function AddressStep() {
                 aria-pressed={state.province === value}
                 onClick={() => update({ province: value })}
                 className={cn(
-                  "h-[70px] rounded-[14px] text-[16px] font-medium",
+                  "h-[70px] rounded-[14px] text-[16px]",
                   state.province === value
-                    ? "province-chip-selected"
-                    : "border border-line bg-white text-ink",
+                    ? "province-chip-selected font-medium"
+                    : "border border-line bg-white font-normal text-ink",
                 )}
               >
                 {label}

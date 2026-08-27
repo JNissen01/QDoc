@@ -202,8 +202,10 @@ export function SelectorCard({
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            "block text-[16px] leading-[22px] font-medium",
-            selected ? "text-action" : "text-ink",
+            "block text-[16px] leading-[22px]",
+            selected
+              ? "font-medium text-action"
+              : "font-normal text-ink",
           )}
         >
           {title}
@@ -337,10 +339,10 @@ export function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-[43px] border px-3.5 py-2 text-[14px] leading-[18px] font-medium transition-colors",
-        selected && variant === "solid" && "border-action bg-action text-white",
-        selected && variant === "soft" && "border-action bg-tint text-ink",
-        !selected && "border-line bg-white text-ink",
+        "rounded-[43px] border px-3.5 py-2 text-[14px] leading-[18px] transition-colors",
+        selected && variant === "solid" && "border-action bg-action font-medium text-white",
+        selected && variant === "soft" && "border-action bg-tint font-medium text-ink",
+        !selected && "border-line bg-white font-normal text-ink",
       )}
     >
       {children}
@@ -423,10 +425,10 @@ export function SegmentedControl<T extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             className={cn(
-              "h-[70px] rounded-[14px] border text-[16px] font-medium",
+              "h-[70px] rounded-[14px] border text-[16px]",
               selected
-                ? "border-action bg-action text-white"
-                : "border-line bg-tint text-ink",
+                ? "border-action bg-action font-medium text-white"
+                : "border-line bg-tint font-normal text-ink",
             )}
           >
             {option.label}
