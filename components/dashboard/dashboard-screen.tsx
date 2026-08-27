@@ -5,8 +5,8 @@ import {
   ClipboardPlus,
   Folder,
   Inbox,
-  Menu,
   Plus,
+  Settings,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PhoneFrame } from "@/components/onboarding/shell";
@@ -40,13 +40,23 @@ export function DashboardScreen() {
   return (
     <PhoneFrame>
       <div className="relative">
-        <button
-          type="button"
-          aria-label="Menu"
-          className="absolute top-0 right-0 text-ink"
-        >
-          <Menu className="size-6" strokeWidth={2} />
-        </button>
+        <div className="group absolute top-0 right-0 z-20">
+          <button
+            type="button"
+            aria-label="Settings"
+            aria-describedby="dashboard-settings-note"
+            className="text-ink"
+          >
+            <Settings className="size-6" strokeWidth={2} />
+          </button>
+          <p
+            id="dashboard-settings-note"
+            role="tooltip"
+            className="pointer-events-none absolute top-full right-0 z-30 mt-2 w-[220px] rounded-[12px] border border-line bg-white px-3 py-2 text-left text-[13px] leading-4 font-normal text-body opacity-0 shadow-[0_8px_24px_rgba(30,27,75,0.12)] transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+          >
+            Within this screen would be system, app and profile settings.
+          </p>
+        </div>
 
         <div className="flex flex-col items-center pt-1 text-center">
           <div className="flex size-24 items-center justify-center rounded-full bg-tint text-[28px] font-semibold text-white">
