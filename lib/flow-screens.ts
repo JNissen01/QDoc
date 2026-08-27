@@ -135,8 +135,8 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
   pronouns: { title: "Pronouns", note: "Phase 2 · 2/7" },
   "medical-history": { title: "Medical history", note: "Phase 2 · 3/7" },
   medications: { title: "Medications", note: "Phase 2 · 4/7, gated" },
-  pharmacy: { title: "Pharmacy", note: "Phase 2 · 5/7" },
-  "family-doctor": { title: "Family doctor", note: "Phase 2 · 6/7" },
+  "family-doctor": { title: "Family doctor", note: "Phase 2 · 5/7" },
+  pharmacy: { title: "Pharmacy", note: "Phase 2 · 6/7" },
   success: { title: "Success", note: "Phase 2 · 7/7" },
 };
 
@@ -209,8 +209,8 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
     "pronouns",
     "medical-history",
     "medications",
-    "pharmacy",
     "family-doctor",
+    "pharmacy",
     "success",
   ],
   dashboard: ["dashboard"],

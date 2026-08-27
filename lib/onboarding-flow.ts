@@ -117,9 +117,9 @@ export function getProgress(
       return { current: 3, total: PHASE2 };
     case "medications":
       return { current: 4, total: PHASE2 };
-    case "pharmacy":
-      return { current: 5, total: PHASE2 };
     case "family-doctor":
+      return { current: 5, total: PHASE2 };
+    case "pharmacy":
       return { current: 6, total: PHASE2 };
     case "biometrics":
       return { current: 1, total: PHASE2 };
@@ -193,12 +193,14 @@ export function getNextStep(
     case "pronouns":
       return "medical-history";
     case "medical-history":
-      return hasCategory(state, "medications") ? "medications" : "pharmacy";
+      return hasCategory(state, "medications")
+        ? "medications"
+        : "family-doctor";
     case "medications":
-      return "pharmacy";
-    case "pharmacy":
       return "family-doctor";
     case "family-doctor":
+      return "pharmacy";
+    case "pharmacy":
       return "success";
     case "success":
       return "dashboard";
@@ -268,14 +270,14 @@ export function getPrevStep(
       return "pronouns";
     case "medications":
       return "medical-history";
-    case "pharmacy":
+    case "family-doctor":
       return hasCategory(state, "medications")
         ? "medications"
         : "medical-history";
-    case "family-doctor":
-      return "pharmacy";
-    case "success":
+    case "pharmacy":
       return "family-doctor";
+    case "success":
+      return "pharmacy";
   }
 }
 

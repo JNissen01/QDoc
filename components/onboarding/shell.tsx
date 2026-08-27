@@ -22,8 +22,8 @@ const MEDICAL_PROFILE_STEPS = new Set<StepId>([
   "pronouns",
   "medical-history",
   "medications",
-  "pharmacy",
   "family-doctor",
+  "pharmacy",
   "success",
 ]);
 
