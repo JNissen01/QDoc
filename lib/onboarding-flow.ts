@@ -29,8 +29,8 @@ export const STEP_IDS = [
   "pronouns",
   "medical-history",
   "medications",
-  "pharmacy",
   "family-doctor",
+  "pharmacy",
   "success",
 ] as const;
 
