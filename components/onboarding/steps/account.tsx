@@ -229,10 +229,6 @@ export function PasswordStep() {
   const [confirm, setConfirm] = useState(state.password);
   const [submitted, setSubmitted] = useState(false);
 
-  const usernameError =
-    submitted && !state.username.trim()
-      ? "Enter a username"
-      : undefined;
   const passwordError =
     submitted && state.password.length < 8
       ? "Use at least 8 characters"
@@ -244,11 +240,7 @@ export function PasswordStep() {
 
   function continuePassword() {
     setSubmitted(true);
-    if (
-      !state.username.trim() ||
-      state.password.length < 8 ||
-      confirm !== state.password
-    ) {
+    if (state.password.length < 8 || confirm !== state.password) {
       return;
     }
     goNext();
@@ -269,14 +261,6 @@ export function PasswordStep() {
       }
     >
       <div className="space-y-4 text-left">
-        <Field
-          label="Username"
-          autoComplete="username"
-          placeholder="e.g. Janedoe"
-          value={state.username}
-          error={usernameError}
-          onChange={(event) => update({ username: event.target.value })}
-        />
         <PasswordField
           label="Password"
           autoComplete="new-password"
