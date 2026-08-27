@@ -25,10 +25,10 @@ export const STEP_IDS = [
   "payment-intro",
   "payment",
   "checkpoint",
+  "biometrics",
   "pronouns",
   "pharmacy",
   "family-doctor",
-  "biometrics",
   "medical-history",
   "medications",
   "success",
@@ -112,13 +112,13 @@ export function getProgress(
     case "checkpoint":
       return { current: 6, total: ACCOUNT_PHASE };
     case "pronouns":
-      return { current: 1, total: PHASE2 };
-    case "pharmacy":
       return { current: 2, total: PHASE2 };
-    case "family-doctor":
+    case "pharmacy":
       return { current: 3, total: PHASE2 };
-    case "biometrics":
+    case "family-doctor":
       return { current: 4, total: PHASE2 };
+    case "biometrics":
+      return { current: 1, total: PHASE2 };
     case "medical-history":
       return { current: 5, total: PHASE2 };
     case "medications":
@@ -197,14 +197,14 @@ export function getNextStep(
     case "insurance-member":
       return "checkpoint";
     case "checkpoint":
+      return "biometrics";
+    case "biometrics":
       return "pronouns";
     case "pronouns":
       return "pharmacy";
     case "pharmacy":
       return "family-doctor";
     case "family-doctor":
-      return "biometrics";
-    case "biometrics":
       return "medical-history";
     case "medical-history":
       return clinicalFollowUps(state)[0] ?? "success";
@@ -270,16 +270,16 @@ export function getPrevStep(
       if (state.coverage === "provincial") return "confirm-info";
       if (state.coverage === "private") return "insurance-member";
       return "payment";
-    case "pronouns":
+    case "biometrics":
       return "checkpoint";
+    case "pronouns":
+      return "biometrics";
     case "pharmacy":
       return "pronouns";
     case "family-doctor":
       return "pharmacy";
-    case "biometrics":
-      return "family-doctor";
     case "medical-history":
-      return "biometrics";
+      return "family-doctor";
     case "medications":
       return "medical-history";
     case "success": {
