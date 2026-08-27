@@ -193,7 +193,6 @@ export function GenderStep() {
       options={GENDERS}
       value={state.gender}
       field="gender"
-      allowSkip
     />
   );
 }

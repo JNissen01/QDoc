@@ -10,6 +10,7 @@ export const STEP_IDS = [
   "confirm-email",
   "password",
   "name",
+  "gender",
   "address",
   "dob",
   "sex",
@@ -25,7 +26,6 @@ export const STEP_IDS = [
   "payment",
   "checkpoint",
   "pronouns",
-  "gender",
   "pharmacy",
   "family-doctor",
   "biometrics",
@@ -47,11 +47,11 @@ export type ProgressMeta = {
 };
 
 const TRIAGE_PHASE = 2;
-const ACCOUNT_PHASE = 5;
+const ACCOUNT_PHASE = 6;
 const PUBLIC_INSURANCE_PHASE = 7;
 const PRIVATE_INSURANCE_PHASE = 3;
 const PAYMENT_PHASE = 2;
-const PHASE2 = 8;
+const PHASE2 = 7;
 
 export function getProgress(
   step: StepId,
@@ -74,8 +74,10 @@ export function getProgress(
       return { current: 3, total: ACCOUNT_PHASE };
     case "name":
       return { current: 4, total: ACCOUNT_PHASE };
-    case "address":
+    case "gender":
       return { current: 5, total: ACCOUNT_PHASE };
+    case "address":
+      return { current: 6, total: ACCOUNT_PHASE };
     case "scan-card":
       return { current: 0, total: PUBLIC_INSURANCE_PHASE, hidden: true };
     case "issued-province":
@@ -108,23 +110,21 @@ export function getProgress(
     case "payment":
       return { current: 2, total: PAYMENT_PHASE };
     case "checkpoint":
-      return { current: 5, total: ACCOUNT_PHASE };
+      return { current: 6, total: ACCOUNT_PHASE };
     case "pronouns":
       return { current: 1, total: PHASE2 };
-    case "gender":
-      return { current: 2, total: PHASE2 };
     case "pharmacy":
-      return { current: 3, total: PHASE2 };
+      return { current: 2, total: PHASE2 };
     case "family-doctor":
-      return { current: 4, total: PHASE2 };
+      return { current: 3, total: PHASE2 };
     case "biometrics":
-      return { current: 5, total: PHASE2 };
+      return { current: 4, total: PHASE2 };
     case "medical-history":
-      return { current: 6, total: PHASE2 };
+      return { current: 5, total: PHASE2 };
     case "medications":
-      return { current: 7, total: PHASE2 };
+      return { current: 6, total: PHASE2 };
     case "success":
-      return { current: 8, total: PHASE2 };
+      return { current: 7, total: PHASE2 };
   }
 }
 
@@ -164,6 +164,8 @@ export function getNextStep(
     case "password":
       return "name";
     case "name":
+      return "gender";
+    case "gender":
       return "address";
     case "address":
       // Public insurance collects DOB + sex inside its own 7-step cluster.
@@ -197,8 +199,6 @@ export function getNextStep(
     case "checkpoint":
       return "pronouns";
     case "pronouns":
-      return "gender";
-    case "gender":
       return "pharmacy";
     case "pharmacy":
       return "family-doctor";
@@ -237,8 +237,10 @@ export function getPrevStep(
       return "confirm-email";
     case "name":
       return "password";
-    case "address":
+    case "gender":
       return "name";
+    case "address":
+      return "gender";
     case "scan-card":
       return "address";
     case "issued-province":
@@ -270,10 +272,8 @@ export function getPrevStep(
       return "payment";
     case "pronouns":
       return "checkpoint";
-    case "gender":
-      return "pronouns";
     case "pharmacy":
-      return "gender";
+      return "pronouns";
     case "family-doctor":
       return "pharmacy";
     case "biometrics":

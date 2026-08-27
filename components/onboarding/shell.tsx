@@ -19,7 +19,6 @@ import {
 /** Phase 2 clinical intake — Exit is shown on these steps by default. */
 const MEDICAL_PROFILE_STEPS = new Set<StepId>([
   "pronouns",
-  "gender",
   "pharmacy",
   "family-doctor",
   "biometrics",
