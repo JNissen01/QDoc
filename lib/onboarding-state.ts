@@ -140,3 +140,20 @@ export function displayFirstName(firstName: string) {
   const trimmed = firstName.trim();
   return trimmed || "there";
 }
+
+/** True once the user has saved any Phase 2 medical-profile answers. */
+export function hasStartedMedicalProfile(state: OnboardingState) {
+  return Boolean(
+    state.height.trim() ||
+      state.weight.trim() ||
+      state.bloodType !== "unknown" ||
+      state.pronouns.trim() ||
+      state.historyCategories.length > 0 ||
+      state.medications.length > 0 ||
+      state.allergies.length > 0 ||
+      state.conditions.length > 0 ||
+      state.surgeries.length > 0 ||
+      state.pharmacy ||
+      state.hasFamilyDoctor !== null,
+  );
+}

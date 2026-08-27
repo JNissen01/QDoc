@@ -20,6 +20,7 @@ import { useFlowPreview } from "@/components/flow/flow-preview-context";
 import { hrefFor } from "@/lib/onboarding-flow";
 import {
   displayFirstName,
+  hasStartedMedicalProfile,
   initialsFromName,
 } from "@/lib/onboarding-state";
 
@@ -36,6 +37,7 @@ export function DashboardScreen() {
   const { state, reset } = useOnboarding();
   const initials = initialsFromName(state.firstName, state.lastName);
   const firstName = displayFirstName(state.firstName);
+  const showMedicalProfileCta = !hasStartedMedicalProfile(state);
 
   function restartPrototype() {
     reset();
@@ -64,7 +66,7 @@ export function DashboardScreen() {
         </div>
 
         <div className="flex flex-col items-center pt-1 text-center">
-          <div className="flex size-24 items-center justify-center rounded-full bg-tint text-[28px] font-semibold text-white">
+          <div className="flex size-24 items-center justify-center rounded-full bg-[#D6E6FF] text-[28px] font-semibold text-white">
             {initials}
           </div>
           <h1 className="mt-4 text-[28px] leading-9 font-semibold text-ink">
@@ -73,13 +75,15 @@ export function DashboardScreen() {
         </div>
       </div>
 
-      <TonalButton
-        className="mt-6 h-14 rounded-[14px] text-[16px] leading-[22px] font-semibold"
-        onClick={() => router.push(hrefFor("biometrics"))}
-      >
-        Complete medical profile
-        <ArrowRight className="size-5" strokeWidth={2} />
-      </TonalButton>
+      {showMedicalProfileCta ? (
+        <TonalButton
+          className="mt-6 h-14 rounded-[14px] bg-[#D6E6FF] text-[16px] leading-[22px] font-semibold"
+          onClick={() => router.push(hrefFor("biometrics"))}
+        >
+          Complete medical profile
+          <ArrowRight className="size-5" strokeWidth={2} />
+        </TonalButton>
+      ) : null}
 
       <section className="mt-8 text-left">
         <h2 className="text-[20px] font-semibold text-ink">Upcoming Visits</h2>
