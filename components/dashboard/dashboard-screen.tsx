@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowRight,
   CalendarDays,
   ClipboardPlus,
   Folder,
@@ -10,9 +11,13 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PhoneFrame } from "@/components/onboarding/shell";
-import { PrimaryButton } from "@/components/onboarding/primitives";
+import {
+  PrimaryButton,
+  TonalButton,
+} from "@/components/onboarding/primitives";
 import { useOnboarding } from "@/components/onboarding/provider";
 import { useFlowPreview } from "@/components/flow/flow-preview-context";
+import { hrefFor } from "@/lib/onboarding-flow";
 import {
   displayFirstName,
   initialsFromName,
@@ -67,6 +72,14 @@ export function DashboardScreen() {
           </h1>
         </div>
       </div>
+
+      <TonalButton
+        className="mt-6 h-14 rounded-[14px] text-[16px] leading-[22px] font-semibold"
+        onClick={() => router.push(hrefFor("biometrics"))}
+      >
+        Complete medical profile
+        <ArrowRight className="size-5" strokeWidth={2} />
+      </TonalButton>
 
       <section className="mt-8 text-left">
         <h2 className="text-[20px] font-semibold text-ink">Upcoming Visits</h2>
