@@ -27,10 +27,10 @@ export const STEP_IDS = [
   "checkpoint",
   "biometrics",
   "pronouns",
-  "pharmacy",
-  "family-doctor",
   "medical-history",
   "medications",
+  "pharmacy",
+  "family-doctor",
   "success",
 ] as const;
 
@@ -113,16 +113,16 @@ export function getProgress(
       return { current: 6, total: ACCOUNT_PHASE };
     case "pronouns":
       return { current: 2, total: PHASE2 };
-    case "pharmacy":
+    case "medical-history":
       return { current: 3, total: PHASE2 };
-    case "family-doctor":
+    case "medications":
       return { current: 4, total: PHASE2 };
+    case "pharmacy":
+      return { current: 5, total: PHASE2 };
+    case "family-doctor":
+      return { current: 6, total: PHASE2 };
     case "biometrics":
       return { current: 1, total: PHASE2 };
-    case "medical-history":
-      return { current: 5, total: PHASE2 };
-    case "medications":
-      return { current: 6, total: PHASE2 };
     case "success":
       return { current: 7, total: PHASE2 };
   }
@@ -130,16 +130,6 @@ export function getProgress(
 
 function hasCategory(state: OnboardingState, category: HistoryCategory) {
   return state.historyCategories.includes(category);
-}
-
-function clinicalFollowUps(state: OnboardingState): StepId[] {
-  if (hasCategory(state, "none") || state.historyCategories.length === 0) {
-    return ["success"];
-  }
-  const steps: StepId[] = [];
-  if (hasCategory(state, "medications")) steps.push("medications");
-  steps.push("success");
-  return steps;
 }
 
 export function getNextStep(
@@ -201,14 +191,14 @@ export function getNextStep(
     case "biometrics":
       return "pronouns";
     case "pronouns":
+      return "medical-history";
+    case "medical-history":
+      return hasCategory(state, "medications") ? "medications" : "pharmacy";
+    case "medications":
       return "pharmacy";
     case "pharmacy":
       return "family-doctor";
     case "family-doctor":
-      return "medical-history";
-    case "medical-history":
-      return clinicalFollowUps(state)[0] ?? "success";
-    case "medications":
       return "success";
     case "success":
       return "dashboard";
@@ -274,18 +264,18 @@ export function getPrevStep(
       return "checkpoint";
     case "pronouns":
       return "biometrics";
-    case "pharmacy":
-      return "pronouns";
-    case "family-doctor":
-      return "pharmacy";
     case "medical-history":
-      return "family-doctor";
+      return "pronouns";
     case "medications":
       return "medical-history";
-    case "success": {
-      const steps = clinicalFollowUps(state);
-      return steps[steps.length - 2] ?? "medical-history";
-    }
+    case "pharmacy":
+      return hasCategory(state, "medications")
+        ? "medications"
+        : "medical-history";
+    case "family-doctor":
+      return "pharmacy";
+    case "success":
+      return "family-doctor";
   }
 }
 
