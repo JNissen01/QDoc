@@ -51,7 +51,7 @@ export function CheckpointStep() {
         {[
           coverageLabel,
           "Account secured with email confirmation",
-          "Address on file for this visit",
+          "Address on file for visits",
         ].map((item) => (
           <li
             key={item}
