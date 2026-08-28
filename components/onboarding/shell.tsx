@@ -146,7 +146,7 @@ export function OnboardingShell({
         ) : null}
 
         {(title || subtitle) && (
-          <header className="mt-6 space-y-2 text-left">
+          <header className="mt-6 mb-8 space-y-2 text-left">
             {title ? (
               <h1 className="text-[28px] leading-9 font-semibold tracking-normal text-ink">
                 {title}
@@ -164,7 +164,14 @@ export function OnboardingShell({
           </header>
         )}
 
-        <div className="mt-6 flex-1 pb-4 text-left">{children}</div>
+        <div
+          className={cn(
+            "flex-1 pb-4 text-left",
+            !(title || subtitle) && "mt-6",
+          )}
+        >
+          {children}
+        </div>
       </div>
       {footer ? (
         <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
