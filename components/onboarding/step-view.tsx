@@ -58,10 +58,10 @@ export function StepView({ step }: { step: StepId }) {
       return <OffRampStep />;
     case "account-intro":
       return <AccountIntroStep />;
-    case "confirm-email":
-      return <ConfirmEmailStep />;
     case "contact":
       return <ContactStep />;
+    case "confirm-email":
+      return <ConfirmEmailStep />;
     case "password":
       return <PasswordStep />;
     case "name":
