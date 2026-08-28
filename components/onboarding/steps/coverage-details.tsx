@@ -272,11 +272,8 @@ function displayDobInput(value: string) {
   return formatDobInput(value);
 }
 
-function confirmControlClass(active: boolean) {
-  return cn(
-    "mt-1 w-full bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none",
-    active ? "border-b-2 border-action pb-0.5" : "border-b border-line pb-0.5",
-  );
+function confirmControlClass() {
+  return "mt-1 w-full bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none";
 }
 
 function ConfirmChip({
@@ -333,7 +330,9 @@ function ConfirmRow({
         reserveAction && "pr-12",
         editing && active
           ? "my-2 rounded-[12px] border-2 border-action bg-white px-3 py-3"
-          : "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
+          : editing
+            ? "-mx-4 px-4 py-4"
+            : "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
       )}
       onClick={() => {
         if (editing) onActivate?.();
@@ -442,7 +441,7 @@ export function ConfirmInfoStep() {
             aria-label="Registration No."
             inputMode="numeric"
             placeholder="123456"
-            className={confirmControlClass(activeField === "registration")}
+            className={confirmControlClass()}
             value={state.registrationNumber}
             onFocus={() => setActiveField("registration")}
             onChange={(event) =>
@@ -462,7 +461,7 @@ export function ConfirmInfoStep() {
           <input
             aria-label="Health No."
             placeholder="1213-456-789"
-            className={confirmControlClass(activeField === "health")}
+            className={confirmControlClass()}
             value={state.healthCardNumber}
             onFocus={() => setActiveField("health")}
             onChange={(event) =>
@@ -481,7 +480,7 @@ export function ConfirmInfoStep() {
             aria-label="Birthday"
             inputMode="numeric"
             placeholder="DD-MM-YYYY"
-            className={confirmControlClass(activeField === "dob")}
+            className={confirmControlClass()}
             value={displayDobInput(state.dob)}
             onFocus={() => setActiveField("dob")}
             onChange={(event) =>
