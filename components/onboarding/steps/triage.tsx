@@ -194,13 +194,7 @@ export function OffRampStep() {
         </div>
       }
     >
-      <div className="rounded-[14px] border border-line bg-white p-4 text-[16px] leading-[22px] text-body">
-        If you chose this by mistake, go back and select a supported region.
-        Emergency care should always go through 911 or your nearest emergency
-        department.
-      </div>
-
-      <div className="mt-6 space-y-4 text-left">
+      <div className="space-y-4 text-left">
         <div className="space-y-1">
           <h2 className="text-[18px] leading-6 font-semibold text-ink">
             Join the waitlist
@@ -238,6 +232,12 @@ export function OffRampStep() {
             })
           }
         />
+      </div>
+
+      <div className="mt-6 rounded-[14px] border border-line bg-white p-4 text-[16px] leading-[22px] text-body">
+        If you chose this by mistake, go back and select a supported region.
+        Emergency care should always go through 911 or your nearest emergency
+        department.
       </div>
     </OnboardingShell>
   );
