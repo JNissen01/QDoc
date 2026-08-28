@@ -3,6 +3,7 @@
 import { MapPin } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
+  Field,
   PrimaryButton,
   RadioDot,
   SelectorCard,
@@ -151,7 +152,7 @@ export function IssuedProvinceStep() {
 }
 
 export function OffRampStep() {
-  const { goTo } = useStepNav("off-ramp");
+  const { state, update, goTo } = useStepNav("off-ramp");
 
   return (
     <OnboardingShell
@@ -165,10 +166,29 @@ export function OffRampStep() {
         </PrimaryButton>
       }
     >
-      <div className="rounded-[14px] border border-line bg-white p-4 text-[16px] leading-[22px] text-body">
-        If you chose this by mistake, go back and select a supported region.
-        Emergency care should always go through 911 or your nearest emergency
-        department.
+      <div className="space-y-4 text-left">
+        <Field
+          label="Location"
+          autoComplete="address-level2"
+          placeholder="City, province or territory"
+          value={state.waitlistLocation}
+          onChange={(event) =>
+            update({ waitlistLocation: event.target.value })
+          }
+        />
+        <Field
+          label="Email"
+          type="email"
+          autoComplete="email"
+          placeholder="JaneDoe@email.com"
+          value={state.waitlistEmail}
+          onChange={(event) => update({ waitlistEmail: event.target.value })}
+        />
+        <div className="rounded-[14px] border border-line bg-white p-4 text-[16px] leading-[22px] text-body">
+          If you chose this by mistake, go back and select a supported region.
+          Emergency care should always go through 911 or your nearest emergency
+          department.
+        </div>
       </div>
     </OnboardingShell>
   );

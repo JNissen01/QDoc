@@ -71,7 +71,10 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
     note: "Canadian resident in MB / ON / NU · 1/2",
   },
   coverage: { title: "Coverage", note: "2/2" },
-  "off-ramp": { title: "Off-ramp", note: "Outside the service area" },
+  "off-ramp": {
+    title: "Off-ramp",
+    note: "Outside the service area · location + email",
+  },
   "account-intro": {
     title: "Account intro",
     note: "Email · Create Account CTA",
