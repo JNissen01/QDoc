@@ -436,18 +436,23 @@ export function PaymentIntroStep() {
       }
     >
       <ol className="relative space-y-[62px]">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute top-[33px] bottom-[33px] left-[33px] z-0 w-0.5 -translate-x-1/2 bg-line"
-        />
-        {PAYMENT_INTRO_ITEMS.map((item) => (
+        {PAYMENT_INTRO_ITEMS.map((item, index, items) => (
           <li
             key={item.title}
             className="relative flex w-full items-center justify-start gap-[22px] self-stretch"
           >
-            <IconWell className="relative z-10 size-[66px] rounded-[12px] border-2 border-line bg-white">
-              <item.icon className="size-[34px]" strokeWidth={1.8} />
-            </IconWell>
+            <span className="relative shrink-0">
+              <IconWell className="relative z-10 size-[66px] rounded-[12px] border-2 border-line bg-white">
+                <item.icon className="size-[34px]" strokeWidth={1.8} />
+              </IconWell>
+              {index < items.length - 1 ? (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute top-[33px] left-1/2 z-0 w-0.5 -translate-x-1/2 bg-line"
+                  style={{ height: "calc(33px + 62px + 33px)" }}
+                />
+              ) : null}
+            </span>
             <div className="min-w-0 flex-1">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
                 {item.title}
