@@ -167,6 +167,10 @@ export function OffRampStep() {
       }
     >
       <div className="space-y-4 text-left">
+        <p className="text-[16px] leading-[22px] font-normal text-body">
+          Join the waitlist and we’ll notify you when QDoc is available in your
+          region.
+        </p>
         <Field
           label="Location"
           autoComplete="address-level2"
