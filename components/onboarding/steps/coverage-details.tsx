@@ -52,7 +52,9 @@ export function ScanCardStep() {
             <Camera className="size-5" />
             Use Camera
           </PrimaryButton>
-          <GhostButton onClick={() => goNext()}>Enter Manually</GhostButton>
+          <GhostButton className="text-[1rem] leading-6" onClick={() => goNext()}>
+            Enter Manually
+          </GhostButton>
         </div>
       }
     >
