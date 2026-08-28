@@ -363,18 +363,38 @@ export function ConfirmInfoStep() {
   const { state, update, goNext } = useStepNav("confirm-info");
   const [editing, setEditing] = useState(false);
   const [activeField, setActiveField] = useState<ConfirmField | null>(null);
+  const [draft, setDraft] = useState<{
+    issuedProvince: Province | null;
+    registrationNumber: string;
+    healthCardNumber: string;
+    dob: string;
+    sex: string;
+  } | null>(null);
   const provinceLabel = state.issuedProvince
     ? PROVINCE_LABELS[state.issuedProvince]
     : "—";
 
-  function toggleEditing() {
-    if (editing) {
-      setEditing(false);
-      setActiveField(null);
-      return;
-    }
+  function startEditing() {
+    setDraft({
+      issuedProvince: state.issuedProvince,
+      registrationNumber: state.registrationNumber,
+      healthCardNumber: state.healthCardNumber,
+      dob: state.dob,
+      sex: state.sex,
+    });
     setEditing(true);
     setActiveField("province");
+  }
+
+  function stopEditing() {
+    setEditing(false);
+    setActiveField(null);
+    setDraft(null);
+  }
+
+  function cancelEdits() {
+    if (draft) update(draft);
+    stopEditing();
   }
 
   return (
@@ -397,7 +417,7 @@ export function ConfirmInfoStep() {
         {editing ? null : (
           <button
             type="button"
-            onClick={toggleEditing}
+            onClick={startEditing}
             aria-label="Edit information"
             className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
           >
@@ -513,7 +533,14 @@ export function ConfirmInfoStep() {
           ) : null}
         </ConfirmRow>
         {editing ? (
-          <GhostButton onClick={toggleEditing}>confirm edits</GhostButton>
+          <div className="flex items-center gap-3 py-3">
+            <GhostButton className="w-auto shrink-0 px-2" onClick={cancelEdits}>
+              Cancel
+            </GhostButton>
+            <PrimaryButton className="min-w-0 flex-1" onClick={stopEditing}>
+              Confirm Edits
+            </PrimaryButton>
+          </div>
         ) : null}
       </div>
     </OnboardingShell>
