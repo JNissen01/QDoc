@@ -143,19 +143,19 @@ export function ContactStep() {
       subtitle="Add a phone number so we can reach you about your care."
       footer={<PrimaryButton onClick={continueContact}>Next</PrimaryButton>}
     >
-      <div className="space-y-4 text-left">
-        <Field
-          label="Phone"
-          type="tel"
-          autoComplete="tel"
-          placeholder="(123) 456-7890"
-          value={state.phone}
-          error={phoneError}
-          onChange={(event) =>
-            update({ phone: formatPhone(event.target.value) })
-          }
-        />
-      </div>
+      <Field
+        type="tel"
+        autoComplete="tel"
+        inputMode="tel"
+        aria-label="Phone"
+        inputClassName="text-center tracking-[0.08em]"
+        placeholder="(123) 456-7890"
+        value={state.phone}
+        error={phoneError}
+        onChange={(event) =>
+          update({ phone: formatPhone(event.target.value) })
+        }
+      />
     </OnboardingShell>
   );
 }
