@@ -3,7 +3,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Camera,
-  Check,
   Clock,
   CreditCard,
   HeartPulse,
@@ -384,7 +383,9 @@ export function ConfirmInfoStep() {
       title="Confirm your information"
       subtitle="Ensure the information entered is correct."
       footer={
-        <PrimaryButton onClick={() => goNext()}>Confirm</PrimaryButton>
+        <PrimaryButton disabled={editing} onClick={() => goNext()}>
+          Confirm
+        </PrimaryButton>
       }
     >
       <div
@@ -393,28 +394,22 @@ export function ConfirmInfoStep() {
           editing ? "border-action" : "border-line",
         )}
       >
-        <button
-          type="button"
-          onClick={toggleEditing}
-          aria-pressed={editing}
-          aria-label={editing ? "Done editing" : "Edit information"}
-          className={cn(
-            "absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full",
-            editing ? "bg-action text-white" : "text-action",
-          )}
-        >
-          {editing ? (
-            <Check className="size-4" strokeWidth={2.2} />
-          ) : (
+        {editing ? null : (
+          <button
+            type="button"
+            onClick={toggleEditing}
+            aria-label="Edit information"
+            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
+          >
             <Pencil className="size-4" strokeWidth={1.8} />
-          )}
-        </button>
+          </button>
+        )}
         <ConfirmRow
           label="Issuing Province"
           value={provinceLabel}
           editing={editing}
           active={activeField === "province"}
-          reserveAction
+          reserveAction={!editing}
           onActivate={() => setActiveField("province")}
         >
           {activeField === "province" ? (
@@ -517,6 +512,9 @@ export function ConfirmInfoStep() {
             </div>
           ) : null}
         </ConfirmRow>
+        {editing ? (
+          <GhostButton onClick={toggleEditing}>confirm edits</GhostButton>
+        ) : null}
       </div>
     </OnboardingShell>
   );
