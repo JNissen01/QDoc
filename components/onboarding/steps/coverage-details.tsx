@@ -40,7 +40,12 @@ const PROVINCE_LABELS: Record<Province, string> = {
   NU: "Nunavut",
 };
 
-const SEXES = ["Male", "Female", "Intersex", "Prefer not to say"];
+const SEX_CHIPS: { value: string; chip: string }[] = [
+  { value: "Female", chip: "F" },
+  { value: "Male", chip: "M" },
+  { value: "Intersex", chip: "I" },
+  { value: "Prefer not to say", chip: "Prefer not to say" },
+];
 
 type ConfirmField =
   | "province"
@@ -275,12 +280,42 @@ function confirmControlClass(active: boolean) {
   );
 }
 
+function ConfirmChip({
+  selected,
+  children,
+  onClick,
+  className,
+}: {
+  selected: boolean;
+  children: ReactNode;
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onClick}
+      className={cn(
+        "h-12 rounded-[14px] text-[16px]",
+        selected
+          ? "province-chip-selected font-medium"
+          : "border border-line bg-white font-normal text-ink",
+        className,
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 function ConfirmRow({
   label,
   value,
   editing,
   active,
   reserveAction = false,
+  onActivate,
   children,
 }: {
   label: string;
@@ -288,8 +323,11 @@ function ConfirmRow({
   editing: boolean;
   active: boolean;
   reserveAction?: boolean;
-  children: ReactNode;
+  onActivate?: () => void;
+  children?: ReactNode;
 }) {
+  const showEditor = Boolean(editing && children);
+
   return (
     <div
       className={cn(
@@ -297,24 +335,27 @@ function ConfirmRow({
         reserveAction && "pr-12",
         editing && active && "bg-tint",
       )}
+      onClick={() => {
+        if (editing) onActivate?.();
+      }}
     >
-      <label className="block min-w-0">
-        <span
+      <div className="min-w-0">
+        <p
           className={cn(
             "text-[13px] leading-4",
             editing && active ? "font-medium text-action" : "text-caption",
           )}
         >
           {label}
-        </span>
-        {editing ? (
+        </p>
+        {showEditor ? (
           children
         ) : (
           <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
             {value}
           </p>
         )}
-      </label>
+      </div>
     </div>
   );
 }
@@ -374,33 +415,32 @@ export function ConfirmInfoStep() {
           editing={editing}
           active={activeField === "province"}
           reserveAction
+          onActivate={() => setActiveField("province")}
         >
-          <select
-            autoFocus
-            aria-label="Issuing Province"
-            className={confirmControlClass(activeField === "province")}
-            value={state.issuedProvince ?? ""}
-            onFocus={() => setActiveField("province")}
-            onChange={(event) => {
-              const next = event.target.value;
-              if (next === "MB" || next === "ON" || next === "NU") {
-                update({ issuedProvince: next });
-              }
-            }}
-          >
-            {!state.issuedProvince ? <option value="">Select</option> : null}
-            {(Object.keys(PROVINCE_LABELS) as Province[]).map((code) => (
-              <option key={code} value={code}>
-                {PROVINCE_LABELS[code]}
-              </option>
-            ))}
-          </select>
+          {activeField === "province" ? (
+            <div
+              className="mt-2 grid grid-cols-3 gap-2"
+              role="group"
+              aria-label="Issuing Province"
+            >
+              {(Object.keys(PROVINCE_LABELS) as Province[]).map((code) => (
+                <ConfirmChip
+                  key={code}
+                  selected={state.issuedProvince === code}
+                  onClick={() => update({ issuedProvince: code })}
+                >
+                  {code}
+                </ConfirmChip>
+              ))}
+            </div>
+          ) : null}
         </ConfirmRow>
         <ConfirmRow
           label="Registration No."
           value={state.registrationNumber || "—"}
           editing={editing}
           active={activeField === "registration"}
+          onActivate={() => setActiveField("registration")}
         >
           <input
             aria-label="Registration No."
@@ -421,6 +461,7 @@ export function ConfirmInfoStep() {
           value={state.healthCardNumber || "—"}
           editing={editing}
           active={activeField === "health"}
+          onActivate={() => setActiveField("health")}
         >
           <input
             aria-label="Health No."
@@ -438,6 +479,7 @@ export function ConfirmInfoStep() {
           value={formatDobDisplay(state.dob)}
           editing={editing}
           active={activeField === "dob"}
+          onActivate={() => setActiveField("dob")}
         >
           <input
             aria-label="Birthday"
@@ -456,21 +498,24 @@ export function ConfirmInfoStep() {
           value={state.sex || "—"}
           editing={editing}
           active={activeField === "sex"}
+          onActivate={() => setActiveField("sex")}
         >
-          <select
-            aria-label="Sex"
-            className={confirmControlClass(activeField === "sex")}
-            value={state.sex}
-            onFocus={() => setActiveField("sex")}
-            onChange={(event) => update({ sex: event.target.value })}
-          >
-            {!state.sex ? <option value="">Select</option> : null}
-            {SEXES.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          {activeField === "sex" ? (
+            <div className="mt-2 grid grid-cols-3 gap-2" role="group" aria-label="Sex">
+              {SEX_CHIPS.map((option) => (
+                <ConfirmChip
+                  key={option.value}
+                  selected={state.sex === option.value}
+                  className={
+                    option.value === "Prefer not to say" ? "col-span-3" : undefined
+                  }
+                  onClick={() => update({ sex: option.value })}
+                >
+                  {option.chip}
+                </ConfirmChip>
+              ))}
+            </div>
+          ) : null}
         </ConfirmRow>
       </div>
     </OnboardingShell>
