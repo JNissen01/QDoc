@@ -98,7 +98,14 @@ export function AccountIntroStep() {
     <OnboardingShell
       step="account-intro"
       title="Now that we know you’re eligible, lets set up your account!"
-      subtitle="Basic account setup needed to insure the privacy and security of your information."
+      subtitle={
+        <p className="text-[16px] leading-[22px] font-normal text-body">
+          Basic account setup needed to insure the privacy and security of your
+          information.
+          <br />
+          Enter your email to begin.
+        </p>
+      }
       footer={
         <PrimaryButton onClick={continueAccount}>Create Account</PrimaryButton>
       }
