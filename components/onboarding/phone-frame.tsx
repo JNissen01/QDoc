@@ -136,12 +136,17 @@ function DeviceChrome({
       />
 
       <div
-        className="h-full rounded-[54px] p-[12px] shadow-[0_24px_80px_rgba(30,27,75,0.28),inset_0_1px_0_rgba(255,255,255,0.14)]"
+        className="box-border rounded-[54px] p-[12px] shadow-[0_24px_80px_rgba(30,27,75,0.28),inset_0_1px_0_rgba(255,255,255,0.14)]"
         style={{
+          width: PHONE_DEVICE_WIDTH,
+          height: PHONE_DEVICE_HEIGHT,
           background: "linear-gradient(180deg, #2f2c4d 0%, #14121f 100%)",
         }}
       >
-        <div className="relative flex h-full flex-col overflow-hidden rounded-[42px] bg-canvas">
+        <div
+          className="relative flex flex-col overflow-hidden rounded-[42px] bg-canvas"
+          style={{ width: PHONE_SCREEN_WIDTH, height: PHONE_SCREEN_HEIGHT }}
+        >
           <StatusBar />
           <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pt-3 pb-2">
             {children}
@@ -166,13 +171,13 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
   }
 
   const scale: CSSProperties = {
-    ["--phone-scale" as string]: `min(1, (100dvw - 2rem) / ${PHONE_DEVICE_WIDTH}px, (100dvh - 2rem) / ${PHONE_DEVICE_HEIGHT}px)`,
+    ["--phone-scale" as string]: `min(1, (100dvw - 2rem) / ${PHONE_DEVICE_WIDTH}px)`,
     width: `calc(${PHONE_DEVICE_WIDTH}px * var(--phone-scale))`,
     height: `calc(${PHONE_DEVICE_HEIGHT}px * var(--phone-scale))`,
   };
 
   return (
-    <div className="flex min-h-dvh items-center justify-center overflow-hidden bg-[#d5def4] px-4 py-4">
+    <div className="flex min-h-dvh items-center justify-center overflow-x-hidden overflow-y-auto bg-[#d5def4] px-4 py-4">
       <div style={scale}>
         <div
           className="origin-top-left"
