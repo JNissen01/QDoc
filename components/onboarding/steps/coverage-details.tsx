@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Camera,
+  Check,
   Clock,
   CreditCard,
   HeartPulse,
@@ -31,12 +32,22 @@ import {
   MOCK_PAYMENT_CARD,
 } from "@/lib/mocks";
 import type { Province } from "@/lib/onboarding-state";
+import { cn } from "@/lib/utils";
 
 const PROVINCE_LABELS: Record<Province, string> = {
   MB: "Manitoba",
   ON: "Ontario",
   NU: "Nunavut",
 };
+
+const SEXES = ["Male", "Female", "Intersex", "Prefer not to say"];
+
+type ConfirmField =
+  | "province"
+  | "registration"
+  | "health"
+  | "dob"
+  | "sex";
 
 export function ScanCardStep() {
   const { goNext, goTo } = useStepNav("scan-card");
@@ -244,50 +255,87 @@ function formatDobDisplay(value: string) {
   return value || "—";
 }
 
+function formatDobInput(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
+}
+
+function displayDobInput(value: string) {
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (iso) return `${iso[3]}-${iso[2]}-${iso[1]}`;
+  return formatDobInput(value);
+}
+
+function confirmControlClass(active: boolean) {
+  return cn(
+    "mt-1 w-full bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none",
+    active ? "border-b-2 border-action pb-0.5" : "border-b border-line pb-0.5",
+  );
+}
+
 function ConfirmRow({
   label,
   value,
-  onEdit,
-  editing = false,
-  editor,
+  editing,
+  active,
+  reserveAction = false,
+  children,
 }: {
   label: string;
   value: string;
-  onEdit: () => void;
-  editing?: boolean;
-  editor?: ReactNode;
+  editing: boolean;
+  active: boolean;
+  reserveAction?: boolean;
+  children: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-line py-4 last:border-b-0">
-      <div className="min-w-0 flex-1">
-        <p className="text-[13px] leading-4 text-caption">{label}</p>
-        {editing && editor ? (
-          editor
+    <div
+      className={cn(
+        "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
+        reserveAction && "pr-12",
+        editing && active && "bg-tint",
+      )}
+    >
+      <label className="block min-w-0">
+        <span
+          className={cn(
+            "text-[13px] leading-4",
+            editing && active ? "font-medium text-action" : "text-caption",
+          )}
+        >
+          {label}
+        </span>
+        {editing ? (
+          children
         ) : (
           <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
             {value}
           </p>
         )}
-      </div>
-      <button
-        type="button"
-        onClick={onEdit}
-        className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-        aria-label={editing ? `Done editing ${label}` : `Edit ${label}`}
-        aria-expanded={editing}
-      >
-        <Pencil className="size-4" strokeWidth={1.8} />
-      </button>
+      </label>
     </div>
   );
 }
 
 export function ConfirmInfoStep() {
-  const { state, update, goNext, goTo } = useStepNav("confirm-info");
-  const [editingProvince, setEditingProvince] = useState(false);
+  const { state, update, goNext } = useStepNav("confirm-info");
+  const [editing, setEditing] = useState(false);
+  const [activeField, setActiveField] = useState<ConfirmField | null>(null);
   const provinceLabel = state.issuedProvince
     ? PROVINCE_LABELS[state.issuedProvince]
     : "—";
+
+  function toggleEditing() {
+    if (editing) {
+      setEditing(false);
+      setActiveField(null);
+      return;
+    }
+    setEditing(true);
+    setActiveField("province");
+  }
 
   return (
     <OnboardingShell
@@ -298,69 +346,132 @@ export function ConfirmInfoStep() {
         <PrimaryButton onClick={() => goNext()}>Confirm</PrimaryButton>
       }
     >
-      <div className="rounded-[14px] border border-line bg-white px-4">
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-[14px] border bg-white px-4",
+          editing ? "border-action" : "border-line",
+        )}
+      >
+        <button
+          type="button"
+          onClick={toggleEditing}
+          aria-pressed={editing}
+          aria-label={editing ? "Done editing" : "Edit information"}
+          className={cn(
+            "absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full",
+            editing ? "bg-action text-white" : "text-action",
+          )}
+        >
+          {editing ? (
+            <Check className="size-4" strokeWidth={2.2} />
+          ) : (
+            <Pencil className="size-4" strokeWidth={1.8} />
+          )}
+        </button>
         <ConfirmRow
           label="Issuing Province"
           value={provinceLabel}
-          editing={editingProvince}
-          onEdit={() => setEditingProvince((open) => !open)}
-          editor={
-            <select
-              autoFocus
-              aria-label="Issuing Province"
-              className="mt-1 w-full bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none"
-              value={state.issuedProvince ?? ""}
-              onChange={(event) => {
-                const next = event.target.value;
-                if (next === "MB" || next === "ON" || next === "NU") {
-                  update({ issuedProvince: next });
-                  setEditingProvince(false);
-                }
-              }}
-            >
-              {!state.issuedProvince ? <option value="">Select</option> : null}
-              {(Object.keys(PROVINCE_LABELS) as Province[]).map((code) => (
-                <option key={code} value={code}>
-                  {PROVINCE_LABELS[code]}
-                </option>
-              ))}
-            </select>
-          }
-        />
+          editing={editing}
+          active={activeField === "province"}
+          reserveAction
+        >
+          <select
+            autoFocus
+            aria-label="Issuing Province"
+            className={confirmControlClass(activeField === "province")}
+            value={state.issuedProvince ?? ""}
+            onFocus={() => setActiveField("province")}
+            onChange={(event) => {
+              const next = event.target.value;
+              if (next === "MB" || next === "ON" || next === "NU") {
+                update({ issuedProvince: next });
+              }
+            }}
+          >
+            {!state.issuedProvince ? <option value="">Select</option> : null}
+            {(Object.keys(PROVINCE_LABELS) as Province[]).map((code) => (
+              <option key={code} value={code}>
+                {PROVINCE_LABELS[code]}
+              </option>
+            ))}
+          </select>
+        </ConfirmRow>
         <ConfirmRow
           label="Registration No."
           value={state.registrationNumber || "—"}
-          onEdit={() => goTo("registration-number")}
-        />
+          editing={editing}
+          active={activeField === "registration"}
+        >
+          <input
+            aria-label="Registration No."
+            inputMode="numeric"
+            placeholder="123456"
+            className={confirmControlClass(activeField === "registration")}
+            value={state.registrationNumber}
+            onFocus={() => setActiveField("registration")}
+            onChange={(event) =>
+              update({
+                registrationNumber: formatRegistration(event.target.value),
+              })
+            }
+          />
+        </ConfirmRow>
         <ConfirmRow
           label="Health No."
           value={state.healthCardNumber || "—"}
-          onEdit={() => goTo("health-card")}
-        />
-        <div className="flex items-start justify-between gap-3 py-4">
-          <div className="min-w-0 space-y-3">
-            <div>
-              <p className="text-[13px] leading-4 text-caption">Birthday</p>
-              <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
-                {formatDobDisplay(state.dob)}
-              </p>
-            </div>
-            <div>
-              <p className="text-[13px] leading-4 text-caption">Sex</p>
-              <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
-                {state.sex || "—"}
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => goTo("dob")}
-            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-            aria-label="Edit birthday and sex"
+          editing={editing}
+          active={activeField === "health"}
+        >
+          <input
+            aria-label="Health No."
+            placeholder="1213-456-789"
+            className={confirmControlClass(activeField === "health")}
+            value={state.healthCardNumber}
+            onFocus={() => setActiveField("health")}
+            onChange={(event) =>
+              update({ healthCardNumber: formatHealthCard(event.target.value) })
+            }
+          />
+        </ConfirmRow>
+        <ConfirmRow
+          label="Birthday"
+          value={formatDobDisplay(state.dob)}
+          editing={editing}
+          active={activeField === "dob"}
+        >
+          <input
+            aria-label="Birthday"
+            inputMode="numeric"
+            placeholder="DD-MM-YYYY"
+            className={confirmControlClass(activeField === "dob")}
+            value={displayDobInput(state.dob)}
+            onFocus={() => setActiveField("dob")}
+            onChange={(event) =>
+              update({ dob: formatDobInput(event.target.value) })
+            }
+          />
+        </ConfirmRow>
+        <ConfirmRow
+          label="Sex"
+          value={state.sex || "—"}
+          editing={editing}
+          active={activeField === "sex"}
+        >
+          <select
+            aria-label="Sex"
+            className={confirmControlClass(activeField === "sex")}
+            value={state.sex}
+            onFocus={() => setActiveField("sex")}
+            onChange={(event) => update({ sex: event.target.value })}
           >
-            <Pencil className="size-4" strokeWidth={1.8} />
-          </button>
-        </div>
+            {!state.sex ? <option value="">Select</option> : null}
+            {SEXES.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </ConfirmRow>
       </div>
     </OnboardingShell>
   );
