@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Camera,
   Clock,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { ScanCardLockIcon } from "@/components/brand/scan-card-lock-icon";
 import { VerifiedCheckIcon } from "@/components/brand/verified-check-icon";
+import { useFlowPreview } from "@/components/flow/flow-preview-context";
 import { OnboardingShell, PhoneFrame } from "@/components/onboarding/shell";
 import {
   Field,
@@ -38,42 +39,7 @@ const PROVINCE_LABELS: Record<Province, string> = {
 };
 
 export function ScanCardStep() {
-  const { goNext, update } = useStepNav("scan-card");
-  const [scanning, setScanning] = useState(false);
-
-  async function scan() {
-    setScanning(true);
-    const patch = {
-      healthCardScanned: true,
-      issuedProvince: MOCK_HEALTH_CARD.issuedProvince,
-      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
-      healthCardNumber: MOCK_HEALTH_CARD.number,
-      healthCardExpiry: MOCK_HEALTH_CARD.expiry,
-      dob: MOCK_HEALTH_CARD.dob,
-    } as const;
-    await delay(1400);
-    update(patch);
-    setScanning(false);
-    goNext(patch);
-  }
-
-  if (scanning) {
-    return (
-      <PhoneFrame>
-        <div className="flex flex-1 flex-col items-center justify-center text-center">
-          <div className="relative flex size-56 items-center justify-center rounded-[28px] border-2 border-dashed border-action bg-white">
-            <ScanLine className="size-16 animate-pulse text-action" />
-          </div>
-          <p className="mt-6 text-[20px] font-semibold text-ink">
-            Scanning your card
-          </p>
-          <p className="mt-2 text-[16px] text-body">
-            Extracting your health card number securely…
-          </p>
-        </div>
-      </PhoneFrame>
-    );
-  }
+  const { goNext, goTo } = useStepNav("scan-card");
 
   return (
     <OnboardingShell
@@ -82,7 +48,7 @@ export function ScanCardStep() {
       subtitle="Or enter your information manually."
       footer={
         <div>
-          <PrimaryButton onClick={scan}>
+          <PrimaryButton onClick={() => goTo("scanning-card")}>
             <Camera className="size-5" />
             Use Camera
           </PrimaryButton>
@@ -146,6 +112,52 @@ export function ScanCardStep() {
         </InfoNote>
       </div>
     </OnboardingShell>
+  );
+}
+
+export function ScanningCardStep() {
+  const { update, goNext } = useStepNav("scanning-card");
+  const preview = useFlowPreview();
+
+  useEffect(() => {
+    if (preview) return;
+
+    let cancelled = false;
+    const patch = {
+      healthCardScanned: true,
+      issuedProvince: MOCK_HEALTH_CARD.issuedProvince,
+      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
+      healthCardNumber: MOCK_HEALTH_CARD.number,
+      healthCardExpiry: MOCK_HEALTH_CARD.expiry,
+      dob: MOCK_HEALTH_CARD.dob,
+    } as const;
+
+    void delay(1400).then(() => {
+      if (cancelled) return;
+      update(patch);
+      goNext(patch);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run the fake scan once when this screen mounts
+  }, [preview]);
+
+  return (
+    <PhoneFrame>
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <div className="relative flex size-56 items-center justify-center rounded-[28px] border-2 border-dashed border-action bg-white">
+          <ScanLine className="size-16 animate-pulse text-action" />
+        </div>
+        <p className="mt-6 text-[20px] font-semibold text-ink">
+          Scanning your card
+        </p>
+        <p className="mt-2 text-[16px] text-body">
+          Extracting your health card number securely…
+        </p>
+      </div>
+    </PhoneFrame>
   );
 }
 

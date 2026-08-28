@@ -14,6 +14,7 @@ export const STEP_IDS = [
   "address",
   "dob",
   "scan-card",
+  "scanning-card",
   "issued-province",
   "registration-number",
   "health-card",
@@ -78,6 +79,7 @@ export function getProgress(
     case "address":
       return { current: 6, total: ACCOUNT_PHASE };
     case "scan-card":
+    case "scanning-card":
       return { current: 0, total: PUBLIC_INSURANCE_PHASE, hidden: true };
     case "issued-province":
       return { current: 1, total: PUBLIC_INSURANCE_PHASE };
@@ -160,7 +162,9 @@ export function getNextStep(
       if (state.coverage === "private") return "insurance-provider";
       return "payment-intro";
     case "scan-card":
-      return state.healthCardScanned ? "confirm-info" : "issued-province";
+      return "issued-province";
+    case "scanning-card":
+      return "confirm-info";
     case "issued-province":
       return "registration-number";
     case "registration-number":
@@ -227,6 +231,8 @@ export function getPrevStep(
       return "sex";
     case "scan-card":
       return "address";
+    case "scanning-card":
+      return "scan-card";
     case "issued-province":
       return "scan-card";
     case "registration-number":
