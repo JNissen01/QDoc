@@ -534,11 +534,14 @@ export function ConfirmInfoStep() {
         </ConfirmRow>
         {editing ? (
           <div className="flex items-center gap-3 py-3">
-            <GhostButton className="w-auto shrink-0 px-2" onClick={cancelEdits}>
+            <GhostButton
+              className="min-w-0 w-auto flex-1 basis-0"
+              onClick={cancelEdits}
+            >
               Cancel
             </GhostButton>
             <PrimaryButton
-              className="h-10 min-w-0 flex-1 text-[16px] leading-[22px]"
+              className="h-10 min-w-0 w-auto flex-1 basis-0 text-[16px] leading-[22px]"
               onClick={stopEditing}
             >
               Confirm Edits
