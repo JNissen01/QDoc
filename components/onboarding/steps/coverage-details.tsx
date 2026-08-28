@@ -43,26 +43,26 @@ export function ScanCardStep() {
 
   async function scan() {
     setScanning(true);
+    const patch = {
+      healthCardScanned: true,
+      issuedProvince: MOCK_HEALTH_CARD.issuedProvince,
+      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
+      healthCardNumber: MOCK_HEALTH_CARD.number,
+      healthCardExpiry: MOCK_HEALTH_CARD.expiry,
+      dob: MOCK_HEALTH_CARD.dob,
+    } as const;
     await delay(1400);
-    update({
-      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
-      healthCardNumber: MOCK_HEALTH_CARD.number,
-      healthCardExpiry: MOCK_HEALTH_CARD.expiry,
-    });
+    update(patch);
     setScanning(false);
-    goNext({
-      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
-      healthCardNumber: MOCK_HEALTH_CARD.number,
-      healthCardExpiry: MOCK_HEALTH_CARD.expiry,
-    });
+    goNext(patch);
   }
 
   if (scanning) {
     return (
       <PhoneFrame>
-        <div className="flex flex-1 flex-col justify-center text-left">
+        <div className="flex flex-1 flex-col items-center justify-center text-center">
           <div className="relative flex size-56 items-center justify-center rounded-[28px] border-2 border-dashed border-action bg-white">
-            <ScanLine className="size-16 text-action" />
+            <ScanLine className="size-16 animate-pulse text-action" />
           </div>
           <p className="mt-6 text-[20px] font-semibold text-ink">
             Scanning your card

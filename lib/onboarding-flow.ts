@@ -160,7 +160,7 @@ export function getNextStep(
       if (state.coverage === "private") return "insurance-provider";
       return "payment-intro";
     case "scan-card":
-      return "issued-province";
+      return state.healthCardScanned ? "confirm-info" : "issued-province";
     case "issued-province":
       return "registration-number";
     case "registration-number":
@@ -237,7 +237,7 @@ export function getPrevStep(
       if (state.coverage === "provincial") return "health-card";
       return "address";
     case "confirm-info":
-      return "dob";
+      return state.healthCardScanned ? "scan-card" : "dob";
     case "insurance-provider":
       return "dob";
     case "insurance-policy":

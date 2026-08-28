@@ -61,6 +61,7 @@ export type OnboardingState = {
   registrationNumber: string;
   healthCardNumber: string;
   healthCardExpiry: string;
+  healthCardScanned: boolean;
   insuranceProvider: string;
   policyNumber: string;
   memberId: string;
@@ -108,6 +109,7 @@ export const defaultOnboardingState: OnboardingState = {
   registrationNumber: "",
   healthCardNumber: "",
   healthCardExpiry: "",
+  healthCardScanned: false,
   insuranceProvider: "MSH",
   policyNumber: "",
   memberId: "",
