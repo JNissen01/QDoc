@@ -537,7 +537,10 @@ export function ConfirmInfoStep() {
             <GhostButton className="w-auto shrink-0 px-2" onClick={cancelEdits}>
               Cancel
             </GhostButton>
-            <PrimaryButton className="min-w-0 flex-1" onClick={stopEditing}>
+            <PrimaryButton
+              className="h-10 min-w-0 flex-1 text-[16px] leading-[22px]"
+              onClick={stopEditing}
+            >
               Confirm Edits
             </PrimaryButton>
           </div>
