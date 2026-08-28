@@ -43,6 +43,10 @@ export type OnboardingState = {
   inServiceArea: boolean | null;
   coverage: CoverageType | null;
   issuedProvince: Province | null;
+  /** Free-text province/location for the off-ramp waitlist. */
+  waitlistLocation: string;
+  waitlistEmail: string;
+  waitlistJoined: boolean;
   email: string;
   password: string;
   emailVerified: boolean;
@@ -88,6 +92,9 @@ export const defaultOnboardingState: OnboardingState = {
   inServiceArea: null,
   coverage: null,
   issuedProvince: null,
+  waitlistLocation: "",
+  waitlistEmail: "",
+  waitlistJoined: false,
   email: "",
   password: "",
   emailVerified: false,
