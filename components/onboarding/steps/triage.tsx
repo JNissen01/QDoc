@@ -196,7 +196,7 @@ export function OffRampStep() {
           value={state.waitlistEmail}
           onChange={(event) => update({ waitlistEmail: event.target.value })}
         />
-        <div className="rounded-[14px] border border-line bg-white p-4 text-[16px] leading-[22px] text-body">
+        <div className="rounded-[14px] bg-white p-4 text-[16px] leading-[22px] text-body">
           If you chose this by mistake, go back and select a supported region.
           Emergency care should always go through 911 or your nearest emergency
           department.
