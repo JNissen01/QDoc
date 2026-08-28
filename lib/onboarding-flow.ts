@@ -6,8 +6,8 @@ export const STEP_IDS = [
   "coverage",
   "off-ramp",
   "account-intro",
-  "confirm-email",
   "contact",
+  "confirm-email",
   "password",
   "name",
   "sex",
@@ -65,9 +65,9 @@ export function getProgress(
       return { current: 1, total: TRIAGE_PHASE };
     case "coverage":
       return { current: 2, total: TRIAGE_PHASE };
-    case "confirm-email":
-      return { current: 1, total: ACCOUNT_PHASE };
     case "contact":
+      return { current: 1, total: ACCOUNT_PHASE };
+    case "confirm-email":
       return { current: 2, total: ACCOUNT_PHASE };
     case "password":
       return { current: 3, total: ACCOUNT_PHASE };
@@ -140,10 +140,10 @@ export function getNextStep(
     case "coverage":
       return "account-intro";
     case "account-intro":
-      return "confirm-email";
-    case "confirm-email":
       return "contact";
     case "contact":
+      return "confirm-email";
+    case "confirm-email":
       return "password";
     case "password":
       return "name";
@@ -213,12 +213,12 @@ export function getPrevStep(
       return "service-area";
     case "account-intro":
       return "coverage";
-    case "confirm-email":
-      return "account-intro";
     case "contact":
-      return "confirm-email";
-    case "password":
+      return "account-intro";
+    case "confirm-email":
       return "contact";
+    case "password":
+      return "confirm-email";
     case "name":
       return "password";
     case "sex":
