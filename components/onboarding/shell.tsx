@@ -102,7 +102,7 @@ export function OnboardingShell({
 }: {
   step: StepId;
   title?: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
   footer?: ReactNode;
   children: ReactNode;
   hideBack?: boolean;
@@ -153,9 +153,13 @@ export function OnboardingShell({
               </h1>
             ) : null}
             {subtitle ? (
-              <p className="text-[16px] leading-[22px] font-normal text-body">
-                {subtitle}
-              </p>
+              typeof subtitle === "string" ? (
+                <p className="text-[16px] leading-[22px] font-normal text-body">
+                  {subtitle}
+                </p>
+              ) : (
+                subtitle
+              )
             ) : null}
           </header>
         )}

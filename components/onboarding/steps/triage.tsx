@@ -159,7 +159,19 @@ export function OffRampStep() {
       step="off-ramp"
       hideBack
       title="QDoc isn’t available for this visit yet"
-      subtitle="We’re currently able to see patients who are physically in Manitoba, Northwestern Ontario, or Nunavut at the time of their visit."
+      subtitle={
+        <div className="space-y-[12px]">
+          <p className="text-[16px] leading-[22px] font-normal text-body">
+            We’re currently able to see patients who are physically in
+            Manitoba, Northwestern Ontario, or Nunavut at the time of their
+            visit.
+          </p>
+          <p className="text-[16px] leading-[22px] font-normal text-body">
+            Join the waitlist and we’ll notify you when QDoc is available in
+            your region.
+          </p>
+        </div>
+      }
       footer={
         <PrimaryButton onClick={() => goTo("service-area")}>
           Go back
@@ -167,10 +179,6 @@ export function OffRampStep() {
       }
     >
       <div className="space-y-4 text-left">
-        <p className="text-[16px] leading-[22px] font-normal text-body">
-          Join the waitlist and we’ll notify you when QDoc is available in your
-          region.
-        </p>
         <Field
           label="Location"
           autoComplete="address-level2"
