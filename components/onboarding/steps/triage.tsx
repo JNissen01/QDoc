@@ -160,7 +160,7 @@ export function OffRampStep() {
       hideBack
       title="QDoc isn’t available for this visit yet"
       subtitle={
-        <div className="space-y-[12px]">
+        <div className="space-y-2">
           <p className="text-[16px] leading-[22px] font-normal text-body">
             We’re currently able to see patients who are physically in
             Manitoba, Northwestern Ontario, or Nunavut at the time of their
