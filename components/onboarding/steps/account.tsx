@@ -110,17 +110,16 @@ export function AccountIntroStep() {
         <PrimaryButton onClick={continueAccount}>Create Account</PrimaryButton>
       }
     >
-      <div className="space-y-4 text-left">
-        <Field
-          label="Email"
-          type="email"
-          autoComplete="email"
-          placeholder="JaneDoe@email.com"
-          value={state.email}
-          error={emailError}
-          onChange={(event) => update({ email: event.target.value })}
-        />
-      </div>
+      <Field
+        type="email"
+        autoComplete="email"
+        aria-label="Email"
+        inputClassName="text-center tracking-[0.08em]"
+        placeholder="JaneDoe@email.com"
+        value={state.email}
+        error={emailError}
+        onChange={(event) => update({ email: event.target.value })}
+      />
     </OnboardingShell>
   );
 }
