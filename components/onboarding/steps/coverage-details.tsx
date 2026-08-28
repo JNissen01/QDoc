@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Camera,
   Clock,
@@ -248,24 +248,33 @@ function ConfirmRow({
   label,
   value,
   onEdit,
+  editing = false,
+  editor,
 }: {
   label: string;
   value: string;
   onEdit: () => void;
+  editing?: boolean;
+  editor?: ReactNode;
 }) {
   return (
     <div className="flex items-start justify-between gap-3 border-b border-line py-4 last:border-b-0">
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-[13px] leading-4 text-caption">{label}</p>
-        <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
-          {value}
-        </p>
+        {editing && editor ? (
+          editor
+        ) : (
+          <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
+            {value}
+          </p>
+        )}
       </div>
       <button
         type="button"
         onClick={onEdit}
         className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-        aria-label={`Edit ${label}`}
+        aria-label={editing ? `Done editing ${label}` : `Edit ${label}`}
+        aria-expanded={editing}
       >
         <Pencil className="size-4" strokeWidth={1.8} />
       </button>
@@ -274,7 +283,8 @@ function ConfirmRow({
 }
 
 export function ConfirmInfoStep() {
-  const { state, goNext, goTo } = useStepNav("confirm-info");
+  const { state, update, goNext, goTo } = useStepNav("confirm-info");
+  const [editingProvince, setEditingProvince] = useState(false);
   const provinceLabel = state.issuedProvince
     ? PROVINCE_LABELS[state.issuedProvince]
     : "—";
@@ -292,7 +302,30 @@ export function ConfirmInfoStep() {
         <ConfirmRow
           label="Issuing Province"
           value={provinceLabel}
-          onEdit={() => goTo("issued-province")}
+          editing={editingProvince}
+          onEdit={() => setEditingProvince((open) => !open)}
+          editor={
+            <select
+              autoFocus
+              aria-label="Issuing Province"
+              className="mt-1 w-full bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none"
+              value={state.issuedProvince ?? ""}
+              onChange={(event) => {
+                const next = event.target.value;
+                if (next === "MB" || next === "ON" || next === "NU") {
+                  update({ issuedProvince: next });
+                  setEditingProvince(false);
+                }
+              }}
+            >
+              {!state.issuedProvince ? <option value="">Select</option> : null}
+              {(Object.keys(PROVINCE_LABELS) as Province[]).map((code) => (
+                <option key={code} value={code}>
+                  {PROVINCE_LABELS[code]}
+                </option>
+              ))}
+            </select>
+          }
         />
         <ConfirmRow
           label="Registration No."
