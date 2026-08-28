@@ -35,22 +35,30 @@ function readStoredState(): OnboardingState {
   }
 }
 
-export function OnboardingProvider({ children }: { children: ReactNode }) {
+export function OnboardingProvider({
+  children,
+  persist = true,
+}: {
+  children: ReactNode;
+  /** When false (flow-map previews), use defaults and do not touch localStorage. */
+  persist?: boolean;
+}) {
   const [state, setState] = useState<OnboardingState>(defaultOnboardingState);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(!persist);
 
   useEffect(() => {
+    if (!persist) return;
     const frame = window.requestAnimationFrame(() => {
       setState(readStoredState());
       setReady(true);
     });
     return () => window.cancelAnimationFrame(frame);
-  }, []);
+  }, [persist]);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!persist || !ready) return;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [ready, state]);
+  }, [persist, ready, state]);
 
   const update = useCallback((patch: Partial<OnboardingState>) => {
     setState((current) => ({ ...current, ...patch }));
@@ -58,8 +66,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
   const reset = useCallback(() => {
     setState(defaultOnboardingState);
-    window.localStorage.removeItem(STORAGE_KEY);
-  }, []);
+    if (persist) {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [persist]);
 
   const value = useMemo(
     () => ({ state, ready, update, reset }),

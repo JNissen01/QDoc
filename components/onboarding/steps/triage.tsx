@@ -162,17 +162,18 @@ export function OffRampStep() {
   const [submitted, setSubmitted] = useState(false);
 
   const location = state.waitlistLocation.trim();
-  const hasRequiredText = Boolean(location && state.waitlistEmail.trim());
+  const emailIsValid = isValidEmail(state.waitlistEmail);
+  const canJoin = Boolean(location && emailIsValid);
   const locationError =
     submitted && !location ? "Enter your province or location" : undefined;
   const emailError =
-    submitted && !isValidEmail(state.waitlistEmail)
+    submitted && !emailIsValid
       ? "Enter a valid email address"
       : undefined;
 
   function joinWaitlist() {
     setSubmitted(true);
-    if (!location || !isValidEmail(state.waitlistEmail)) return;
+    if (!canJoin) return;
     update({ waitlistJoined: true });
   }
 
@@ -185,7 +186,7 @@ export function OffRampStep() {
       footer={
         <div className="space-y-2">
           <PrimaryButton
-            disabled={state.waitlistJoined || !hasRequiredText}
+            disabled={state.waitlistJoined || !canJoin}
             onClick={joinWaitlist}
           >
             {state.waitlistJoined ? "You’re on the waitlist" : "Join waitlist"}

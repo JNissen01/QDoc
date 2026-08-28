@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { DashboardScreen } from "@/components/dashboard/dashboard-screen";
 import { FlowPreviewProvider } from "@/components/flow/flow-preview-context";
+import { OnboardingProvider } from "@/components/onboarding/provider";
 import { StepView } from "@/components/onboarding/step-view";
 import {
   getFlowSections,
@@ -100,39 +101,41 @@ export function FlowBoard() {
         </Link>
       </header>
 
-      <FlowPreviewProvider>
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-14">
-          {sections.map((group, sectionIndex) => (
-            <section
-              key={group.section.id}
-              aria-labelledby={`flow-section-${group.section.id}`}
-            >
-              <div className="mb-6 border-b border-line pb-4">
-                <h2
-                  id={`flow-section-${group.section.id}`}
-                  className="text-[22px] leading-7 font-semibold text-ink"
-                >
-                  {group.section.title}
-                </h2>
-                {group.section.description ? (
-                  <p className="mt-1 text-[15px] leading-5 text-body">
-                    {group.section.description}
-                  </p>
-                ) : null}
-              </div>
-              <div className="grid grid-cols-1 justify-items-center gap-x-6 gap-y-10 sm:grid-cols-2 sm:justify-items-start xl:grid-cols-3 2xl:grid-cols-4">
-                {group.screens.map((screen, localIndex) => (
-                  <ScreenPreview
-                    key={screen.id}
-                    screen={screen}
-                    index={startIndexBySection[sectionIndex] + localIndex}
-                  />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      </FlowPreviewProvider>
+      <OnboardingProvider persist={false}>
+        <FlowPreviewProvider>
+          <div className="mx-auto flex max-w-[1400px] flex-col gap-14">
+            {sections.map((group, sectionIndex) => (
+              <section
+                key={group.section.id}
+                aria-labelledby={`flow-section-${group.section.id}`}
+              >
+                <div className="mb-6 border-b border-line pb-4">
+                  <h2
+                    id={`flow-section-${group.section.id}`}
+                    className="text-[22px] leading-7 font-semibold text-ink"
+                  >
+                    {group.section.title}
+                  </h2>
+                  {group.section.description ? (
+                    <p className="mt-1 text-[15px] leading-5 text-body">
+                      {group.section.description}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="grid grid-cols-1 justify-items-center gap-x-6 gap-y-10 sm:grid-cols-2 sm:justify-items-start xl:grid-cols-3 2xl:grid-cols-4">
+                  {group.screens.map((screen, localIndex) => (
+                    <ScreenPreview
+                      key={screen.id}
+                      screen={screen}
+                      index={startIndexBySection[sectionIndex] + localIndex}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        </FlowPreviewProvider>
+      </OnboardingProvider>
     </div>
   );
 }
