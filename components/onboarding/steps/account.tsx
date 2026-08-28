@@ -78,39 +78,17 @@ function PasswordField({
 }
 
 export function AccountIntroStep() {
-  const { goNext } = useStepNav("account-intro");
-
-  return (
-    <OnboardingShell
-      step="account-intro"
-      title="Now that we know you’re eligible, lets set up your account!"
-      subtitle="Basic account setup needed to insure the privacy and security of your information."
-      footer={
-        <PrimaryButton onClick={() => goNext()}>Create Account</PrimaryButton>
-      }
-    >
-      <div className="min-h-[240px]" aria-hidden />
-    </OnboardingShell>
-  );
-}
-
-export function ContactStep() {
-  const { state, update, goNext } = useStepNav("contact");
+  const { state, update, goNext } = useStepNav("account-intro");
   const [submitted, setSubmitted] = useState(false);
 
   const emailError =
     submitted && !isValidEmail(state.email)
       ? "Enter a valid email address"
       : undefined;
-  const phoneDigits = state.phone.replace(/\D/g, "");
-  const phoneError =
-    submitted && phoneDigits.length < 10
-      ? "Enter a valid phone number"
-      : undefined;
 
-  function continueContact() {
+  function continueAccount() {
     setSubmitted(true);
-    if (!isValidEmail(state.email) || phoneDigits.length < 10) {
+    if (!isValidEmail(state.email)) {
       return;
     }
     goNext();
@@ -118,10 +96,12 @@ export function ContactStep() {
 
   return (
     <OnboardingShell
-      step="contact"
-      title="Contact information"
+      step="account-intro"
+      title="Now that we know you’re eligible, lets set up your account!"
       subtitle="We’ll send a 5-digit code to your email to confirm it’s you. For this prototype, any code works."
-      footer={<PrimaryButton onClick={continueContact}>Next</PrimaryButton>}
+      footer={
+        <PrimaryButton onClick={continueAccount}>Create Account</PrimaryButton>
+      }
     >
       <div className="space-y-4 text-left">
         <Field
@@ -133,6 +113,37 @@ export function ContactStep() {
           error={emailError}
           onChange={(event) => update({ email: event.target.value })}
         />
+      </div>
+    </OnboardingShell>
+  );
+}
+
+export function ContactStep() {
+  const { state, update, goNext } = useStepNav("contact");
+  const [submitted, setSubmitted] = useState(false);
+
+  const phoneDigits = state.phone.replace(/\D/g, "");
+  const phoneError =
+    submitted && phoneDigits.length < 10
+      ? "Enter a valid phone number"
+      : undefined;
+
+  function continueContact() {
+    setSubmitted(true);
+    if (phoneDigits.length < 10) {
+      return;
+    }
+    goNext();
+  }
+
+  return (
+    <OnboardingShell
+      step="contact"
+      title="Contact information"
+      subtitle="We’ll use this number if we need to reach you about your care."
+      footer={<PrimaryButton onClick={continueContact}>Next</PrimaryButton>}
+    >
+      <div className="space-y-4 text-left">
         <Field
           label="Phone"
           type="tel"
@@ -150,7 +161,7 @@ export function ContactStep() {
 }
 
 export function ConfirmEmailStep() {
-  const { update, goNext } = useStepNav("confirm-email");
+  const { state, update, goNext } = useStepNav("confirm-email");
   const [digits, setDigits] = useState(["", "", "", "", ""]);
   const [error, setError] = useState("");
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
@@ -189,7 +200,11 @@ export function ConfirmEmailStep() {
     <OnboardingShell
       step="confirm-email"
       title="Confirm your email"
-      subtitle="Enter the code sent to your email address to secure your account."
+      subtitle={
+        state.email
+          ? `Enter the code sent to ${state.email} to secure your account.`
+          : "Enter the code sent to your email address to secure your account."
+      }
       footer={
         <PrimaryButton disabled={!complete} onClick={verify}>
           Verify

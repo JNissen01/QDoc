@@ -72,10 +72,13 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
   },
   coverage: { title: "Coverage", note: "2/2" },
   "off-ramp": { title: "Off-ramp", note: "Outside the service area" },
-  "account-intro": { title: "Account intro", note: "Create Account CTA" },
+  "account-intro": {
+    title: "Account intro",
+    note: "Email · Create Account CTA",
+  },
   contact: {
     title: "Contact information",
-    note: "Email + phone · 1/6",
+    note: "Phone · 1/6",
   },
   "confirm-email": { title: "Confirm your email", note: "5-digit code · 2/6" },
   password: {
