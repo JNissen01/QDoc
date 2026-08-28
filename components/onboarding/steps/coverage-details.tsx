@@ -296,7 +296,7 @@ function ConfirmChip({
       aria-pressed={selected}
       onClick={onClick}
       className={cn(
-        "h-12 rounded-[14px] text-[16px]",
+        "h-8 rounded-[10px] text-[14px] leading-[18px]",
         selected
           ? "province-chip-selected font-medium"
           : "border border-line bg-white font-normal text-ink",
@@ -330,9 +330,10 @@ function ConfirmRow({
   return (
     <div
       className={cn(
-        "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
         reserveAction && "pr-12",
-        editing && active && "bg-tint",
+        editing && active
+          ? "my-2 rounded-[12px] border-2 border-action bg-white px-3 py-3"
+          : "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
       )}
       onClick={() => {
         if (editing) onActivate?.();
