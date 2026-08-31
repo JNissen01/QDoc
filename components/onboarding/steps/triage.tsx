@@ -209,7 +209,7 @@ export function OffRampStep() {
             disabled={!state.waitlistJoined && !canJoin}
             onClick={onPrimaryClick}
           >
-            {state.waitlistJoined ? "You’re on the waitlist" : "Join waitlist"}
+            Join waitlist
           </PrimaryButton>
           <GhostButton onClick={() => goTo("service-area")}>Go back</GhostButton>
         </div>
