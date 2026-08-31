@@ -5,14 +5,16 @@ import { DashboardScreen } from "@/components/dashboard/dashboard-screen";
 import { FlowPreviewProvider } from "@/components/flow/flow-preview-context";
 import { StepView } from "@/components/onboarding/step-view";
 import {
+  PHONE_DEVICE_HEIGHT,
+  PHONE_DEVICE_WIDTH,
+} from "@/components/onboarding/phone-frame";
+import {
   getFlowSections,
   type FlowScreen,
 } from "@/lib/flow-screens";
 import type { StepId } from "@/lib/onboarding-flow";
 
-const PHONE_WIDTH = 430;
-const PHONE_HEIGHT = 780;
-const SCALE = 0.56;
+const SCALE = 0.52;
 
 function ScreenPreview({
   screen,
@@ -39,17 +41,17 @@ function ScreenPreview({
         </div>
       </div>
       <div
-        className="relative overflow-hidden rounded-[20px] border border-line bg-canvas shadow-[0_8px_24px_rgba(30,27,75,0.08)]"
+        className="relative"
         style={{
-          width: PHONE_WIDTH * SCALE,
-          height: PHONE_HEIGHT * SCALE,
+          width: PHONE_DEVICE_WIDTH * SCALE,
+          height: PHONE_DEVICE_HEIGHT * SCALE,
         }}
       >
         <div
           className="origin-top-left"
           style={{
-            width: PHONE_WIDTH,
-            height: PHONE_HEIGHT,
+            width: PHONE_DEVICE_WIDTH,
+            height: PHONE_DEVICE_HEIGHT,
             transform: `scale(${SCALE})`,
             pointerEvents: "none",
           }}
@@ -62,7 +64,7 @@ function ScreenPreview({
         </div>
         <Link
           href={screen.href}
-          className="absolute inset-0 z-10 rounded-[20px] outline-none ring-action focus-visible:ring-2"
+          className="absolute inset-0 z-10 rounded-[28px] outline-none ring-action focus-visible:ring-2"
           aria-label={`Open ${screen.title}`}
         />
       </div>

@@ -6,7 +6,7 @@ import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { getPrevStep, getProgress, hrefFor, type StepId } from "@/lib/onboarding-flow";
 import { useOnboarding } from "@/components/onboarding/provider";
-import { useFlowPreview } from "@/components/flow/flow-preview-context";
+import { PhoneFrame } from "@/components/onboarding/phone-frame";
 import { GhostButton, PrimaryButton } from "@/components/onboarding/primitives";
 import {
   Dialog,
@@ -15,6 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+export { PhoneFrame };
 
 /** Phase 2 clinical intake — Exit is shown on these steps by default. */
 const MEDICAL_PROFILE_STEPS = new Set<StepId>([
@@ -69,25 +71,6 @@ export function BackLink({ onClick }: { onClick: () => void }) {
       <ChevronLeft className="size-5 text-action" strokeWidth={1.8} />
       Back
     </button>
-  );
-}
-
-export function PhoneFrame({ children }: { children: ReactNode }) {
-  const preview = useFlowPreview();
-
-  return (
-    <div
-      className={cn("bg-canvas", preview ? "h-[780px] overflow-hidden" : "min-h-dvh")}
-    >
-      <div
-        className={cn(
-          "mx-auto flex w-full max-w-[430px] flex-col px-5 pb-7 pt-5",
-          preview ? "h-full" : "min-h-dvh",
-        )}
-      >
-        {children}
-      </div>
-    </div>
   );
 }
 
@@ -163,7 +146,7 @@ export function OnboardingShell({
         <div className="mt-6 flex-1 pb-4 text-left">{children}</div>
       </div>
       {footer ? (
-        <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-1">
           {footer}
         </div>
       ) : null}
