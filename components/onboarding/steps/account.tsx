@@ -108,10 +108,11 @@ export function AccountIntroStep() {
     >
       <div className="space-y-4 text-left">
         <Field
-          label="Email"
+          aria-label="Email"
           type="email"
           autoComplete="email"
           placeholder="JaneDoe@email.com"
+          inputClassName="text-center"
           value={state.email}
           error={emailError}
           onChange={(event) => update({ email: event.target.value })}
