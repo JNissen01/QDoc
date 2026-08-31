@@ -73,7 +73,7 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
   coverage: { title: "Coverage", note: "2/2" },
   "off-ramp": {
     title: "Off-ramp",
-    note: "Waitlist for uncovered areas",
+    note: "Waitlist for uncovered areas · confirms, then returns to welcome",
   },
   "account-intro": {
     title: "Account intro",

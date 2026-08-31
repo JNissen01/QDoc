@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
@@ -160,6 +160,7 @@ export function IssuedProvinceStep() {
 export function OffRampStep() {
   const { state, update, goTo } = useStepNav("off-ramp");
   const [submitted, setSubmitted] = useState(false);
+  const joinedThisVisit = useRef(false);
 
   const location = state.waitlistLocation.trim();
   const emailIsValid = isValidEmail(state.waitlistEmail);
@@ -171,11 +172,30 @@ export function OffRampStep() {
       ? "Enter a valid email address"
       : undefined;
 
+  function goToWelcome() {
+    goTo("welcome");
+  }
+
   function joinWaitlist() {
     setSubmitted(true);
     if (!canJoin) return;
+    joinedThisVisit.current = true;
     update({ waitlistJoined: true });
   }
+
+  function onPrimaryClick() {
+    if (state.waitlistJoined) {
+      goToWelcome();
+      return;
+    }
+    joinWaitlist();
+  }
+
+  useEffect(() => {
+    if (!state.waitlistJoined || !joinedThisVisit.current) return;
+    const timeout = window.setTimeout(goToWelcome, 1400);
+    return () => window.clearTimeout(timeout);
+  }, [state.waitlistJoined]);
 
   return (
     <OnboardingShell
@@ -186,8 +206,8 @@ export function OffRampStep() {
       footer={
         <div className="space-y-2">
           <PrimaryButton
-            disabled={state.waitlistJoined || !canJoin}
-            onClick={joinWaitlist}
+            disabled={!state.waitlistJoined && !canJoin}
+            onClick={onPrimaryClick}
           >
             {state.waitlistJoined ? "You’re on the waitlist" : "Join waitlist"}
           </PrimaryButton>

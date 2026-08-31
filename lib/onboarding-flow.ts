@@ -172,7 +172,7 @@ export function getNextStep(
     case "service-area":
       return state.inServiceArea ? "coverage" : "off-ramp";
     case "off-ramp":
-      return "service-area";
+      return "welcome";
     case "coverage":
       return "account-intro";
     case "account-intro":
