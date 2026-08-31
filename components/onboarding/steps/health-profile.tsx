@@ -230,7 +230,7 @@ function FrequencySegmented({
 }) {
   return (
     <div
-      className="flex h-12 shrink-0 items-center self-stretch rounded-[12px] border border-line bg-white p-1"
+      className="flex h-12 shrink-0 items-center self-stretch rounded-[12px] bg-canvas p-1"
       role="group"
       aria-label="Frequency"
     >
