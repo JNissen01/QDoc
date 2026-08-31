@@ -122,3 +122,13 @@
   border: 2px solid #425bc7;
   background-color: #ffffff;
 }
+
+/** Keep overflow scroll without a visible scrollbar (phone chrome). */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

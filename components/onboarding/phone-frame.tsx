@@ -148,7 +148,7 @@ function DeviceChrome({
           style={{ width: PHONE_SCREEN_WIDTH, height: PHONE_SCREEN_HEIGHT }}
         >
           <StatusBar />
-          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pt-3 pb-2">
+          <div className="scrollbar-none flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pt-3 pb-2">
             {children}
           </div>
           <div className="flex h-[22px] shrink-0 items-start justify-center">
