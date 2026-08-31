@@ -197,7 +197,7 @@ export function OffRampStep() {
     >
       <div className="space-y-4 text-left">
         <div className="space-y-1">
-          <h2 className="text-[18px] leading-6 font-semibold text-ink">
+          <h2 className="text-[20px] leading-6 font-semibold text-ink">
             Join the waitlist
           </h2>
           <p className="text-[16px] leading-[22px] font-normal text-body">
