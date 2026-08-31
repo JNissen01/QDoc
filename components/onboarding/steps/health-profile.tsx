@@ -817,13 +817,8 @@ function AllergyEntryCard({
   const customReactions = draft.reactions.filter(
     (reaction) => !isPresetReaction(reaction),
   );
-  const [showCustomReaction, setShowCustomReaction] = useState(
-    customReactions.length > 0 &&
-      draft.reactions.some((reaction) => !isPresetReaction(reaction)),
-  );
-  const [customReaction, setCustomReaction] = useState(
-    customReactions[0] ?? "",
-  );
+  const [showCustomReaction, setShowCustomReaction] = useState(false);
+  const [customReaction, setCustomReaction] = useState("");
 
   function toggleReaction(reaction: string) {
     const reactions = draft.reactions.includes(reaction)
