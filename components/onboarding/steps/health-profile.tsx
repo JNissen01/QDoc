@@ -7,6 +7,7 @@ import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   CheckBox,
   InfoNote,
+  inputValueClass,
   PrimaryButton,
   SelectorCard,
   StepFooter,
@@ -278,7 +279,8 @@ function ClearableInput({
             }
           }}
           className={cn(
-            "rounded-[14px] border border-line bg-white py-0 pl-4 pr-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+            "rounded-[14px] border border-line bg-white py-0 pl-4 pr-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
+            inputValueClass,
             size === "compact" ? "h-[42px]" : "h-[70px]",
           )}
         />
@@ -559,7 +561,10 @@ function MedicationSearchBlock({
               if (value) onCommitName(value);
             }
           }}
-          className="h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]"
+          className={cn(
+            "h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
+            inputValueClass,
+          )}
         />
       </div>
       <p className="mt-5 mb-2 text-[16px] leading-[1rem] font-medium text-ink">
@@ -848,7 +853,10 @@ function NamedHistoryListStep({
                 if (pendingQuery) add(pendingQuery);
               }
             }}
-            className="h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]"
+            className={cn(
+              "h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
+              inputValueClass,
+            )}
           />
         </div>
         {pendingQuery ? (

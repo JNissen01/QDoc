@@ -6,6 +6,8 @@ import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   Field,
   GhostButton,
+  inputValueCenteredClass,
+  inputValueClass,
   PrimaryButton,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
@@ -54,7 +56,8 @@ function PasswordField({
           aria-invalid={Boolean(error)}
           onChange={(event) => onChange(event.target.value)}
           className={cn(
-            "h-[70px] rounded-[14px] border border-line bg-white pr-12 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0 md:text-[16px]",
+            "h-[70px] rounded-[14px] border border-line bg-white pr-12 pl-4 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0",
+            inputValueClass,
           )}
         />
         <button
@@ -226,7 +229,8 @@ export function ConfirmEmailStep() {
             onChange={(event) => setDigit(index, event.target.value)}
             onKeyDown={(event) => onKeyDown(index, event)}
             className={cn(
-              "h-[70px] w-full rounded-[14px] border border-line bg-white text-center text-[24px] font-semibold text-ink placeholder:text-fog focus:border-2 focus:border-action focus:outline-none",
+              "h-[70px] w-full rounded-[14px] border border-line bg-white focus:border-2 focus:border-action focus:outline-none",
+              inputValueCenteredClass,
               error && "border-danger",
             )}
           />

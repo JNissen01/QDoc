@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type ComponentProps } from "react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
+  inputValueClass,
   PrimaryButton,
   RadioDot,
   SearchField,
@@ -80,12 +81,13 @@ function UnitField({
       <div className="relative">
         <Input
           className={cn(
-            "h-[70px] rounded-[14px] border border-line bg-white py-0 pr-12 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+            "h-[70px] rounded-[14px] border border-line bg-white py-0 pr-12 pl-4 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
+            inputValueClass,
             inputClassName,
           )}
           {...props}
         />
-        <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[16px] leading-[22px] text-caption">
+        <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[18px] leading-6 font-normal text-caption">
           {suffix}
         </span>
       </div>
