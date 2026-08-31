@@ -179,6 +179,9 @@ export function RegistrationNumberStep() {
           })
         }
       />
+      <div className="mt-3">
+        <LockNote>Your information is encrypted and secure</LockNote>
+      </div>
     </OnboardingShell>
   );
 }

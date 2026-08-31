@@ -8,7 +8,6 @@ import {
   GhostButton,
   inputValueCenteredClass,
   inputValueClass,
-  LockNote,
   PrimaryButton,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
@@ -117,9 +116,6 @@ export function AccountIntroStep() {
         error={emailError}
         onChange={(event) => update({ email: event.target.value })}
       />
-      <div className="mt-3">
-        <LockNote>Your information is encrypted and secure</LockNote>
-      </div>
     </OnboardingShell>
   );
 }
