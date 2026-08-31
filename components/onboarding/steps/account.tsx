@@ -8,6 +8,7 @@ import {
   GhostButton,
   inputValueCenteredClass,
   inputValueClass,
+  LockNote,
   PrimaryButton,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
@@ -106,17 +107,18 @@ export function AccountIntroStep() {
         <PrimaryButton onClick={continueAccount}>Create Account</PrimaryButton>
       }
     >
-      <div className="space-y-4 text-left">
-        <Field
-          aria-label="Email"
-          type="email"
-          autoComplete="email"
-          placeholder="JaneDoe@email.com"
-          inputClassName="text-center"
-          value={state.email}
-          error={emailError}
-          onChange={(event) => update({ email: event.target.value })}
-        />
+      <Field
+        aria-label="Email"
+        type="email"
+        autoComplete="email"
+        placeholder="JaneDoe@email.com"
+        inputClassName="text-center"
+        value={state.email}
+        error={emailError}
+        onChange={(event) => update({ email: event.target.value })}
+      />
+      <div className="mt-3">
+        <LockNote>Your information is encrypted and secure</LockNote>
       </div>
     </OnboardingShell>
   );
