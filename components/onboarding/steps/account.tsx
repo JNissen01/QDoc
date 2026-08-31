@@ -143,7 +143,7 @@ export function ContactStep() {
     <OnboardingShell
       step="contact"
       title="Contact information"
-      subtitle="We’ll use this number if we need to reach you about your care."
+      subtitle="Enter your phone number below. We’ll use this number if we need to reach you about your care."
       footer={<PrimaryButton onClick={continueContact}>Next</PrimaryButton>}
     >
       <div className="space-y-4 text-left">
