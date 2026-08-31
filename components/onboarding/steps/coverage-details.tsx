@@ -332,7 +332,7 @@ function ConfirmRow({
       className={cn(
         reserveAction && "pr-12",
         editing && active
-          ? "-mx-2 my-2 rounded-[12px] border-2 border-action bg-white px-3 py-3"
+          ? "-mx-2 my-2 rounded-[12px] bg-white px-3 py-3"
           : editing
             ? "-mx-4 px-4 py-4"
             : "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
