@@ -12,7 +12,7 @@ import {
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { filterByQuery, MOCK_CLINICS, MOCK_PHARMACIES } from "@/lib/mocks";
-import type { BloodType, MeasurementSystem } from "@/lib/onboarding-state";
+import type { MeasurementSystem } from "@/lib/onboarding-state";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -259,18 +259,6 @@ export function FamilyDoctorStep() {
   );
 }
 
-const BLOOD_TYPES: BloodType[] = [
-  "unknown",
-  "A+",
-  "A-",
-  "B+",
-  "B-",
-  "AB+",
-  "AB-",
-  "O+",
-  "O-",
-];
-
 export function BiometricsStep() {
   const { state, update, goNext, ready } = useStepNav("biometrics");
   const system = state.measurementSystem;
@@ -293,7 +281,7 @@ export function BiometricsStep() {
     <OnboardingShell
       step="biometrics"
       title="A few basics about your body"
-      subtitle="Height, weight, and blood type help your provider dose and document accurately. You can skip any field you don’t know."
+      subtitle="Height and weight help your provider dose and document accurately. You can skip any field you don’t know."
       footer={
         <StepFooter onSkip={() => goNext()}>
           <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
@@ -332,25 +320,6 @@ export function BiometricsStep() {
               if (metric !== null) update({ weight: metric });
             }}
           />
-        </div>
-        <div>
-          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">Blood type</p>
-          <div className="flex flex-wrap gap-2">
-            {BLOOD_TYPES.map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => update({ bloodType: type })}
-                className={
-                  state.bloodType === type
-                    ? "rounded-[0.625rem] bg-action px-3.5 py-2 text-[14px] font-medium text-white"
-                    : "rounded-[0.625rem] border border-line bg-white px-3.5 py-2 text-[14px] font-normal text-ink"
-                }
-              >
-                {type === "unknown" ? "Don’t know" : type}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
     </OnboardingShell>
