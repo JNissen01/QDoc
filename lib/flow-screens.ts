@@ -76,11 +76,11 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
     title: "Account intro",
     note: "Email · Create Account CTA",
   },
+  "confirm-email": { title: "Confirm your email", note: "5-digit code · 1/6" },
   contact: {
     title: "Contact information",
-    note: "Phone · 1/6",
+    note: "Phone · 2/6",
   },
-  "confirm-email": { title: "Confirm your email", note: "5-digit code · 2/6" },
   password: {
     title: "Create a password",
     note: "Password · 3/6",
@@ -149,8 +149,8 @@ const SECTION_BY_STEP: Record<StepId | "dashboard", FlowSectionId> = {
   coverage: "welcome-triage",
   "off-ramp": "welcome-triage",
   "account-intro": "account",
-  contact: "account",
   "confirm-email": "account",
+  contact: "account",
   password: "account",
   name: "account",
   sex: "account",
@@ -182,8 +182,8 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
   "welcome-triage": ["welcome", "service-area", "coverage", "off-ramp"],
   account: [
     "account-intro",
-    "contact",
     "confirm-email",
+    "contact",
     "password",
     "name",
     "sex",

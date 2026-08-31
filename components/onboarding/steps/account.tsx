@@ -98,7 +98,7 @@ export function AccountIntroStep() {
     <OnboardingShell
       step="account-intro"
       title="Now that we know you’re eligible, lets set up your account!"
-      subtitle="Basic account setup needed to insure the privacy and security of your information."
+      subtitle="We’ll send a 5-digit code to your email to confirm it’s you. For this prototype, any code works."
       footer={
         <PrimaryButton onClick={continueAccount}>Create Account</PrimaryButton>
       }
@@ -140,7 +140,7 @@ export function ContactStep() {
     <OnboardingShell
       step="contact"
       title="Contact information"
-      subtitle="Add a phone number so we can reach you about your care."
+      subtitle="We’ll use this number if we need to reach you about your care."
       footer={<PrimaryButton onClick={continueContact}>Next</PrimaryButton>}
     >
       <div className="space-y-4 text-left">
@@ -161,7 +161,7 @@ export function ContactStep() {
 }
 
 export function ConfirmEmailStep() {
-  const { update, goNext } = useStepNav("confirm-email");
+  const { state, update, goNext } = useStepNav("confirm-email");
   const [digits, setDigits] = useState(["", "", "", "", ""]);
   const [error, setError] = useState("");
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
@@ -200,7 +200,11 @@ export function ConfirmEmailStep() {
     <OnboardingShell
       step="confirm-email"
       title="Confirm your email"
-      subtitle="Enter the code sent to your email address to secure your account."
+      subtitle={
+        state.email
+          ? `Enter the code sent to ${state.email} to secure your account.`
+          : "Enter the code sent to your email address to secure your account."
+      }
       footer={
         <PrimaryButton disabled={!complete} onClick={verify}>
           Verify
