@@ -235,11 +235,11 @@ export function OffRampStep() {
         />
       </div>
 
-      <div className="mt-6 rounded-[14px] border border-line bg-white p-4 text-[16px] leading-[22px] text-body">
+      <p className="mt-6 text-[14px] leading-[18px] font-normal text-caption">
         If you chose this by mistake, go back and select a supported region.
         Emergency care should always go through 911 or your nearest emergency
         department.
-      </div>
+      </p>
     </OnboardingShell>
   );
 }
