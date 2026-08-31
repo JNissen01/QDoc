@@ -263,7 +263,7 @@ function ClearableInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label className="text-[13px] leading-4 font-normal text-ink">
+      <Label className="text-[16px] leading-[1rem] font-medium text-ink">
         {label}
       </Label>
       <div className="relative">
@@ -352,7 +352,7 @@ function MedicationEntryCard({
 
       <div className="space-y-4">
         <div>
-          <p className="mb-2 text-[13px] leading-4 text-ink">Dosage</p>
+          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">Dosage</p>
           <div className="flex flex-wrap gap-2">
             {MEDICATION_DOSAGES.map((dosage) => (
               <SoftChip
@@ -432,7 +432,7 @@ function MedicationEntryCard({
         </div>
 
         <div>
-          <p className="mb-2 text-[13px] leading-4 text-ink">Frequency</p>
+          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">Frequency</p>
           <FrequencySegmented
             value={
               showCustomFrequency || !presetFrequency
@@ -539,7 +539,7 @@ function MedicationSearchBlock({
 }) {
   return (
     <div>
-      <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+      <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
         Medication name
       </p>
       <div className="relative">
@@ -562,7 +562,7 @@ function MedicationSearchBlock({
           className="h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]"
         />
       </div>
-      <p className="mt-5 mb-2 text-[13px] leading-4 font-normal text-ink">
+      <p className="mt-5 mb-2 text-[16px] leading-[1rem] font-medium text-ink">
         Common medications
       </p>
       <div className="flex flex-wrap gap-2">
@@ -833,7 +833,7 @@ function NamedHistoryListStep({
       ) : null}
 
       <div>
-        <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+        <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
           {fieldLabel}
         </p>
         <div className="relative">
@@ -860,7 +860,7 @@ function NamedHistoryListStep({
             Add “{pendingQuery}”
           </button>
         ) : null}
-        <p className="mt-5 mb-2 text-[13px] leading-4 font-normal text-ink">
+        <p className="mt-5 mb-2 text-[16px] leading-[1rem] font-medium text-ink">
           {commonLabel}
         </p>
         <div className="flex flex-wrap gap-2">

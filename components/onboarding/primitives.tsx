@@ -153,7 +153,7 @@ export function Field({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {label ? (
-        <Label className="text-[13px] leading-4 font-normal text-ink">
+        <Label className="text-[16px] leading-[1rem] font-medium text-ink">
           {label}
         </Label>
       ) : null}

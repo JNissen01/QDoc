@@ -247,7 +247,7 @@ export function AddressStep() {
           />
         </div>
         <div>
-          <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
             Province
           </p>
           <div className="grid grid-cols-3 gap-2">

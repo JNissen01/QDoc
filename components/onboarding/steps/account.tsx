@@ -44,7 +44,7 @@ function PasswordField({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label className="text-[13px] leading-4 font-normal text-ink">{label}</Label>
+      <Label className="text-[16px] leading-[1rem] font-medium text-ink">{label}</Label>
       <div className="relative">
         <Input
           type={visible ? "text" : "password"}

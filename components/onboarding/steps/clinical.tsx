@@ -74,7 +74,7 @@ function UnitField({
 }) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <Label className="text-[13px] leading-4 font-normal text-ink">
+      <Label className="text-[16px] leading-[1rem] font-medium text-ink">
         {label}
       </Label>
       <div className="relative">
@@ -107,7 +107,7 @@ function MeasurementSystemToggle({
 
   return (
     <div>
-      <p className="mb-2 text-[13px] leading-4 text-ink">Measurement System</p>
+      <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">Measurement System</p>
       <div
         className="flex h-12 shrink-0 items-center self-stretch rounded-[12px] border border-line bg-white p-1"
         role="group"
@@ -162,7 +162,7 @@ export function PharmacyStep() {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
-      <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+      <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
         Pharmacies near you
       </p>
       <div className="space-y-3">
@@ -234,7 +234,7 @@ export function FamilyDoctorStep() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
-          <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
             Clinics near you
           </p>
           <div className="space-y-3">
@@ -332,7 +332,7 @@ export function BiometricsStep() {
           />
         </div>
         <div>
-          <p className="mb-2 text-[13px] leading-4 text-ink">Blood type</p>
+          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">Blood type</p>
           <div className="flex flex-wrap gap-2">
             {BLOOD_TYPES.map((type) => (
               <button
