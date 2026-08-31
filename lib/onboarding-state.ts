@@ -39,6 +39,13 @@ export type Medication = {
   frequency: string;
 };
 
+export type Allergy = {
+  id: string;
+  name: string;
+  reactions: string[];
+  severity: Severity | null;
+};
+
 export type OnboardingState = {
   inServiceArea: boolean | null;
   coverage: CoverageType | null;
@@ -84,7 +91,7 @@ export type OnboardingState = {
   bloodType: BloodType;
   historyCategories: HistoryCategory[];
   medications: Medication[];
-  allergies: string[];
+  allergies: Allergy[];
   conditions: string[];
   surgeries: string[];
 };

@@ -60,7 +60,22 @@ export const MOCK_MEDICATION = {
   frequency: "Twice daily",
 };
 
-export const MOCK_ALLERGY = "Peanuts";
+export const MOCK_ALLERGY = {
+  name: "Peanuts",
+  reactions: ["Rash", "Hives"],
+  severity: "moderate" as const,
+};
+
+export const ALLERGY_REACTIONS = [
+  "Rash",
+  "Swelling",
+  "Hives",
+  "Nausea",
+  "Trouble breathing",
+  "Anaphylaxis",
+];
+
+export const ALLERGY_SEVERITIES = ["Mild", "Moderate", "Severe"] as const;
 
 export const MOCK_PAYMENT_CARD = {
   cardholderName: "Jane Doe",
@@ -115,14 +130,7 @@ export const MEDICATION_FREQUENCIES = [
   "As needed",
 ] as const;
 
-export const MEDICATION_REACTIONS = [
-  "Rash",
-  "Swelling",
-  "Hives",
-  "Nausea",
-  "Trouble breathing",
-  "Anaphylaxis",
-];
+export const MEDICATION_REACTIONS = ALLERGY_REACTIONS;
 
 export function delay(ms = 1100) {
   return new Promise((resolve) => setTimeout(resolve, ms));

@@ -14,6 +14,7 @@ import {
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import {
+  ALLERGY_REACTIONS,
   COMMON_ALLERGIES,
   COMMON_CONDITIONS,
   COMMON_MEDICATIONS,
@@ -24,7 +25,12 @@ import {
   MOCK_ALLERGY,
   MOCK_MEDICATION,
 } from "@/lib/mocks";
-import type { HistoryCategory, Medication } from "@/lib/onboarding-state";
+import type {
+  Allergy,
+  HistoryCategory,
+  Medication,
+  Severity,
+} from "@/lib/onboarding-state";
 import type { StepId } from "@/lib/onboarding-flow";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -144,12 +150,15 @@ function isPresetFrequency(value: string): value is FrequencyOption {
 
 function SoftChip({
   selected,
+  appearance = "filled",
   children,
   onClick,
   onRemove,
   removeLabel,
 }: {
   selected?: boolean;
+  /** filled = solid action (meds); outlined = tint + action border (allergy reactions) */
+  appearance?: "filled" | "outlined";
   children: ReactNode;
   onClick: () => void;
   onRemove?: () => void;
@@ -158,9 +167,13 @@ function SoftChip({
   const chipClass = cn(
     "rounded-[0.625rem] px-3.5 py-2 text-[14px] leading-[18px] transition-colors",
     selected
-      ? "bg-action font-medium text-white"
+      ? appearance === "outlined"
+        ? "border border-action bg-canvas font-medium text-action"
+        : "bg-action font-medium text-white"
       : "border border-line bg-white font-normal text-ink",
   );
+  const removeClass =
+    selected && appearance === "filled" ? "text-white" : "text-ink";
 
   if (!onRemove) {
     return (
@@ -190,7 +203,7 @@ function SoftChip({
         aria-label={removeLabel ?? "Remove"}
         className={cn(
           "-mr-0.5 inline-flex shrink-0 items-center justify-center",
-          selected ? "text-white" : "text-ink",
+          removeClass,
         )}
         onMouseDown={(event) => {
           event.preventDefault();
@@ -235,6 +248,46 @@ function FrequencySegmented({
             )}
           >
             {option}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
+  { value: "mild", label: "Mild" },
+  { value: "moderate", label: "Moderate" },
+  { value: "severe", label: "Severe" },
+];
+
+function SeveritySegmented({
+  value,
+  onChange,
+}: {
+  value: Severity | null;
+  onChange: (value: Severity) => void;
+}) {
+  return (
+    <div
+      className="flex h-12 shrink-0 items-center self-stretch rounded-[12px] bg-canvas p-1"
+      role="group"
+      aria-label="Severity"
+    >
+      {SEVERITY_OPTIONS.map((option) => {
+        const selected = value === option.value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => onChange(option.value)}
+            className={cn(
+              "flex h-full flex-1 items-center justify-center rounded-[10px] px-1.5 text-center text-[14px] leading-[18px] font-medium transition-colors",
+              selected ? "bg-action text-white" : "bg-transparent text-ink",
+            )}
+          >
+            {option.label}
           </button>
         );
       })}
@@ -729,7 +782,336 @@ export function MedicationsStep() {
   );
 }
 
-type NamedHistoryKey = "allergies" | "conditions" | "surgeries";
+function emptyAllergy(name = ""): Allergy {
+  return {
+    id: crypto.randomUUID(),
+    name,
+    reactions: [],
+    severity: null,
+  };
+}
+
+function isAllergyComplete(allergy: Allergy) {
+  return Boolean(
+    allergy.name.trim() &&
+      allergy.reactions.length > 0 &&
+      allergy.severity,
+  );
+}
+
+function isPresetReaction(value: string) {
+  return ALLERGY_REACTIONS.includes(value);
+}
+
+function AllergyEntryCard({
+  draft,
+  onChange,
+  onDismiss,
+  onSave,
+}: {
+  draft: Allergy;
+  onChange: (next: Allergy) => void;
+  onDismiss: () => void;
+  onSave: () => void;
+}) {
+  const customReactions = draft.reactions.filter(
+    (reaction) => !isPresetReaction(reaction),
+  );
+  const [showCustomReaction, setShowCustomReaction] = useState(
+    customReactions.length > 0 &&
+      draft.reactions.some((reaction) => !isPresetReaction(reaction)),
+  );
+  const [customReaction, setCustomReaction] = useState(
+    customReactions[0] ?? "",
+  );
+
+  function toggleReaction(reaction: string) {
+    const reactions = draft.reactions.includes(reaction)
+      ? draft.reactions.filter((item) => item !== reaction)
+      : [...draft.reactions, reaction];
+    onChange({ ...draft, reactions });
+  }
+
+  return (
+    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <p className="text-[18px] leading-6 font-semibold text-ink">
+          {draft.name}
+        </p>
+        <button
+          type="button"
+          className="shrink-0 text-caption"
+          onClick={onDismiss}
+          aria-label="Cancel allergy entry"
+        >
+          <X className="size-5" />
+        </button>
+      </div>
+
+      <div className="space-y-5">
+        <div>
+          <p className="text-[14px] leading-4 font-medium text-ink">Reaction</p>
+          <p className="mt-1 mb-2 text-[13px] leading-4 text-caption">
+            Select all that apply
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {ALLERGY_REACTIONS.map((reaction) => (
+              <SoftChip
+                key={reaction}
+                appearance="outlined"
+                selected={draft.reactions.includes(reaction)}
+                onClick={() => toggleReaction(reaction)}
+              >
+                {reaction}
+              </SoftChip>
+            ))}
+            {!showCustomReaction
+              ? customReactions.map((reaction) => (
+                  <SoftChip
+                    key={reaction}
+                    appearance="outlined"
+                    selected
+                    onClick={() => {
+                      setCustomReaction(reaction);
+                      setShowCustomReaction(true);
+                    }}
+                    onRemove={() => {
+                      onChange({
+                        ...draft,
+                        reactions: draft.reactions.filter(
+                          (item) => item !== reaction,
+                        ),
+                      });
+                    }}
+                    removeLabel="Remove custom reaction"
+                  >
+                    {reaction}
+                  </SoftChip>
+                ))
+              : null}
+          </div>
+          {showCustomReaction ? (
+            <div className="mt-3">
+              <ClearableInput
+                label="Specific Reaction"
+                size="compact"
+                value={customReaction}
+                placeholder="e.g. Itchy throat"
+                onChange={(value) => {
+                  setCustomReaction(value);
+                }}
+                onClear={() => {
+                  const previous = customReaction.trim();
+                  setCustomReaction("");
+                  setShowCustomReaction(false);
+                  if (previous && !isPresetReaction(previous)) {
+                    onChange({
+                      ...draft,
+                      reactions: draft.reactions.filter(
+                        (item) => item !== previous,
+                      ),
+                    });
+                  }
+                }}
+                onConfirm={() => {
+                  const value = customReaction.trim();
+                  if (!value) return;
+                  const withoutOldCustom = draft.reactions.filter(
+                    (item) => isPresetReaction(item) || item === value,
+                  );
+                  const reactions = withoutOldCustom.includes(value)
+                    ? withoutOldCustom
+                    : [...withoutOldCustom, value];
+                  setCustomReaction(value);
+                  setShowCustomReaction(false);
+                  onChange({ ...draft, reactions });
+                }}
+              />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="mt-3 text-[15px] font-medium text-action"
+              onClick={() => setShowCustomReaction(true)}
+            >
+              + Add Specific Reaction
+            </button>
+          )}
+        </div>
+
+        <div>
+          <p className="mb-2 text-[14px] leading-4 font-medium text-ink">
+            Severity
+          </p>
+          <SeveritySegmented
+            value={draft.severity}
+            onChange={(severity) => onChange({ ...draft, severity })}
+          />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
+        disabled={!isAllergyComplete(draft)}
+        onClick={onSave}
+      >
+        <span className="inline-flex items-center justify-center gap-2">
+          <CirclePlusIcon className="size-5 shrink-0" />
+          Add allergy
+        </span>
+      </button>
+    </div>
+  );
+}
+
+export function AllergiesStep() {
+  const { state, update, goNext } = useStepNav("allergies");
+  const [draft, setDraft] = useState<Allergy | null>(null);
+  const [query, setQuery] = useState("");
+  const [scanning, setScanning] = useState(false);
+
+  function openEntry(name: string, existing?: Allergy) {
+    const trimmed = name.trim();
+    if (!trimmed && !existing) return;
+    setQuery("");
+    if (existing) {
+      setDraft({ ...existing });
+      return;
+    }
+    setDraft(emptyAllergy(trimmed));
+  }
+
+  function saveDraft() {
+    if (!draft || !isAllergyComplete(draft)) return;
+    const next: Allergy = {
+      ...draft,
+      name: draft.name.trim(),
+      reactions: draft.reactions.map((item) => item.trim()).filter(Boolean),
+    };
+    const exists = state.allergies.some((item) => item.id === next.id);
+    const allergies = exists
+      ? state.allergies.map((item) => (item.id === next.id ? next : item))
+      : [...state.allergies, next];
+    update({ allergies });
+    setDraft(null);
+  }
+
+  async function scanAllergy() {
+    setScanning(true);
+    await delay(1000);
+    setDraft({
+      ...emptyAllergy(),
+      ...MOCK_ALLERGY,
+    });
+    setQuery("");
+    setScanning(false);
+  }
+
+  function remove(id: string) {
+    update({
+      allergies: state.allergies.filter((item) => item.id !== id),
+    });
+  }
+
+  const listedAllergies = state.allergies.filter(
+    (allergy) => draft?.id !== allergy.id,
+  );
+  const canContinue = state.allergies.some(isAllergyComplete);
+
+  return (
+    <OnboardingShell
+      step="allergies"
+      title="Any allergies we should know about?"
+      subtitle="Enter the name of any drug, food, or environmental allergies, or scan a label to enter automatically."
+      footer={
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
+            Continue
+          </PrimaryButton>
+        </StepFooter>
+      }
+    >
+      <button
+        type="button"
+        className="mb-5 inline-flex items-center gap-2 text-[16px] font-semibold text-action disabled:text-caption"
+        disabled={scanning}
+        onClick={scanAllergy}
+      >
+        <ScanLine className="size-4" />
+        {scanning ? "Scanning label…" : "Scan Allergy"}
+      </button>
+
+      {listedAllergies.length > 0 && !draft ? (
+        <div className="mb-4 space-y-3">
+          {listedAllergies.map((allergy) => (
+            <div
+              key={allergy.id}
+              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+            >
+              <div>
+                <p className="text-[16px] font-semibold text-ink">
+                  {allergy.name}
+                </p>
+                <p className="text-[14px] text-body">
+                  {[
+                    allergy.severity
+                      ? allergy.severity.charAt(0).toUpperCase() +
+                        allergy.severity.slice(1)
+                      : null,
+                    allergy.reactions.join(", "),
+                  ]
+                    .filter(Boolean)
+                    .join(" • ")}
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  aria-label="Edit allergy"
+                  onClick={() => openEntry(allergy.name, allergy)}
+                  className="text-caption"
+                >
+                  <Pencil className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Delete allergy"
+                  onClick={() => remove(allergy.id)}
+                  className="text-danger"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {draft ? (
+        <AllergyEntryCard
+          key={draft.id}
+          draft={draft}
+          onChange={setDraft}
+          onDismiss={() => setDraft(null)}
+          onSave={saveDraft}
+        />
+      ) : (
+        <NamedHistorySearchBlock
+          fieldLabel="Allergy name"
+          placeholder="e.g. Peanuts"
+          commonLabel="Common allergies"
+          commonItems={COMMON_ALLERGIES}
+          query={query}
+          onQueryChange={setQuery}
+          onCommitName={(name) => openEntry(name)}
+        />
+      )}
+    </OnboardingShell>
+  );
+}
+
+type NamedHistoryKey = "conditions" | "surgeries";
 
 function namesMatch(left: string, right: string) {
   return left.trim().toLowerCase() === right.trim().toLowerCase();
@@ -966,23 +1348,6 @@ function NamedHistoryListStep({
         />
       )}
     </OnboardingShell>
-  );
-}
-
-export function AllergiesStep() {
-  return (
-    <NamedHistoryListStep
-      step="allergies"
-      title="Any allergies we should know about?"
-      subtitle="Enter the name of any drug, food, or environmental allergies, or scan a label to enter automatically."
-      fieldLabel="Allergy name"
-      placeholder="e.g. Peanuts"
-      commonLabel="Common allergies"
-      commonItems={COMMON_ALLERGIES}
-      scanLabel="Scan Allergy"
-      mockScanValue={MOCK_ALLERGY}
-      itemNoun="allergy"
-    />
   );
 }
 
