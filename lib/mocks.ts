@@ -47,9 +47,11 @@ export const MOCK_LOCATION = {
 };
 
 export const MOCK_HEALTH_CARD = {
+  issuedProvince: "MB" as const,
   registrationNumber: "123456",
   number: "1213-456-789",
   expiry: "12/28",
+  dob: "1990-03-14",
 };
 
 export const MOCK_MEDICATION = {

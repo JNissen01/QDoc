@@ -102,6 +102,10 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
     title: "Scan intro",
     note: "No progress bar · start of public path",
   },
+  "scanning-card": {
+    title: "Scanning card",
+    note: "Fake scan · then review",
+  },
   "issued-province": {
     title: "Issuing province",
     note: "1 of 6",
@@ -162,6 +166,7 @@ const SECTION_BY_STEP: Record<StepId | "dashboard", FlowSectionId> = {
   sex: "account",
   address: "account",
   "scan-card": "public-insurance",
+  "scanning-card": "public-insurance",
   "issued-province": "public-insurance",
   "registration-number": "public-insurance",
   "health-card": "public-insurance",
@@ -200,6 +205,7 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
   ],
   "public-insurance": [
     "scan-card",
+    "scanning-card",
     "issued-province",
     "registration-number",
     "health-card",

@@ -31,6 +31,7 @@ import {
   PaymentStep,
   RegistrationNumberStep,
   ScanCardStep,
+  ScanningCardStep,
 } from "@/components/onboarding/steps/coverage-details";
 import { CheckpointStep } from "@/components/onboarding/steps/checkpoint";
 import {
@@ -79,6 +80,8 @@ export function StepView({ step }: { step: StepId }) {
       return <PronounsStep />;
     case "scan-card":
       return <ScanCardStep />;
+    case "scanning-card":
+      return <ScanningCardStep />;
     case "registration-number":
       return <RegistrationNumberStep />;
     case "health-card":
