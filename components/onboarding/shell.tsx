@@ -85,7 +85,7 @@ export function OnboardingShell({
 }: {
   step: StepId;
   title?: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
   footer?: ReactNode;
   children: ReactNode;
   hideBack?: boolean;
@@ -129,21 +129,32 @@ export function OnboardingShell({
         ) : null}
 
         {(title || subtitle) && (
-          <header className="mt-6 space-y-2 text-left">
+          <header className="mt-6 mb-8 space-y-2 text-left">
             {title ? (
               <h1 className="text-[28px] leading-9 font-semibold tracking-normal text-ink">
                 {title}
               </h1>
             ) : null}
             {subtitle ? (
-              <p className="text-[16px] leading-[22px] font-normal text-body">
-                {subtitle}
-              </p>
+              typeof subtitle === "string" ? (
+                <p className="text-[16px] leading-[22px] font-normal text-body">
+                  {subtitle}
+                </p>
+              ) : (
+                subtitle
+              )
             ) : null}
           </header>
         )}
 
-        <div className="mt-6 flex-1 pb-4 text-left">{children}</div>
+        <div
+          className={cn(
+            "flex-1 pb-4 text-left",
+            !(title || subtitle) && "mt-6",
+          )}
+        >
+          {children}
+        </div>
       </div>
       {footer ? (
         <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-1">

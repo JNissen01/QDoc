@@ -71,7 +71,10 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
     note: "Canadian resident in MB / ON / NU · 1/2",
   },
   coverage: { title: "Coverage", note: "2/2" },
-  "off-ramp": { title: "Off-ramp", note: "Outside the service area" },
+  "off-ramp": {
+    title: "Off-ramp",
+    note: "Outside the service area · location + email",
+  },
   "account-intro": {
     title: "Account intro",
     note: "Email · Create Account CTA",
@@ -98,6 +101,10 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
   "scan-card": {
     title: "Scan intro",
     note: "No progress bar · start of public path",
+  },
+  "scanning-card": {
+    title: "Scanning card",
+    note: "Fake scan · then review",
   },
   "issued-province": {
     title: "Issuing province",
@@ -156,6 +163,7 @@ const SECTION_BY_STEP: Record<StepId | "dashboard", FlowSectionId> = {
   sex: "account",
   address: "account",
   "scan-card": "public-insurance",
+  "scanning-card": "public-insurance",
   "issued-province": "public-insurance",
   "registration-number": "public-insurance",
   "health-card": "public-insurance",
@@ -191,6 +199,7 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
   ],
   "public-insurance": [
     "scan-card",
+    "scanning-card",
     "issued-province",
     "registration-number",
     "health-card",

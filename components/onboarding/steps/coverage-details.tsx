@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Camera,
   Clock,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { ScanCardLockIcon } from "@/components/brand/scan-card-lock-icon";
 import { VerifiedCheckIcon } from "@/components/brand/verified-check-icon";
+import { useFlowPreview } from "@/components/flow/flow-preview-context";
 import { OnboardingShell, PhoneFrame } from "@/components/onboarding/shell";
 import {
   Field,
@@ -30,6 +31,7 @@ import {
   MOCK_PAYMENT_CARD,
 } from "@/lib/mocks";
 import type { Province } from "@/lib/onboarding-state";
+import { cn } from "@/lib/utils";
 
 const PROVINCE_LABELS: Record<Province, string> = {
   MB: "Manitoba",
@@ -37,43 +39,22 @@ const PROVINCE_LABELS: Record<Province, string> = {
   NU: "Nunavut",
 };
 
+const SEX_CHIPS: { value: string; chip: string }[] = [
+  { value: "Female", chip: "F" },
+  { value: "Male", chip: "M" },
+  { value: "Intersex", chip: "I" },
+  { value: "Prefer not to say", chip: "Prefer not to say" },
+];
+
+type ConfirmField =
+  | "province"
+  | "registration"
+  | "health"
+  | "dob"
+  | "sex";
+
 export function ScanCardStep() {
-  const { goNext, update } = useStepNav("scan-card");
-  const [scanning, setScanning] = useState(false);
-
-  async function scan() {
-    setScanning(true);
-    await delay(1400);
-    update({
-      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
-      healthCardNumber: MOCK_HEALTH_CARD.number,
-      healthCardExpiry: MOCK_HEALTH_CARD.expiry,
-    });
-    setScanning(false);
-    goNext({
-      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
-      healthCardNumber: MOCK_HEALTH_CARD.number,
-      healthCardExpiry: MOCK_HEALTH_CARD.expiry,
-    });
-  }
-
-  if (scanning) {
-    return (
-      <PhoneFrame>
-        <div className="flex flex-1 flex-col justify-center text-left">
-          <div className="relative flex size-56 items-center justify-center rounded-[28px] border-2 border-dashed border-action bg-white">
-            <ScanLine className="size-16 text-action" />
-          </div>
-          <p className="mt-6 text-[20px] font-semibold text-ink">
-            Scanning your card
-          </p>
-          <p className="mt-2 text-[16px] text-body">
-            Extracting your health card number securely…
-          </p>
-        </div>
-      </PhoneFrame>
-    );
-  }
+  const { goNext, goTo } = useStepNav("scan-card");
 
   return (
     <OnboardingShell
@@ -82,11 +63,13 @@ export function ScanCardStep() {
       subtitle="Or enter your information manually."
       footer={
         <div>
-          <PrimaryButton onClick={scan}>
+          <PrimaryButton onClick={() => goTo("scanning-card")}>
             <Camera className="size-5" />
             Use Camera
           </PrimaryButton>
-          <GhostButton onClick={() => goNext()}>Enter Manually</GhostButton>
+          <GhostButton className="text-[1rem] leading-6" onClick={() => goNext()}>
+            Enter Manually
+          </GhostButton>
         </div>
       }
     >
@@ -146,6 +129,52 @@ export function ScanCardStep() {
         </InfoNote>
       </div>
     </OnboardingShell>
+  );
+}
+
+export function ScanningCardStep() {
+  const { update, goNext } = useStepNav("scanning-card");
+  const preview = useFlowPreview();
+
+  useEffect(() => {
+    if (preview) return;
+
+    let cancelled = false;
+    const patch = {
+      healthCardScanned: true,
+      issuedProvince: MOCK_HEALTH_CARD.issuedProvince,
+      registrationNumber: MOCK_HEALTH_CARD.registrationNumber,
+      healthCardNumber: MOCK_HEALTH_CARD.number,
+      healthCardExpiry: MOCK_HEALTH_CARD.expiry,
+      dob: MOCK_HEALTH_CARD.dob,
+    } as const;
+
+    void delay(1400).then(() => {
+      if (cancelled) return;
+      update(patch);
+      goNext(patch);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run the fake scan once when this screen mounts
+  }, [preview]);
+
+  return (
+    <PhoneFrame>
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <div className="relative flex size-56 items-center justify-center rounded-[28px] border-2 border-dashed border-action bg-white">
+          <ScanLine className="size-16 animate-pulse text-action" />
+        </div>
+        <p className="mt-6 text-[20px] font-semibold text-ink">
+          Scanning your card
+        </p>
+        <p className="mt-2 text-[16px] text-body">
+          Extracting your health card number securely…
+        </p>
+      </div>
+    </PhoneFrame>
   );
 }
 
@@ -230,40 +259,143 @@ function formatDobDisplay(value: string) {
   return value || "—";
 }
 
+function formatDobInput(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
+}
+
+function displayDobInput(value: string) {
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (iso) return `${iso[3]}-${iso[2]}-${iso[1]}`;
+  return formatDobInput(value);
+}
+
+function confirmControlClass() {
+  return "mt-1 w-full bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none";
+}
+
+function ConfirmChip({
+  selected,
+  children,
+  onClick,
+  className,
+}: {
+  selected: boolean;
+  children: ReactNode;
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onClick}
+      className={cn(
+        "h-8 rounded-[10px] text-[14px] leading-[18px]",
+        selected
+          ? "province-chip-selected font-medium"
+          : "border border-line bg-white font-normal text-ink",
+        className,
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 function ConfirmRow({
   label,
   value,
-  onEdit,
+  editing,
+  active,
+  reserveAction = false,
+  onActivate,
+  children,
 }: {
   label: string;
   value: string;
-  onEdit: () => void;
+  editing: boolean;
+  active: boolean;
+  reserveAction?: boolean;
+  onActivate?: () => void;
+  children?: ReactNode;
 }) {
+  const showEditor = Boolean(editing && children);
+
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-line py-4 last:border-b-0">
+    <div
+      className={cn(
+        reserveAction && "pr-12",
+        editing && active
+          ? "-mx-2 my-2 rounded-[12px] border-2 border-action bg-white px-3 py-3"
+          : editing
+            ? "-mx-4 px-4 py-4"
+            : "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
+      )}
+      onClick={() => {
+        if (editing) onActivate?.();
+      }}
+    >
       <div className="min-w-0">
-        <p className="text-[13px] leading-4 text-caption">{label}</p>
-        <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
-          {value}
+        <p
+          className={cn(
+            "text-[13px] leading-4",
+            editing && active ? "font-medium text-action" : "text-caption",
+          )}
+        >
+          {label}
         </p>
+        {showEditor ? (
+          children
+        ) : (
+          <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
+            {value}
+          </p>
+        )}
       </div>
-      <button
-        type="button"
-        onClick={onEdit}
-        className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-        aria-label={`Edit ${label}`}
-      >
-        <Pencil className="size-4" strokeWidth={1.8} />
-      </button>
     </div>
   );
 }
 
 export function ConfirmInfoStep() {
-  const { state, goNext, goTo } = useStepNav("confirm-info");
+  const { state, update, goNext } = useStepNav("confirm-info");
+  const [editing, setEditing] = useState(false);
+  const [activeField, setActiveField] = useState<ConfirmField | null>(null);
+  const [draft, setDraft] = useState<{
+    issuedProvince: Province | null;
+    registrationNumber: string;
+    healthCardNumber: string;
+    dob: string;
+    sex: string;
+  } | null>(null);
   const provinceLabel = state.issuedProvince
     ? PROVINCE_LABELS[state.issuedProvince]
     : "—";
+
+  function startEditing() {
+    setDraft({
+      issuedProvince: state.issuedProvince,
+      registrationNumber: state.registrationNumber,
+      healthCardNumber: state.healthCardNumber,
+      dob: state.dob,
+      sex: state.sex,
+    });
+    setEditing(true);
+    setActiveField("province");
+  }
+
+  function stopEditing() {
+    setEditing(false);
+    setActiveField(null);
+    setDraft(null);
+  }
+
+  function cancelEdits() {
+    if (draft) update(draft);
+    stopEditing();
+  }
 
   return (
     <OnboardingShell
@@ -271,49 +403,151 @@ export function ConfirmInfoStep() {
       title="Confirm your information"
       subtitle="Ensure the information entered is correct."
       footer={
-        <PrimaryButton onClick={() => goNext()}>Confirm</PrimaryButton>
+        <PrimaryButton disabled={editing} onClick={() => goNext()}>
+          Confirm
+        </PrimaryButton>
       }
     >
-      <div className="rounded-[14px] border border-line bg-white px-4">
-        <ConfirmRow
-          label="Issuing Province"
-          value={provinceLabel}
-          onEdit={() => goTo("issued-province")}
-        />
-        <ConfirmRow
-          label="Registration No."
-          value={state.registrationNumber || "—"}
-          onEdit={() => goTo("registration-number")}
-        />
-        <ConfirmRow
-          label="Health No."
-          value={state.healthCardNumber || "—"}
-          onEdit={() => goTo("health-card")}
-        />
-        <div className="flex items-start justify-between gap-3 py-4">
-          <div className="min-w-0 space-y-3">
-            <div>
-              <p className="text-[13px] leading-4 text-caption">Birthday</p>
-              <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
-                {formatDobDisplay(state.dob)}
-              </p>
-            </div>
-            <div>
-              <p className="text-[13px] leading-4 text-caption">Sex</p>
-              <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
-                {state.sex || "—"}
-              </p>
-            </div>
-          </div>
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-[14px] border bg-white px-4",
+          editing ? "border-action" : "border-line",
+        )}
+      >
+        {editing ? null : (
           <button
             type="button"
-            onClick={() => goTo("dob")}
-            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-            aria-label="Edit birthday and sex"
+            onClick={startEditing}
+            aria-label="Edit information"
+            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
           >
             <Pencil className="size-4" strokeWidth={1.8} />
           </button>
-        </div>
+        )}
+        <ConfirmRow
+          label="Issuing Province"
+          value={provinceLabel}
+          editing={editing}
+          active={activeField === "province"}
+          reserveAction={!editing}
+          onActivate={() => setActiveField("province")}
+        >
+          {activeField === "province" ? (
+            <div
+              className="mt-2 grid grid-cols-3 gap-2"
+              role="group"
+              aria-label="Issuing Province"
+            >
+              {(Object.keys(PROVINCE_LABELS) as Province[]).map((code) => (
+                <ConfirmChip
+                  key={code}
+                  selected={state.issuedProvince === code}
+                  onClick={() => update({ issuedProvince: code })}
+                >
+                  {code}
+                </ConfirmChip>
+              ))}
+            </div>
+          ) : null}
+        </ConfirmRow>
+        <ConfirmRow
+          label="Registration No."
+          value={state.registrationNumber || "—"}
+          editing={editing}
+          active={activeField === "registration"}
+          onActivate={() => setActiveField("registration")}
+        >
+          <input
+            aria-label="Registration No."
+            inputMode="numeric"
+            placeholder="123456"
+            className={confirmControlClass()}
+            value={state.registrationNumber}
+            onFocus={() => setActiveField("registration")}
+            onChange={(event) =>
+              update({
+                registrationNumber: formatRegistration(event.target.value),
+              })
+            }
+          />
+        </ConfirmRow>
+        <ConfirmRow
+          label="Health No."
+          value={state.healthCardNumber || "—"}
+          editing={editing}
+          active={activeField === "health"}
+          onActivate={() => setActiveField("health")}
+        >
+          <input
+            aria-label="Health No."
+            placeholder="1213-456-789"
+            className={confirmControlClass()}
+            value={state.healthCardNumber}
+            onFocus={() => setActiveField("health")}
+            onChange={(event) =>
+              update({ healthCardNumber: formatHealthCard(event.target.value) })
+            }
+          />
+        </ConfirmRow>
+        <ConfirmRow
+          label="Birthday"
+          value={formatDobDisplay(state.dob)}
+          editing={editing}
+          active={activeField === "dob"}
+          onActivate={() => setActiveField("dob")}
+        >
+          <input
+            aria-label="Birthday"
+            inputMode="numeric"
+            placeholder="DD-MM-YYYY"
+            className={confirmControlClass()}
+            value={displayDobInput(state.dob)}
+            onFocus={() => setActiveField("dob")}
+            onChange={(event) =>
+              update({ dob: formatDobInput(event.target.value) })
+            }
+          />
+        </ConfirmRow>
+        <ConfirmRow
+          label="Sex"
+          value={state.sex || "—"}
+          editing={editing}
+          active={activeField === "sex"}
+          onActivate={() => setActiveField("sex")}
+        >
+          {activeField === "sex" ? (
+            <div className="mt-2 grid grid-cols-3 gap-2" role="group" aria-label="Sex">
+              {SEX_CHIPS.map((option) => (
+                <ConfirmChip
+                  key={option.value}
+                  selected={state.sex === option.value}
+                  className={
+                    option.value === "Prefer not to say" ? "col-span-3" : undefined
+                  }
+                  onClick={() => update({ sex: option.value })}
+                >
+                  {option.chip}
+                </ConfirmChip>
+              ))}
+            </div>
+          ) : null}
+        </ConfirmRow>
+        {editing ? (
+          <div className="flex items-center gap-3 py-3">
+            <GhostButton
+              className="min-w-0 w-auto flex-1 basis-0"
+              onClick={cancelEdits}
+            >
+              Cancel
+            </GhostButton>
+            <PrimaryButton
+              className="h-10 min-w-0 w-auto flex-1 basis-0 text-[16px] leading-[22px]"
+              onClick={stopEditing}
+            >
+              Confirm Edits
+            </PrimaryButton>
+          </div>
+        ) : null}
       </div>
     </OnboardingShell>
   );
