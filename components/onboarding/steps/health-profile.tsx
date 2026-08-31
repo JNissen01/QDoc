@@ -264,7 +264,14 @@ function ClearableInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label className="text-[16px] leading-[1rem] font-medium text-ink">
+      <Label
+        className={cn(
+          "font-medium text-ink",
+          size === "compact"
+            ? "text-[14px] leading-4"
+            : "text-[16px] leading-[1rem]",
+        )}
+      >
         {label}
       </Label>
       <div className="relative">
@@ -279,9 +286,10 @@ function ClearableInput({
             }
           }}
           className={cn(
-            "rounded-[14px] border border-line bg-white py-0 pl-4 pr-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
-            inputValueClass,
-            size === "compact" ? "h-[42px]" : "h-[70px]",
+            "rounded-[14px] border border-line bg-white py-0 pl-4 pr-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 font-normal text-ink placeholder:font-normal placeholder:text-fog",
+            size === "compact"
+              ? "h-[42px] text-[16px] leading-[22px] placeholder:text-[16px] md:text-[16px]"
+              : cn("h-[70px]", inputValueClass),
           )}
         />
         <div className="absolute inset-y-0 right-1.5 flex items-center">
@@ -354,7 +362,7 @@ function MedicationEntryCard({
 
       <div className="space-y-4">
         <div>
-          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">Dosage</p>
+          <p className="mb-2 text-[14px] leading-4 font-medium text-ink">Dosage</p>
           <div className="flex flex-wrap gap-2">
             {MEDICATION_DOSAGES.map((dosage) => (
               <SoftChip
@@ -434,7 +442,7 @@ function MedicationEntryCard({
         </div>
 
         <div>
-          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">Frequency</p>
+          <p className="mb-2 text-[14px] leading-4 font-medium text-ink">Frequency</p>
           <FrequencySegmented
             value={
               showCustomFrequency || !presetFrequency
