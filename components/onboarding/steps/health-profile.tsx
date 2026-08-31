@@ -735,6 +735,103 @@ function namesMatch(left: string, right: string) {
   return left.trim().toLowerCase() === right.trim().toLowerCase();
 }
 
+function NamedHistorySearchBlock({
+  fieldLabel,
+  placeholder,
+  commonLabel,
+  commonItems,
+  query,
+  onQueryChange,
+  onCommitName,
+}: {
+  fieldLabel: string;
+  placeholder: string;
+  commonLabel: string;
+  commonItems: string[];
+  query: string;
+  onQueryChange: (value: string) => void;
+  onCommitName: (name: string) => void;
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
+        {fieldLabel}
+      </p>
+      <div className="relative">
+        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
+        <Input
+          value={query}
+          placeholder={placeholder}
+          onChange={(event) => onQueryChange(event.target.value)}
+          onBlur={() => {
+            const value = query.trim();
+            if (value) onCommitName(value);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              const value = query.trim();
+              if (value) onCommitName(value);
+            }
+          }}
+          className={cn(
+            "h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
+            inputValueClass,
+          )}
+        />
+      </div>
+      <p className="mt-5 mb-2 text-[16px] leading-[1rem] font-medium text-ink">
+        {commonLabel}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {commonItems.map((item) => (
+          <SoftChip key={item} onClick={() => onCommitName(item)}>
+            {item}
+          </SoftChip>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NamedHistoryEntryCard({
+  name,
+  itemNoun,
+  onDismiss,
+  onSave,
+}: {
+  name: string;
+  itemNoun: string;
+  onDismiss: () => void;
+  onSave: () => void;
+}) {
+  return (
+    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <p className="text-[18px] leading-6 font-semibold text-ink">{name}</p>
+        <button
+          type="button"
+          className="shrink-0 text-caption"
+          onClick={onDismiss}
+          aria-label={`Cancel ${itemNoun} entry`}
+        >
+          <X className="size-5" />
+        </button>
+      </div>
+      <button
+        type="button"
+        className="inline-flex w-full items-center justify-center text-[16px] font-semibold text-action"
+        onClick={onSave}
+      >
+        <span className="inline-flex items-center justify-center gap-2">
+          <CirclePlusIcon className="size-5 shrink-0" />
+          Add {itemNoun}
+        </span>
+      </button>
+    </div>
+  );
+}
+
 function NamedHistoryListStep({
   step,
   title,
@@ -760,6 +857,7 @@ function NamedHistoryListStep({
 }) {
   const { state, update, goNext } = useStepNav(step);
   const items = state[step];
+  const [draft, setDraft] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [scanning, setScanning] = useState(false);
 
@@ -767,14 +865,21 @@ function NamedHistoryListStep({
     return items.some((item) => namesMatch(item, name));
   }
 
-  function add(name: string) {
+  function openEntry(name: string) {
     const value = name.trim();
-    if (!value || includesName(value)) {
-      setQuery("");
-      return;
-    }
-    update({ [step]: [...items, value] });
+    if (!value) return;
     setQuery("");
+    setDraft(value);
+  }
+
+  function saveDraft() {
+    if (!draft) return;
+    const value = draft.trim();
+    if (!value) return;
+    if (!includesName(value)) {
+      update({ [step]: [...items, value] });
+    }
+    setDraft(null);
   }
 
   function remove(name: string) {
@@ -783,21 +888,18 @@ function NamedHistoryListStep({
     });
   }
 
-  function toggle(name: string) {
-    if (includesName(name)) remove(name);
-    else add(name);
-  }
-
   async function scan() {
     if (!mockScanValue) return;
     setScanning(true);
     await delay(1000);
-    add(mockScanValue);
+    openEntry(mockScanValue);
     setScanning(false);
   }
 
+  const listedItems = items.filter(
+    (item) => !draft || !namesMatch(item, draft),
+  );
   const canContinue = items.length > 0;
-  const pendingQuery = query.trim();
 
   return (
     <OnboardingShell
@@ -824,9 +926,9 @@ function NamedHistoryListStep({
         </button>
       ) : null}
 
-      {items.length > 0 ? (
+      {listedItems.length > 0 && !draft ? (
         <div className="mb-4 space-y-3">
-          {items.map((item) => (
+          {listedItems.map((item) => (
             <div
               key={item}
               className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
@@ -845,52 +947,24 @@ function NamedHistoryListStep({
         </div>
       ) : null}
 
-      <div>
-        <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
-          {fieldLabel}
-        </p>
-        <div className="relative">
-          <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
-          <Input
-            value={query}
-            placeholder={placeholder}
-            onChange={(event) => setQuery(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.preventDefault();
-                if (pendingQuery) add(pendingQuery);
-              }
-            }}
-            className={cn(
-              "h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
-              inputValueClass,
-            )}
-          />
-        </div>
-        {pendingQuery ? (
-          <button
-            type="button"
-            className="mt-2 text-[14px] font-semibold text-action"
-            onClick={() => add(pendingQuery)}
-          >
-            Add “{pendingQuery}”
-          </button>
-        ) : null}
-        <p className="mt-5 mb-2 text-[16px] leading-[1rem] font-medium text-ink">
-          {commonLabel}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {commonItems.map((item) => (
-            <SoftChip
-              key={item}
-              selected={includesName(item)}
-              onClick={() => toggle(item)}
-            >
-              {item}
-            </SoftChip>
-          ))}
-        </div>
-      </div>
+      {draft ? (
+        <NamedHistoryEntryCard
+          name={draft}
+          itemNoun={itemNoun}
+          onDismiss={() => setDraft(null)}
+          onSave={saveDraft}
+        />
+      ) : (
+        <NamedHistorySearchBlock
+          fieldLabel={fieldLabel}
+          placeholder={placeholder}
+          commonLabel={commonLabel}
+          commonItems={commonItems}
+          query={query}
+          onQueryChange={setQuery}
+          onCommitName={openEntry}
+        />
+      )}
     </OnboardingShell>
   );
 }
