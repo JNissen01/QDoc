@@ -35,7 +35,7 @@ export function ServiceAreaStep() {
       }
     >
       <div>
-        <div className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3">
+        <div className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]">
           <MapPin
             className="size-5 shrink-0 text-action"
             strokeWidth={1.8}
