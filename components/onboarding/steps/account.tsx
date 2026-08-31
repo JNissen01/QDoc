@@ -101,7 +101,7 @@ export function AccountIntroStep() {
     <OnboardingShell
       step="account-intro"
       title="Now that we know you’re eligible, lets set up your account!"
-      subtitle="We’ll send a 5-digit code to your email to confirm it’s you. For this prototype, any code works."
+      subtitle="We’ll send a 5-digit code to your email to confirm it’s you."
       footer={
         <PrimaryButton onClick={continueAccount}>Create Account</PrimaryButton>
       }
