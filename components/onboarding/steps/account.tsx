@@ -148,10 +148,11 @@ export function ContactStep() {
     >
       <div className="space-y-4 text-left">
         <Field
-          label="Phone"
+          aria-label="Phone"
           type="tel"
           autoComplete="tel"
           placeholder="(123) 456-7890"
+          inputClassName="text-center"
           value={state.phone}
           error={phoneError}
           onChange={(event) =>
