@@ -36,7 +36,6 @@ import type {
   Severity,
   Surgery,
 } from "@/lib/onboarding-state";
-import type { StepId } from "@/lib/onboarding-flow";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -1373,12 +1372,18 @@ function SurgeryTextField({
   value,
   placeholder,
   onChange,
+  size = "default",
+  error,
+  inputMode,
 }: {
   label: string;
   hint?: string;
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
+  size?: "default" | "compact";
+  error?: string;
+  inputMode?: "numeric" | "text";
 }) {
   return (
     <div>
@@ -1391,14 +1396,37 @@ function SurgeryTextField({
       <Input
         value={value}
         placeholder={placeholder}
+        inputMode={inputMode}
+        aria-invalid={Boolean(error)}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
-          "h-[70px] rounded-[14px] border border-line bg-white shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
-          inputValueClass,
+          "rounded-[14px] border border-line bg-white shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0",
+          size === "compact"
+            ? "h-[42px] px-4 text-[16px] leading-[22px] font-normal text-ink placeholder:text-[16px] placeholder:font-normal placeholder:text-fog"
+            : cn("h-[70px]", inputValueClass),
         )}
       />
+      {error ? (
+        <p className="mt-2 text-[14px] leading-[18px] text-danger">{error}</p>
+      ) : null}
     </div>
   );
+}
+
+function getSurgeryYearError(year: string) {
+  const trimmed = year.trim();
+  if (!trimmed || !/^\d{4}$/.test(trimmed)) return undefined;
+  const value = Number(trimmed);
+  const currentYear = new Date().getFullYear();
+  if (value > currentYear) {
+    return `Enter a year on or before ${currentYear}.`;
+  }
+  return undefined;
+}
+
+function isValidSurgeryYear(year: string) {
+  const trimmed = year.trim();
+  return /^\d{4}$/.test(trimmed) && !getSurgeryYearError(trimmed);
 }
 
 function emptySurgery(name = ""): Surgery {
@@ -1412,7 +1440,7 @@ function emptySurgery(name = ""): Surgery {
 }
 
 function isSurgeryComplete(surgery: Surgery) {
-  return Boolean(surgery.name.trim() && surgery.year.trim());
+  return Boolean(surgery.name.trim() && isValidSurgeryYear(surgery.year));
 }
 
 function formatSurgerySummary(surgery: Surgery) {
@@ -1432,6 +1460,8 @@ function SurgeryEntryCard({
   onDismiss: () => void;
   onSave: () => void;
 }) {
+  const yearError = getSurgeryYearError(draft.year);
+
   return (
     <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -1451,9 +1481,14 @@ function SurgeryEntryCard({
       <div className="space-y-5">
         <SurgeryTextField
           label="Year of Procedure"
+          size="compact"
+          inputMode="numeric"
           value={draft.year}
           placeholder="e.g. 2015"
-          onChange={(year) => onChange({ ...draft, year })}
+          error={yearError}
+          onChange={(year) =>
+            onChange({ ...draft, year: year.replace(/\D/g, "").slice(0, 4) })
+          }
         />
         <SurgeryTextField
           label="Complications"
