@@ -1210,7 +1210,6 @@ function ConditionEntryCard({
             options={CONDITION_STATUS_OPTIONS}
             onChange={(status) => onChange({ ...draft, status })}
             ariaLabel="Status"
-            compact
           />
         </div>
 
@@ -1223,7 +1222,6 @@ function ConditionEntryCard({
             options={CONDITION_DIAGNOSIS_YEARS_OPTIONS}
             onChange={(diagnosisYears) => onChange({ ...draft, diagnosisYears })}
             ariaLabel="Years since diagnosis"
-            compact
           />
         </div>
       </div>
