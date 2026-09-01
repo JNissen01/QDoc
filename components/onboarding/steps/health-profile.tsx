@@ -925,7 +925,7 @@ function AllergyEntryCard({
           ) : (
             <button
               type="button"
-              className="mt-3 text-[15px] font-medium text-action"
+              className="mt-3 text-[15px] font-medium text-caption"
               onClick={() => setShowCustomReaction(true)}
             >
               + Add Specific Reaction
