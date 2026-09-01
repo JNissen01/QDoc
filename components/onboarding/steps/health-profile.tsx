@@ -1394,7 +1394,7 @@ function SurgeryTextField({
   const fieldClass = cn(
     "w-full rounded-[14px] border border-line bg-white shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0",
     multiline
-      ? "h-[42px] resize-none overflow-y-hidden px-4 py-2.5 text-[16px] leading-[22px] font-normal text-ink placeholder:text-[16px] placeholder:font-normal placeholder:text-fog"
+      ? "min-h-[42px] resize-none overflow-y-hidden px-4 py-2.5 text-[16px] leading-[22px] font-normal text-ink placeholder:text-[16px] placeholder:font-normal placeholder:text-fog"
       : size === "compact"
         ? "h-[42px] px-4 text-[16px] leading-[22px] font-normal text-ink placeholder:text-[16px] placeholder:font-normal placeholder:text-fog"
         : cn("h-[70px]", inputValueClass),
@@ -1405,13 +1405,13 @@ function SurgeryTextField({
   }
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [isScrollable, setIsScrollable] = useState(false);
 
   useEffect(() => {
     if (!multiline) return;
     const el = textareaRef.current;
     if (!el) return;
-    setIsScrollable(el.scrollHeight > SINGLE_LINE_HEIGHT + 1);
+    el.style.height = "0px";
+    el.style.height = `${Math.max(SINGLE_LINE_HEIGHT, el.scrollHeight)}px`;
   }, [multiline, value]);
 
   return (
@@ -1431,11 +1431,7 @@ function SurgeryTextField({
           rows={1}
           aria-invalid={Boolean(error)}
           onChange={(event) => handleChange(event.target.value)}
-          className={cn(
-            fieldClass,
-            "outline-none",
-            isScrollable && "surgery-textarea-scrollable",
-          )}
+          className={cn(fieldClass, "outline-none")}
         />
       ) : (
         <Input
