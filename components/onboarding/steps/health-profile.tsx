@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowRight, Pencil, ScanLine, Search, Trash2, X } from "lucide-react";
 import { CirclePlusIcon } from "@/components/brand/circle-plus-icon";
 import { OnboardingShell } from "@/components/onboarding/shell";
@@ -1373,6 +1373,8 @@ function SurgeryTextField({
   placeholder,
   onChange,
   size = "default",
+  multiline = false,
+  maxLength,
   error,
   inputMode,
 }: {
@@ -1382,9 +1384,34 @@ function SurgeryTextField({
   placeholder: string;
   onChange: (value: string) => void;
   size?: "default" | "compact";
+  multiline?: boolean;
+  maxLength?: number;
   error?: string;
   inputMode?: "numeric" | "text";
 }) {
+  const fieldClass = cn(
+    "w-full rounded-[14px] border border-line bg-white shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0",
+    multiline
+      ? "min-h-[42px] resize-none px-4 py-2.5 text-[16px] leading-[22px] font-normal text-ink placeholder:text-[16px] placeholder:font-normal placeholder:text-fog"
+      : size === "compact"
+        ? "h-[42px] px-4 text-[16px] leading-[22px] font-normal text-ink placeholder:text-[16px] placeholder:font-normal placeholder:text-fog"
+        : cn("h-[70px]", inputValueClass),
+  );
+
+  function handleChange(next: string) {
+    onChange(maxLength ? next.slice(0, maxLength) : next);
+  }
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!multiline) return;
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "0px";
+    el.style.height = `${Math.max(42, el.scrollHeight)}px`;
+  }, [multiline, value]);
+
   return (
     <div>
       <p className="text-[14px] leading-4 font-medium text-ink">{label}</p>
@@ -1393,19 +1420,28 @@ function SurgeryTextField({
       ) : (
         <div className="mb-2" />
       )}
-      <Input
-        value={value}
-        placeholder={placeholder}
-        inputMode={inputMode}
-        aria-invalid={Boolean(error)}
-        onChange={(event) => onChange(event.target.value)}
-        className={cn(
-          "rounded-[14px] border border-line bg-white shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0",
-          size === "compact"
-            ? "h-[42px] px-4 text-[16px] leading-[22px] font-normal text-ink placeholder:text-[16px] placeholder:font-normal placeholder:text-fog"
-            : cn("h-[70px]", inputValueClass),
-        )}
-      />
+      {multiline ? (
+        <textarea
+          ref={textareaRef}
+          value={value}
+          placeholder={placeholder}
+          maxLength={maxLength}
+          rows={1}
+          aria-invalid={Boolean(error)}
+          onChange={(event) => handleChange(event.target.value)}
+          className={cn(fieldClass, "outline-none")}
+        />
+      ) : (
+        <Input
+          value={value}
+          placeholder={placeholder}
+          inputMode={inputMode}
+          maxLength={maxLength}
+          aria-invalid={Boolean(error)}
+          onChange={(event) => handleChange(event.target.value)}
+          className={fieldClass}
+        />
+      )}
       {error ? (
         <p className="mt-2 text-[14px] leading-[18px] text-danger">{error}</p>
       ) : null}
@@ -1493,6 +1529,8 @@ function SurgeryEntryCard({
         <SurgeryTextField
           label="Complications"
           hint="In a few words, describe any complications that arose from your procedure."
+          multiline
+          maxLength={75}
           value={draft.complications}
           placeholder="e.g. Infection"
           onChange={(complications) => onChange({ ...draft, complications })}
@@ -1500,6 +1538,8 @@ function SurgeryEntryCard({
         <SurgeryTextField
           label="Current implants or hardware"
           hint="List all that apply. e.g. Plates, screws, mesh or devices"
+          multiline
+          maxLength={75}
           value={draft.implants}
           placeholder="e.g. A plate and 6 screws"
           onChange={(implants) => onChange({ ...draft, implants })}
