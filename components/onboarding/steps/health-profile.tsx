@@ -1481,10 +1481,28 @@ function isSurgeryComplete(surgery: Surgery) {
   return Boolean(surgery.name.trim() && isValidSurgeryYear(surgery.year));
 }
 
-function formatSurgerySummary(surgery: Surgery) {
-  return [surgery.year.trim(), surgery.complications.trim(), surgery.implants.trim()]
-    .filter(Boolean)
-    .join(" • ");
+function SurgeryListDetails({ surgery }: { surgery: Surgery }) {
+  const year = surgery.year.trim();
+  const complications = surgery.complications.trim();
+  const implants = surgery.implants.trim();
+
+  if (!year && !complications && !implants) return null;
+
+  return (
+    <div className="mt-0.5 space-y-0.5 text-[14px] text-body">
+      {year ? <p className="truncate">{year}</p> : null}
+      {complications ? (
+        <p className="truncate" title={complications}>
+          {complications}
+        </p>
+      ) : null}
+      {implants ? (
+        <p className="truncate" title={implants}>
+          {implants}
+        </p>
+      ) : null}
+    </div>
+  );
 }
 
 function SurgeryEntryCard({
@@ -1632,17 +1650,15 @@ export function SurgeriesStep() {
           {listedSurgeries.map((surgery) => (
             <div
               key={surgery.id}
-              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-start justify-between gap-3 rounded-[14px] border border-line bg-white px-4 py-3"
             >
-              <div>
-                <p className="text-[16px] font-semibold text-ink">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[16px] font-semibold text-ink">
                   {surgery.name}
                 </p>
-                <p className="text-[14px] text-body">
-                  {formatSurgerySummary(surgery)}
-                </p>
+                <SurgeryListDetails surgery={surgery} />
               </div>
-              <div className="flex gap-3">
+              <div className="flex shrink-0 gap-3">
                 <button
                   type="button"
                   aria-label="Edit surgery"
