@@ -19,6 +19,8 @@ import {
   COMMON_CONDITIONS,
   COMMON_MEDICATIONS,
   COMMON_SURGERIES,
+  CONDITION_DIAGNOSIS_YEARS_OPTIONS,
+  CONDITION_STATUS_OPTIONS,
   delay,
   MEDICATION_DOSAGES,
   MEDICATION_FREQUENCIES,
@@ -27,6 +29,8 @@ import {
 import type {
   Allergy,
   Condition,
+  ConditionDiagnosisYears,
+  ConditionStatus,
   HistoryCategory,
   Medication,
   Severity,
@@ -261,20 +265,26 @@ const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
   { value: "severe", label: "Severe" },
 ];
 
-function SeveritySegmented({
+function CanvasSegmented<T extends string>({
   value,
+  options,
   onChange,
+  ariaLabel,
+  compact,
 }: {
-  value: Severity | null;
-  onChange: (value: Severity) => void;
+  value: T | null;
+  options: readonly { value: T; label: string }[];
+  onChange: (value: T) => void;
+  ariaLabel: string;
+  compact?: boolean;
 }) {
   return (
     <div
       className="flex h-12 shrink-0 items-center self-stretch rounded-[12px] bg-canvas p-1"
       role="group"
-      aria-label="Severity"
+      aria-label={ariaLabel}
     >
-      {SEVERITY_OPTIONS.map((option) => {
+      {options.map((option) => {
         const selected = value === option.value;
         return (
           <button
@@ -283,7 +293,10 @@ function SeveritySegmented({
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
             className={cn(
-              "flex h-full flex-1 items-center justify-center rounded-[10px] px-1.5 text-center text-[14px] leading-[18px] font-medium transition-colors",
+              "flex h-full flex-1 items-center justify-center rounded-[10px] px-1 text-center font-medium transition-colors",
+              compact
+                ? "text-[12px] leading-[14px]"
+                : "text-[14px] leading-[18px]",
               selected ? "bg-action text-white" : "bg-transparent text-ink",
             )}
           >
@@ -292,6 +305,23 @@ function SeveritySegmented({
         );
       })}
     </div>
+  );
+}
+
+function SeveritySegmented({
+  value,
+  onChange,
+}: {
+  value: Severity | null;
+  onChange: (value: Severity) => void;
+}) {
+  return (
+    <CanvasSegmented
+      value={value}
+      options={SEVERITY_OPTIONS}
+      onChange={onChange}
+      ariaLabel="Severity"
+    />
   );
 }
 
@@ -1088,15 +1118,57 @@ function emptyCondition(name = ""): Condition {
   return {
     id: crypto.randomUUID(),
     name,
+    severity: null,
+    status: null,
+    diagnosisYears: null,
   };
+}
+
+function isConditionComplete(condition: Condition) {
+  return Boolean(
+    condition.name.trim() &&
+      condition.severity &&
+      condition.status &&
+      condition.diagnosisYears,
+  );
+}
+
+function formatConditionStatus(status: ConditionStatus) {
+  return (
+    CONDITION_STATUS_OPTIONS.find((option) => option.value === status)?.label ??
+    status
+  );
+}
+
+function formatConditionDiagnosisYears(years: ConditionDiagnosisYears) {
+  return (
+    CONDITION_DIAGNOSIS_YEARS_OPTIONS.find((option) => option.value === years)
+      ?.label ?? years
+  );
+}
+
+function formatConditionSummary(condition: Condition) {
+  return [
+    condition.severity
+      ? condition.severity.charAt(0).toUpperCase() + condition.severity.slice(1)
+      : null,
+    condition.status ? formatConditionStatus(condition.status) : null,
+    condition.diagnosisYears
+      ? formatConditionDiagnosisYears(condition.diagnosisYears)
+      : null,
+  ]
+    .filter(Boolean)
+    .join(" • ");
 }
 
 function ConditionEntryCard({
   draft,
+  onChange,
   onDismiss,
   onSave,
 }: {
   draft: Condition;
+  onChange: (next: Condition) => void;
   onDismiss: () => void;
   onSave: () => void;
 }) {
@@ -1115,9 +1187,51 @@ function ConditionEntryCard({
           <X className="size-5" />
         </button>
       </div>
+
+      <div className="space-y-5">
+        <div>
+          <p className="mb-2 text-[14px] leading-4 font-medium text-ink">
+            Severity
+          </p>
+          <CanvasSegmented
+            value={draft.severity}
+            options={SEVERITY_OPTIONS}
+            onChange={(severity) => onChange({ ...draft, severity })}
+            ariaLabel="Severity"
+          />
+        </div>
+
+        <div>
+          <p className="mb-2 text-[14px] leading-4 font-medium text-ink">
+            Status
+          </p>
+          <CanvasSegmented
+            value={draft.status}
+            options={CONDITION_STATUS_OPTIONS}
+            onChange={(status) => onChange({ ...draft, status })}
+            ariaLabel="Status"
+            compact
+          />
+        </div>
+
+        <div>
+          <p className="mb-2 text-[14px] leading-4 font-medium text-ink">
+            How many years has it been since your diagnosis
+          </p>
+          <CanvasSegmented
+            value={draft.diagnosisYears}
+            options={CONDITION_DIAGNOSIS_YEARS_OPTIONS}
+            onChange={(diagnosisYears) => onChange({ ...draft, diagnosisYears })}
+            ariaLabel="Years since diagnosis"
+            compact
+          />
+        </div>
+      </div>
+
       <button
         type="button"
-        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action"
+        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
+        disabled={!isConditionComplete(draft)}
         onClick={onSave}
       >
         <span className="inline-flex items-center justify-center gap-2">
@@ -1134,10 +1248,6 @@ export function ConditionsStep() {
   const [draft, setDraft] = useState<Condition | null>(null);
   const [query, setQuery] = useState("");
 
-  function includesName(name: string) {
-    return state.conditions.some((item) => namesMatch(item.name, name));
-  }
-
   function openEntry(name: string, existing?: Condition) {
     const trimmed = name.trim();
     if (!trimmed && !existing) return;
@@ -1150,7 +1260,7 @@ export function ConditionsStep() {
   }
 
   function saveDraft() {
-    if (!draft?.name.trim()) return;
+    if (!draft || !isConditionComplete(draft)) return;
     const next: Condition = {
       ...draft,
       name: draft.name.trim(),
@@ -1179,7 +1289,7 @@ export function ConditionsStep() {
   const listedConditions = state.conditions.filter(
     (condition) => draft?.id !== condition.id,
   );
-  const canContinue = state.conditions.length > 0;
+  const canContinue = state.conditions.some(isConditionComplete);
 
   return (
     <OnboardingShell
@@ -1201,9 +1311,14 @@ export function ConditionsStep() {
               key={condition.id}
               className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
             >
-              <p className="text-[16px] font-semibold text-ink">
-                {condition.name}
-              </p>
+              <div>
+                <p className="text-[16px] font-semibold text-ink">
+                  {condition.name}
+                </p>
+                <p className="text-[14px] text-body">
+                  {formatConditionSummary(condition)}
+                </p>
+              </div>
               <div className="flex gap-3">
                 <button
                   type="button"
@@ -1230,6 +1345,7 @@ export function ConditionsStep() {
       {draft ? (
         <ConditionEntryCard
           draft={draft}
+          onChange={setDraft}
           onDismiss={() => setDraft(null)}
           onSave={saveDraft}
         />

@@ -46,9 +46,15 @@ export type Allergy = {
   severity: Severity | null;
 };
 
+export type ConditionStatus = "unmanaged" | "managed" | "in_remission";
+export type ConditionDiagnosisYears = "under_5" | "5_to_10" | "over_10";
+
 export type Condition = {
   id: string;
   name: string;
+  severity: Severity | null;
+  status: ConditionStatus | null;
+  diagnosisYears: ConditionDiagnosisYears | null;
 };
 
 export type OnboardingState = {

@@ -77,6 +77,18 @@ export const ALLERGY_REACTIONS = [
 
 export const ALLERGY_SEVERITIES = ["Mild", "Moderate", "Severe"] as const;
 
+export const CONDITION_STATUS_OPTIONS = [
+  { value: "unmanaged", label: "Unmanaged" },
+  { value: "managed", label: "Managed" },
+  { value: "in_remission", label: "In remission" },
+] as const;
+
+export const CONDITION_DIAGNOSIS_YEARS_OPTIONS = [
+  { value: "under_5", label: "<5" },
+  { value: "5_to_10", label: "5-10" },
+  { value: "over_10", label: "10+" },
+] as const;
+
 export const MOCK_PAYMENT_CARD = {
   cardholderName: "Jane Doe",
   cardNumber: "4242 4242 4242 4242",
