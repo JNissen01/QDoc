@@ -57,6 +57,14 @@ export type Condition = {
   diagnosisYears: ConditionDiagnosisYears | null;
 };
 
+export type Surgery = {
+  id: string;
+  name: string;
+  year: string;
+  complications: string;
+  implants: string;
+};
+
 export type OnboardingState = {
   inServiceArea: boolean | null;
   coverage: CoverageType | null;
@@ -104,7 +112,7 @@ export type OnboardingState = {
   medications: Medication[];
   allergies: Allergy[];
   conditions: Condition[];
-  surgeries: string[];
+  surgeries: Surgery[];
 };
 
 export const defaultOnboardingState: OnboardingState = {

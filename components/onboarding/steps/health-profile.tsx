@@ -34,6 +34,7 @@ import type {
   HistoryCategory,
   Medication,
   Severity,
+  Surgery,
 } from "@/lib/onboarding-state";
 import type { StepId } from "@/lib/onboarding-flow";
 import { cn } from "@/lib/utils";
@@ -1114,6 +1115,10 @@ export function AllergiesStep() {
   );
 }
 
+function namesMatch(left: string, right: string) {
+  return left.trim().toLowerCase() === right.trim().toLowerCase();
+}
+
 function emptyCondition(name = ""): Condition {
   return {
     id: crypto.randomUUID(),
@@ -1362,10 +1367,247 @@ export function ConditionsStep() {
   );
 }
 
-type NamedHistoryKey = "surgeries";
+function SurgeryTextField({
+  label,
+  hint,
+  value,
+  placeholder,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div>
+      <p className="text-[14px] leading-4 font-medium text-ink">{label}</p>
+      {hint ? (
+        <p className="mt-1 mb-2 text-[13px] leading-4 text-caption">{hint}</p>
+      ) : (
+        <div className="mb-2" />
+      )}
+      <Input
+        value={value}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+        className={cn(
+          "h-[70px] rounded-[14px] border border-line bg-white shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
+          inputValueClass,
+        )}
+      />
+    </div>
+  );
+}
 
-function namesMatch(left: string, right: string) {
-  return left.trim().toLowerCase() === right.trim().toLowerCase();
+function emptySurgery(name = ""): Surgery {
+  return {
+    id: crypto.randomUUID(),
+    name,
+    year: "",
+    complications: "",
+    implants: "",
+  };
+}
+
+function isSurgeryComplete(surgery: Surgery) {
+  return Boolean(surgery.name.trim() && surgery.year.trim());
+}
+
+function formatSurgerySummary(surgery: Surgery) {
+  return [surgery.year.trim(), surgery.complications.trim(), surgery.implants.trim()]
+    .filter(Boolean)
+    .join(" • ");
+}
+
+function SurgeryEntryCard({
+  draft,
+  onChange,
+  onDismiss,
+  onSave,
+}: {
+  draft: Surgery;
+  onChange: (next: Surgery) => void;
+  onDismiss: () => void;
+  onSave: () => void;
+}) {
+  return (
+    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <p className="text-[18px] leading-6 font-semibold text-ink">
+          {draft.name}
+        </p>
+        <button
+          type="button"
+          className="shrink-0 text-caption"
+          onClick={onDismiss}
+          aria-label="Cancel surgery entry"
+        >
+          <X className="size-5" />
+        </button>
+      </div>
+
+      <div className="space-y-5">
+        <SurgeryTextField
+          label="Year of Procedure"
+          value={draft.year}
+          placeholder="e.g. 2015"
+          onChange={(year) => onChange({ ...draft, year })}
+        />
+        <SurgeryTextField
+          label="Complications"
+          hint="In a few words, describe any complications that arose from your procedure."
+          value={draft.complications}
+          placeholder="e.g. Infection"
+          onChange={(complications) => onChange({ ...draft, complications })}
+        />
+        <SurgeryTextField
+          label="Current implants or hardware"
+          hint="List all that apply. e.g. Plates, screws, mesh or devices"
+          value={draft.implants}
+          placeholder="e.g. A plate and 6 screws"
+          onChange={(implants) => onChange({ ...draft, implants })}
+        />
+      </div>
+
+      <button
+        type="button"
+        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
+        disabled={!isSurgeryComplete(draft)}
+        onClick={onSave}
+      >
+        <span className="inline-flex items-center justify-center gap-2">
+          <CirclePlusIcon className="size-5 shrink-0" />
+          Add surgery
+        </span>
+      </button>
+    </div>
+  );
+}
+
+export function SurgeriesStep() {
+  const { state, update, goNext } = useStepNav("surgeries");
+  const [draft, setDraft] = useState<Surgery | null>(null);
+  const [query, setQuery] = useState("");
+
+  function openEntry(name: string, existing?: Surgery) {
+    const trimmed = name.trim();
+    if (!trimmed && !existing) return;
+    setQuery("");
+    if (existing) {
+      setDraft({ ...existing });
+      return;
+    }
+    setDraft(emptySurgery(trimmed));
+  }
+
+  function saveDraft() {
+    if (!draft || !isSurgeryComplete(draft)) return;
+    const next: Surgery = {
+      ...draft,
+      name: draft.name.trim(),
+      year: draft.year.trim(),
+      complications: draft.complications.trim(),
+      implants: draft.implants.trim(),
+    };
+    const duplicate = state.surgeries.some(
+      (item) => item.id !== next.id && namesMatch(item.name, next.name),
+    );
+    if (duplicate) {
+      setDraft(null);
+      return;
+    }
+    const exists = state.surgeries.some((item) => item.id === next.id);
+    const surgeries = exists
+      ? state.surgeries.map((item) => (item.id === next.id ? next : item))
+      : [...state.surgeries, next];
+    update({ surgeries });
+    setDraft(null);
+  }
+
+  function remove(id: string) {
+    update({
+      surgeries: state.surgeries.filter((item) => item.id !== id),
+    });
+  }
+
+  const listedSurgeries = state.surgeries.filter(
+    (surgery) => draft?.id !== surgery.id,
+  );
+  const canContinue = state.surgeries.some(isSurgeryComplete);
+
+  return (
+    <OnboardingShell
+      step="surgeries"
+      title="Have you had any past surgeries?"
+      subtitle="Add prior procedures or operations so they’re on file for this visit."
+      footer={
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
+            Continue
+          </PrimaryButton>
+        </StepFooter>
+      }
+    >
+      {listedSurgeries.length > 0 && !draft ? (
+        <div className="mb-4 space-y-3">
+          {listedSurgeries.map((surgery) => (
+            <div
+              key={surgery.id}
+              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+            >
+              <div>
+                <p className="text-[16px] font-semibold text-ink">
+                  {surgery.name}
+                </p>
+                <p className="text-[14px] text-body">
+                  {formatSurgerySummary(surgery)}
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  aria-label="Edit surgery"
+                  onClick={() => openEntry(surgery.name, surgery)}
+                  className="text-caption"
+                >
+                  <Pencil className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Delete surgery"
+                  onClick={() => remove(surgery.id)}
+                  className="text-danger"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {draft ? (
+        <SurgeryEntryCard
+          draft={draft}
+          onChange={setDraft}
+          onDismiss={() => setDraft(null)}
+          onSave={saveDraft}
+        />
+      ) : (
+        <NamedHistorySearchBlock
+          fieldLabel="Surgery name"
+          placeholder="e.g. Appendectomy"
+          commonLabel="Common surgeries"
+          commonItems={COMMON_SURGERIES}
+          query={query}
+          onQueryChange={setQuery}
+          onCommitName={(name) => openEntry(name)}
+        />
+      )}
+    </OnboardingShell>
+  );
 }
 
 function NamedHistorySearchBlock({
@@ -1424,195 +1666,5 @@ function NamedHistorySearchBlock({
         ))}
       </div>
     </div>
-  );
-}
-
-function NamedHistoryEntryCard({
-  name,
-  itemNoun,
-  onDismiss,
-  onSave,
-}: {
-  name: string;
-  itemNoun: string;
-  onDismiss: () => void;
-  onSave: () => void;
-}) {
-  return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
-      <div className="mb-4 flex items-start justify-between gap-3">
-        <p className="text-[18px] leading-6 font-semibold text-ink">{name}</p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label={`Cancel ${itemNoun} entry`}
-        >
-          <X className="size-5" />
-        </button>
-      </div>
-      <button
-        type="button"
-        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action"
-        onClick={onSave}
-      >
-        <span className="inline-flex items-center justify-center gap-2">
-          <CirclePlusIcon className="size-5 shrink-0" />
-          Add {itemNoun}
-        </span>
-      </button>
-    </div>
-  );
-}
-
-function NamedHistoryListStep({
-  step,
-  title,
-  subtitle,
-  fieldLabel,
-  placeholder,
-  commonLabel,
-  commonItems,
-  scanLabel,
-  mockScanValue,
-  itemNoun,
-}: {
-  step: StepId & NamedHistoryKey;
-  title: string;
-  subtitle: string;
-  fieldLabel: string;
-  placeholder: string;
-  commonLabel: string;
-  commonItems: string[];
-  scanLabel?: string;
-  mockScanValue?: string;
-  itemNoun: string;
-}) {
-  const { state, update, goNext } = useStepNav(step);
-  const items = state[step];
-  const [draft, setDraft] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-  const [scanning, setScanning] = useState(false);
-
-  function includesName(name: string) {
-    return items.some((item) => namesMatch(item, name));
-  }
-
-  function openEntry(name: string) {
-    const value = name.trim();
-    if (!value) return;
-    setQuery("");
-    setDraft(value);
-  }
-
-  function saveDraft() {
-    if (!draft) return;
-    const value = draft.trim();
-    if (!value) return;
-    if (!includesName(value)) {
-      update({ [step]: [...items, value] });
-    }
-    setDraft(null);
-  }
-
-  function remove(name: string) {
-    update({
-      [step]: items.filter((item) => !namesMatch(item, name)),
-    });
-  }
-
-  async function scan() {
-    if (!mockScanValue) return;
-    setScanning(true);
-    await delay(1000);
-    openEntry(mockScanValue);
-    setScanning(false);
-  }
-
-  const listedItems = items.filter(
-    (item) => !draft || !namesMatch(item, draft),
-  );
-  const canContinue = items.length > 0;
-
-  return (
-    <OnboardingShell
-      step={step}
-      title={title}
-      subtitle={subtitle}
-      footer={
-        <StepFooter onSkip={() => goNext()}>
-          <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
-            Continue
-          </PrimaryButton>
-        </StepFooter>
-      }
-    >
-      {scanLabel ? (
-        <button
-          type="button"
-          className="mb-5 inline-flex items-center gap-2 text-[16px] font-semibold text-action disabled:text-caption"
-          disabled={scanning}
-          onClick={scan}
-        >
-          <ScanLine className="size-4" />
-          {scanning ? "Scanning label…" : scanLabel}
-        </button>
-      ) : null}
-
-      {listedItems.length > 0 && !draft ? (
-        <div className="mb-4 space-y-3">
-          {listedItems.map((item) => (
-            <div
-              key={item}
-              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
-            >
-              <p className="text-[16px] font-semibold text-ink">{item}</p>
-              <button
-                type="button"
-                aria-label={`Delete ${itemNoun}`}
-                onClick={() => remove(item)}
-                className="text-danger"
-              >
-                <Trash2 className="size-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      ) : null}
-
-      {draft ? (
-        <NamedHistoryEntryCard
-          name={draft}
-          itemNoun={itemNoun}
-          onDismiss={() => setDraft(null)}
-          onSave={saveDraft}
-        />
-      ) : (
-        <NamedHistorySearchBlock
-          fieldLabel={fieldLabel}
-          placeholder={placeholder}
-          commonLabel={commonLabel}
-          commonItems={commonItems}
-          query={query}
-          onQueryChange={setQuery}
-          onCommitName={openEntry}
-        />
-      )}
-    </OnboardingShell>
-  );
-}
-
-export function SurgeriesStep() {
-  return (
-    <NamedHistoryListStep
-      step="surgeries"
-      title="Have you had any past surgeries?"
-      subtitle="Add prior procedures or operations so they’re on file for this visit."
-      fieldLabel="Surgery name"
-      placeholder="e.g. Appendectomy"
-      commonLabel="Common surgeries"
-      commonItems={COMMON_SURGERIES}
-      itemNoun="surgery"
-    />
   );
 }
