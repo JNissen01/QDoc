@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowRight, Pencil, ScanLine, Search, Trash2, X } from "lucide-react";
+import { ArrowRight, Check, Pencil, ScanLine, Search, Trash2, X } from "lucide-react";
 import { CirclePlusIcon } from "@/components/brand/circle-plus-icon";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
@@ -1507,11 +1507,13 @@ function SurgeryListDetails({ surgery }: { surgery: Surgery }) {
 
 function SurgeryEntryCard({
   draft,
+  isEditing,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Surgery;
+  isEditing: boolean;
   onChange: (next: Surgery) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -1573,8 +1575,17 @@ function SurgeryEntryCard({
         onClick={onSave}
       >
         <span className="inline-flex items-center justify-center gap-2">
-          <CirclePlusIcon className="size-5 shrink-0" />
-          Add surgery
+          {isEditing ? (
+            <>
+              <Check className="size-5 shrink-0" strokeWidth={2.5} />
+              Confirm edits
+            </>
+          ) : (
+            <>
+              <CirclePlusIcon className="size-5 shrink-0" />
+              Add surgery
+            </>
+          )}
         </span>
       </button>
     </div>
@@ -1684,6 +1695,7 @@ export function SurgeriesStep() {
       {draft ? (
         <SurgeryEntryCard
           draft={draft}
+          isEditing={state.surgeries.some((item) => item.id === draft.id)}
           onChange={setDraft}
           onDismiss={() => setDraft(null)}
           onSave={saveDraft}
