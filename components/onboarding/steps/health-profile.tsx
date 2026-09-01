@@ -22,7 +22,6 @@ import {
   delay,
   MEDICATION_DOSAGES,
   MEDICATION_FREQUENCIES,
-  MOCK_ALLERGY,
   MOCK_MEDICATION,
 } from "@/lib/mocks";
 import type {
@@ -964,7 +963,6 @@ export function AllergiesStep() {
   const { state, update, goNext } = useStepNav("allergies");
   const [draft, setDraft] = useState<Allergy | null>(null);
   const [query, setQuery] = useState("");
-  const [scanning, setScanning] = useState(false);
 
   function openEntry(name: string, existing?: Allergy) {
     const trimmed = name.trim();
@@ -992,17 +990,6 @@ export function AllergiesStep() {
     setDraft(null);
   }
 
-  async function scanAllergy() {
-    setScanning(true);
-    await delay(1000);
-    setDraft({
-      ...emptyAllergy(),
-      ...MOCK_ALLERGY,
-    });
-    setQuery("");
-    setScanning(false);
-  }
-
   function remove(id: string) {
     update({
       allergies: state.allergies.filter((item) => item.id !== id),
@@ -1027,16 +1014,6 @@ export function AllergiesStep() {
         </StepFooter>
       }
     >
-      <button
-        type="button"
-        className="mb-5 inline-flex items-center gap-2 text-[16px] font-semibold text-action disabled:text-caption"
-        disabled={scanning}
-        onClick={scanAllergy}
-      >
-        <ScanLine className="size-4" />
-        {scanning ? "Scanning label…" : "Scan Allergy"}
-      </button>
-
       {listedAllergies.length > 0 && !draft ? (
         <div className="mb-4 space-y-3">
           {listedAllergies.map((allergy) => (
