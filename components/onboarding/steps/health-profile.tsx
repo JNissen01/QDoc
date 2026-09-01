@@ -152,6 +152,41 @@ function isPresetFrequency(value: string): value is FrequencyOption {
   return (MEDICATION_FREQUENCIES as readonly string[]).includes(value);
 }
 
+function EntryCardSaveButton({
+  isEditing,
+  addLabel,
+  disabled,
+  onSave,
+}: {
+  isEditing: boolean;
+  addLabel: string;
+  disabled: boolean;
+  onSave: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
+      disabled={disabled}
+      onClick={onSave}
+    >
+      <span className="inline-flex items-center justify-center gap-2">
+        {isEditing ? (
+          <>
+            <Check className="size-5 shrink-0" strokeWidth={2.5} />
+            Confirm edits
+          </>
+        ) : (
+          <>
+            <CirclePlusIcon className="size-5 shrink-0" />
+            {addLabel}
+          </>
+        )}
+      </span>
+    </button>
+  );
+}
+
 function SoftChip({
   selected,
   appearance = "filled",
@@ -403,11 +438,13 @@ function ClearableInput({
 
 function MedicationEntryCard({
   draft,
+  isEditing,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Medication;
+  isEditing: boolean;
   onChange: (next: Medication) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -606,17 +643,12 @@ function MedicationEntryCard({
         </div>
       </div>
 
-      <button
-        type="button"
-        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
+      <EntryCardSaveButton
+        isEditing={isEditing}
+        addLabel="Add medication"
         disabled={!isMedicationComplete(draft)}
-        onClick={onSave}
-      >
-        <span className="inline-flex items-center justify-center gap-2">
-          <CirclePlusIcon className="size-5 shrink-0" />
-          Add medication
-        </span>
-      </button>
+        onSave={onSave}
+      />
     </div>
   );
 }
@@ -797,6 +829,7 @@ export function MedicationsStep() {
         <MedicationEntryCard
           key={draft.id}
           draft={draft}
+          isEditing={state.medications.some((item) => item.id === draft.id)}
           onChange={setDraft}
           onDismiss={() => setDraft(null)}
           onSave={saveDraft}
@@ -835,11 +868,13 @@ function isPresetReaction(value: string) {
 
 function AllergyEntryCard({
   draft,
+  isEditing,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Allergy;
+  isEditing: boolean;
   onChange: (next: Allergy) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -975,17 +1010,12 @@ function AllergyEntryCard({
         </div>
       </div>
 
-      <button
-        type="button"
-        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
+      <EntryCardSaveButton
+        isEditing={isEditing}
+        addLabel="Add allergy"
         disabled={!isAllergyComplete(draft)}
-        onClick={onSave}
-      >
-        <span className="inline-flex items-center justify-center gap-2">
-          <CirclePlusIcon className="size-5 shrink-0" />
-          Add allergy
-        </span>
-      </button>
+        onSave={onSave}
+      />
     </div>
   );
 }
@@ -1095,6 +1125,7 @@ export function AllergiesStep() {
         <AllergyEntryCard
           key={draft.id}
           draft={draft}
+          isEditing={state.allergies.some((item) => item.id === draft.id)}
           onChange={setDraft}
           onDismiss={() => setDraft(null)}
           onSave={saveDraft}
@@ -1167,11 +1198,13 @@ function formatConditionSummary(condition: Condition) {
 
 function ConditionEntryCard({
   draft,
+  isEditing,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Condition;
+  isEditing: boolean;
   onChange: (next: Condition) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -1230,17 +1263,12 @@ function ConditionEntryCard({
         </div>
       </div>
 
-      <button
-        type="button"
-        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
+      <EntryCardSaveButton
+        isEditing={isEditing}
+        addLabel="Add condition"
         disabled={!isConditionComplete(draft)}
-        onClick={onSave}
-      >
-        <span className="inline-flex items-center justify-center gap-2">
-          <CirclePlusIcon className="size-5 shrink-0" />
-          Add condition
-        </span>
-      </button>
+        onSave={onSave}
+      />
     </div>
   );
 }
@@ -1347,6 +1375,7 @@ export function ConditionsStep() {
       {draft ? (
         <ConditionEntryCard
           draft={draft}
+          isEditing={state.conditions.some((item) => item.id === draft.id)}
           onChange={setDraft}
           onDismiss={() => setDraft(null)}
           onSave={saveDraft}
@@ -1568,26 +1597,12 @@ function SurgeryEntryCard({
         />
       </div>
 
-      <button
-        type="button"
-        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action disabled:text-caption"
+      <EntryCardSaveButton
+        isEditing={isEditing}
+        addLabel="Add surgery"
         disabled={!isSurgeryComplete(draft)}
-        onClick={onSave}
-      >
-        <span className="inline-flex items-center justify-center gap-2">
-          {isEditing ? (
-            <>
-              <Check className="size-5 shrink-0" strokeWidth={2.5} />
-              Confirm edits
-            </>
-          ) : (
-            <>
-              <CirclePlusIcon className="size-5 shrink-0" />
-              Add surgery
-            </>
-          )}
-        </span>
-      </button>
+        onSave={onSave}
+      />
     </div>
   );
 }
