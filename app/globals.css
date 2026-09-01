@@ -132,3 +132,25 @@
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/** Compact surgery detail textarea: thin scrollbar only when content overflows. */
+.surgery-textarea-scrollable {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(66, 91, 199, 0.35) transparent;
+}
+
+.surgery-textarea-scrollable::-webkit-scrollbar {
+  width: 4px;
+}
+
+.surgery-textarea-scrollable::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+.surgery-textarea-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(66, 91, 199, 0.35);
+  border-radius: 999px;
+}
