@@ -46,6 +46,11 @@ export type Allergy = {
   severity: Severity | null;
 };
 
+export type Condition = {
+  id: string;
+  name: string;
+};
+
 export type OnboardingState = {
   inServiceArea: boolean | null;
   coverage: CoverageType | null;
@@ -92,7 +97,7 @@ export type OnboardingState = {
   historyCategories: HistoryCategory[];
   medications: Medication[];
   allergies: Allergy[];
-  conditions: string[];
+  conditions: Condition[];
   surgeries: string[];
 };
 

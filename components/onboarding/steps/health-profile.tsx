@@ -26,6 +26,7 @@ import {
 } from "@/lib/mocks";
 import type {
   Allergy,
+  Condition,
   HistoryCategory,
   Medication,
   Severity,
@@ -1083,7 +1084,171 @@ export function AllergiesStep() {
   );
 }
 
-type NamedHistoryKey = "conditions" | "surgeries";
+function emptyCondition(name = ""): Condition {
+  return {
+    id: crypto.randomUUID(),
+    name,
+  };
+}
+
+function ConditionEntryCard({
+  draft,
+  onDismiss,
+  onSave,
+}: {
+  draft: Condition;
+  onDismiss: () => void;
+  onSave: () => void;
+}) {
+  return (
+    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <p className="text-[18px] leading-6 font-semibold text-ink">
+          {draft.name}
+        </p>
+        <button
+          type="button"
+          className="shrink-0 text-caption"
+          onClick={onDismiss}
+          aria-label="Cancel condition entry"
+        >
+          <X className="size-5" />
+        </button>
+      </div>
+      <button
+        type="button"
+        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action"
+        onClick={onSave}
+      >
+        <span className="inline-flex items-center justify-center gap-2">
+          <CirclePlusIcon className="size-5 shrink-0" />
+          Add condition
+        </span>
+      </button>
+    </div>
+  );
+}
+
+export function ConditionsStep() {
+  const { state, update, goNext } = useStepNav("conditions");
+  const [draft, setDraft] = useState<Condition | null>(null);
+  const [query, setQuery] = useState("");
+
+  function includesName(name: string) {
+    return state.conditions.some((item) => namesMatch(item.name, name));
+  }
+
+  function openEntry(name: string, existing?: Condition) {
+    const trimmed = name.trim();
+    if (!trimmed && !existing) return;
+    setQuery("");
+    if (existing) {
+      setDraft({ ...existing });
+      return;
+    }
+    setDraft(emptyCondition(trimmed));
+  }
+
+  function saveDraft() {
+    if (!draft?.name.trim()) return;
+    const next: Condition = {
+      ...draft,
+      name: draft.name.trim(),
+    };
+    const duplicate = state.conditions.some(
+      (item) => item.id !== next.id && namesMatch(item.name, next.name),
+    );
+    if (duplicate) {
+      setDraft(null);
+      return;
+    }
+    const exists = state.conditions.some((item) => item.id === next.id);
+    const conditions = exists
+      ? state.conditions.map((item) => (item.id === next.id ? next : item))
+      : [...state.conditions, next];
+    update({ conditions });
+    setDraft(null);
+  }
+
+  function remove(id: string) {
+    update({
+      conditions: state.conditions.filter((item) => item.id !== id),
+    });
+  }
+
+  const listedConditions = state.conditions.filter(
+    (condition) => draft?.id !== condition.id,
+  );
+  const canContinue = state.conditions.length > 0;
+
+  return (
+    <OnboardingShell
+      step="conditions"
+      title="Do you have any ongoing conditions?"
+      subtitle="Enter diagnoses you’re currently managing so your provider has the full picture."
+      footer={
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
+            Continue
+          </PrimaryButton>
+        </StepFooter>
+      }
+    >
+      {listedConditions.length > 0 && !draft ? (
+        <div className="mb-4 space-y-3">
+          {listedConditions.map((condition) => (
+            <div
+              key={condition.id}
+              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+            >
+              <p className="text-[16px] font-semibold text-ink">
+                {condition.name}
+              </p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  aria-label="Edit condition"
+                  onClick={() => openEntry(condition.name, condition)}
+                  className="text-caption"
+                >
+                  <Pencil className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Delete condition"
+                  onClick={() => remove(condition.id)}
+                  className="text-danger"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {draft ? (
+        <ConditionEntryCard
+          draft={draft}
+          onDismiss={() => setDraft(null)}
+          onSave={saveDraft}
+        />
+      ) : (
+        <NamedHistorySearchBlock
+          fieldLabel="Condition name"
+          placeholder="e.g. Asthma"
+          commonLabel="Common conditions"
+          commonItems={COMMON_CONDITIONS}
+          query={query}
+          onQueryChange={setQuery}
+          onCommitName={(name) => openEntry(name)}
+        />
+      )}
+    </OnboardingShell>
+  );
+}
+
+type NamedHistoryKey = "surgeries";
 
 function namesMatch(left: string, right: string) {
   return left.trim().toLowerCase() === right.trim().toLowerCase();
@@ -1161,7 +1326,7 @@ function NamedHistoryEntryCard({
 }) {
   return (
     <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
-      <div className="mb-5 flex items-start justify-between gap-3">
+      <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">{name}</p>
         <button
           type="button"
@@ -1174,7 +1339,7 @@ function NamedHistoryEntryCard({
       </div>
       <button
         type="button"
-        className="inline-flex w-full items-center justify-center text-[16px] font-semibold text-action"
+        className="mt-5 inline-flex w-full items-center justify-center text-[16px] font-semibold text-action"
         onClick={onSave}
       >
         <span className="inline-flex items-center justify-center gap-2">
@@ -1320,21 +1485,6 @@ function NamedHistoryListStep({
         />
       )}
     </OnboardingShell>
-  );
-}
-
-export function ConditionsStep() {
-  return (
-    <NamedHistoryListStep
-      step="conditions"
-      title="Do you have any ongoing conditions?"
-      subtitle="Enter diagnoses you’re currently managing so your provider has the full picture."
-      fieldLabel="Condition name"
-      placeholder="e.g. Asthma"
-      commonLabel="Common conditions"
-      commonItems={COMMON_CONDITIONS}
-      itemNoun="condition"
-    />
   );
 }
 
