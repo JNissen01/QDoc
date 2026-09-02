@@ -5,6 +5,7 @@ import { Pencil } from "lucide-react";
 import {
   ConfirmChip,
   ConfirmRow,
+  ReviewSectionCard,
   confirmControlClass,
 } from "@/components/onboarding/confirm-primitives";
 import { OnboardingShell } from "@/components/onboarding/shell";
@@ -81,6 +82,13 @@ type MedicalProfileDraft = Pick<
   | "familyDoctor"
   | "pharmacy"
 >;
+
+const MAIN_SECTIONS = new Set<ConfirmField>([
+  "biometrics",
+  "pronouns",
+  "family-doctor",
+  "pharmacy",
+]);
 
 function shouldShowCategory(
   category: HistoryCategory,
@@ -187,8 +195,10 @@ export function ConfirmMedicalProfileStep() {
     const params = new URLSearchParams(window.location.search);
     setExitMode(params.get("exit") === "1");
   }, []);
-  const [editing, setEditing] = useState(false);
+  const [editingSection, setEditingSection] = useState<ConfirmField | null>(null);
   const [activeField, setActiveField] = useState<ConfirmField | null>(null);
+  const mainEditing =
+    editingSection !== null && MAIN_SECTIONS.has(editingSection);
   const [draft, setDraft] = useState<MedicalProfileDraft | null>(null);
   const [heightDraft, setHeightDraft] = useState("");
   const [weightDraft, setWeightDraft] = useState("");
@@ -212,7 +222,7 @@ export function ConfirmMedicalProfileStep() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync when system toggles
   }, [ready, system]);
 
-  function startEditing() {
+  function startSectionEdit(section: ConfirmField) {
     setDraft({
       measurementSystem: state.measurementSystem,
       height: state.height,
@@ -229,27 +239,33 @@ export function ConfirmMedicalProfileStep() {
       familyDoctor: state.familyDoctor ? { ...state.familyDoctor } : null,
       pharmacy: state.pharmacy ? { ...state.pharmacy } : null,
     });
-    setHeightDraft(formatHeightDisplay(state.height, system));
-    setWeightDraft(formatWeightDisplay(state.weight, system));
-    setEditing(true);
-    setActiveField("biometrics");
+    if (section === "biometrics") {
+      setHeightDraft(formatHeightDisplay(state.height, system));
+      setWeightDraft(formatWeightDisplay(state.weight, system));
+    }
+    setEditingSection(section);
+    if (MAIN_SECTIONS.has(section)) {
+      setActiveField(section);
+    } else {
+      setActiveField(null);
+    }
   }
 
-  function stopEditing() {
-    setEditing(false);
+  function stopSectionEdit() {
+    setEditingSection(null);
     setActiveField(null);
     setDraft(null);
     setClinicQuery("");
     setPharmacyQuery("");
   }
 
-  function cancelEdits() {
+  function cancelSectionEdit() {
     if (draft) {
       update(draft);
       setHeightDraft(formatHeightDisplay(draft.height, draft.measurementSystem));
       setWeightDraft(formatWeightDisplay(draft.weight, draft.measurementSystem));
     }
-    stopEditing();
+    stopSectionEdit();
   }
 
   const showMedications = shouldShowCategory("medications", state, exitMode);
@@ -275,36 +291,37 @@ export function ConfirmMedicalProfileStep() {
       }
       footer={
         <PrimaryButton
-          disabled={editing}
+          disabled={editingSection !== null}
           onClick={() => (exitMode ? goTo("dashboard") : goNext())}
         >
           {exitMode ? "Exit" : "Confirm"}
         </PrimaryButton>
       }
     >
+      <div className="space-y-3">
       <div
         className={cn(
           "relative overflow-hidden rounded-[14px] border bg-white px-4",
-          editing ? "border-action" : "border-line",
+          mainEditing ? "border-action" : "border-line",
         )}
       >
-        {editing ? null : (
+        {!mainEditing ? (
           <button
             type="button"
-            onClick={startEditing}
+            onClick={() => startSectionEdit("biometrics")}
             aria-label="Edit information"
             className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
           >
             <Pencil className="size-4" strokeWidth={1.8} />
           </button>
-        )}
+        ) : null}
 
         <ConfirmRow
           label="Height / weight"
           value={formatBiometricsRow(state.height, state.weight, system)}
-          editing={editing}
+          editing={mainEditing}
           active={activeField === "biometrics"}
-          reserveAction={!editing}
+          reserveAction={!mainEditing}
           onActivate={() => setActiveField("biometrics")}
         >
           {activeField === "biometrics" ? (
@@ -352,7 +369,7 @@ export function ConfirmMedicalProfileStep() {
         <ConfirmRow
           label="Pronouns"
           value={state.pronouns || "—"}
-          editing={editing}
+          editing={mainEditing}
           active={activeField === "pronouns"}
           onActivate={() => setActiveField("pronouns")}
         >
@@ -372,261 +389,13 @@ export function ConfirmMedicalProfileStep() {
           ) : null}
         </ConfirmRow>
 
-        {showMedications ? (
-          <ConfirmRow
-            label="Medications"
-            value={formatMedicationsList(state.medications)}
-            editing={editing}
-            active={activeField === "medications"}
-            onActivate={() => setActiveField("medications")}
-          >
-            {activeField === "medications" ? (
-              <div className="mt-2 space-y-4">
-                {state.medications.map((medication) => (
-                  <div key={medication.id} className="space-y-2 border-b border-line pb-3 last:border-b-0">
-                    <p className="text-[14px] font-semibold text-ink">{medication.name}</p>
-                    <p className="text-[13px] text-caption">Dosage</p>
-                    <div className="flex flex-wrap gap-2">
-                      {MEDICATION_DOSAGES.map((dosage) => (
-                        <ConfirmChip
-                          key={dosage}
-                          selected={medication.dosage === dosage}
-                          onClick={() =>
-                            update({
-                              medications: state.medications.map((item) =>
-                                item.id === medication.id
-                                  ? { ...item, dosage }
-                                  : item,
-                              ),
-                            })
-                          }
-                        >
-                          {dosage}
-                        </ConfirmChip>
-                      ))}
-                    </div>
-                    <p className="text-[13px] text-caption">Frequency</p>
-                    <CompactSegmented
-                      value={
-                        (MEDICATION_FREQUENCIES as readonly string[]).includes(
-                          medication.frequency,
-                        )
-                          ? (medication.frequency as (typeof MEDICATION_FREQUENCIES)[number])
-                          : null
-                      }
-                      options={MEDICATION_FREQUENCIES.map((value) => ({
-                        value,
-                        label: value,
-                      }))}
-                      ariaLabel={`Frequency for ${medication.name}`}
-                      onChange={(frequency) =>
-                        update({
-                          medications: state.medications.map((item) =>
-                            item.id === medication.id
-                              ? { ...item, frequency }
-                              : item,
-                          ),
-                        })
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
-
-        {showAllergies ? (
-          <ConfirmRow
-            label="Allergies"
-            value={formatAllergiesList(state.allergies)}
-            editing={editing}
-            active={activeField === "allergies"}
-            onActivate={() => setActiveField("allergies")}
-          >
-            {activeField === "allergies" ? (
-              <div className="mt-2 space-y-4">
-                {state.allergies.map((allergy) => (
-                  <div key={allergy.id} className="space-y-2 border-b border-line pb-3 last:border-b-0">
-                    <p className="text-[14px] font-semibold text-ink">{allergy.name}</p>
-                    <p className="text-[13px] text-caption">Reactions</p>
-                    <div className="flex flex-wrap gap-2">
-                      {ALLERGY_REACTIONS.map((reaction) => (
-                        <ConfirmChip
-                          key={reaction}
-                          selected={allergy.reactions.includes(reaction)}
-                          onClick={() => {
-                            const reactions = allergy.reactions.includes(reaction)
-                              ? allergy.reactions.filter((item) => item !== reaction)
-                              : [...allergy.reactions, reaction];
-                            update({
-                              allergies: state.allergies.map((item) =>
-                                item.id === allergy.id ? { ...item, reactions } : item,
-                              ),
-                            });
-                          }}
-                        >
-                          {reaction}
-                        </ConfirmChip>
-                      ))}
-                    </div>
-                    <p className="text-[13px] text-caption">Severity</p>
-                    <CompactSegmented
-                      value={allergy.severity}
-                      options={SEVERITY_OPTIONS}
-                      ariaLabel={`Severity for ${allergy.name}`}
-                      onChange={(severity) =>
-                        update({
-                          allergies: state.allergies.map((item) =>
-                            item.id === allergy.id ? { ...item, severity } : item,
-                          ),
-                        })
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
-
-        {showConditions ? (
-          <ConfirmRow
-            label="Ongoing conditions"
-            value={formatConditionsList(state.conditions)}
-            editing={editing}
-            active={activeField === "conditions"}
-            onActivate={() => setActiveField("conditions")}
-          >
-            {activeField === "conditions" ? (
-              <div className="mt-2 space-y-4">
-                {state.conditions.map((condition) => (
-                  <div key={condition.id} className="space-y-2 border-b border-line pb-3 last:border-b-0">
-                    <p className="text-[14px] font-semibold text-ink">{condition.name}</p>
-                    <p className="text-[13px] text-caption">Severity</p>
-                    <CompactSegmented
-                      value={condition.severity}
-                      options={SEVERITY_OPTIONS}
-                      ariaLabel={`Severity for ${condition.name}`}
-                      onChange={(severity) =>
-                        update({
-                          conditions: state.conditions.map((item) =>
-                            item.id === condition.id ? { ...item, severity } : item,
-                          ),
-                        })
-                      }
-                    />
-                    <p className="text-[13px] text-caption">Status</p>
-                    <CompactSegmented
-                      value={condition.status}
-                      options={CONDITION_STATUS_OPTIONS}
-                      ariaLabel={`Status for ${condition.name}`}
-                      onChange={(status) =>
-                        update({
-                          conditions: state.conditions.map((item) =>
-                            item.id === condition.id ? { ...item, status } : item,
-                          ),
-                        })
-                      }
-                    />
-                    <p className="text-[13px] text-caption">Years since diagnosis</p>
-                    <CompactSegmented
-                      value={condition.diagnosisYears}
-                      options={CONDITION_DIAGNOSIS_YEARS_OPTIONS}
-                      ariaLabel={`Diagnosis years for ${condition.name}`}
-                      onChange={(diagnosisYears) =>
-                        update({
-                          conditions: state.conditions.map((item) =>
-                            item.id === condition.id
-                              ? { ...item, diagnosisYears }
-                              : item,
-                          ),
-                        })
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
-
-        {showSurgeries ? (
-          <ConfirmRow
-            label="Past surgeries"
-            value={formatSurgeriesList(state.surgeries)}
-            editing={editing}
-            active={activeField === "surgeries"}
-            onActivate={() => setActiveField("surgeries")}
-          >
-            {activeField === "surgeries" ? (
-              <div className="mt-2 space-y-4">
-                {state.surgeries.map((surgery) => (
-                  <div key={surgery.id} className="space-y-2 border-b border-line pb-3 last:border-b-0">
-                    <p className="text-[14px] font-semibold text-ink">{surgery.name}</p>
-                    <input
-                      aria-label={`Year for ${surgery.name}`}
-                      inputMode="numeric"
-                      placeholder="Year"
-                      className={confirmControlClass()}
-                      value={surgery.year}
-                      onChange={(event) =>
-                        update({
-                          surgeries: state.surgeries.map((item) =>
-                            item.id === surgery.id
-                              ? {
-                                  ...item,
-                                  year: event.target.value.replace(/\D/g, "").slice(0, 4),
-                                }
-                              : item,
-                          ),
-                        })
-                      }
-                    />
-                    <input
-                      aria-label={`Complications for ${surgery.name}`}
-                      placeholder="Complications"
-                      className={confirmControlClass()}
-                      value={surgery.complications}
-                      onChange={(event) =>
-                        update({
-                          surgeries: state.surgeries.map((item) =>
-                            item.id === surgery.id
-                              ? { ...item, complications: event.target.value.slice(0, 75) }
-                              : item,
-                          ),
-                        })
-                      }
-                    />
-                    <input
-                      aria-label={`Implants for ${surgery.name}`}
-                      placeholder="Implants / hardware"
-                      className={confirmControlClass()}
-                      value={surgery.implants}
-                      onChange={(event) =>
-                        update({
-                          surgeries: state.surgeries.map((item) =>
-                            item.id === surgery.id
-                              ? { ...item, implants: event.target.value.slice(0, 75) }
-                              : item,
-                          ),
-                        })
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
-
         <ConfirmRow
           label="Family doctor"
           value={formatFamilyDoctorSummary(
             state.hasFamilyDoctor,
             state.familyDoctor,
           )}
-          editing={editing}
+          editing={mainEditing}
           active={activeField === "family-doctor"}
           onActivate={() => setActiveField("family-doctor")}
         >
@@ -678,7 +447,7 @@ export function ConfirmMedicalProfileStep() {
         <ConfirmRow
           label="Pharmacy"
           value={formatPharmacySummary(state.pharmacy)}
-          editing={editing}
+          editing={mainEditing}
           active={activeField === "pharmacy"}
           onActivate={() => setActiveField("pharmacy")}
         >
@@ -707,22 +476,292 @@ export function ConfirmMedicalProfileStep() {
           ) : null}
         </ConfirmRow>
 
-        {editing ? (
+        {mainEditing ? (
           <div className="flex items-center gap-3 py-3">
             <GhostButton
               className="min-w-0 w-auto flex-1 basis-0"
-              onClick={cancelEdits}
+              onClick={cancelSectionEdit}
             >
               Cancel
             </GhostButton>
             <PrimaryButton
               className="h-10 min-w-0 w-auto flex-1 basis-0 text-[16px] leading-[22px]"
-              onClick={stopEditing}
+              onClick={stopSectionEdit}
             >
               Confirm Edits
             </PrimaryButton>
           </div>
         ) : null}
+      </div>
+
+      {showMedications ? (
+        <ReviewSectionCard
+          label="Medications"
+          value={formatMedicationsList(state.medications)}
+          editing={editingSection === "medications"}
+          onStartEdit={() => startSectionEdit("medications")}
+          onCancel={cancelSectionEdit}
+          onConfirm={stopSectionEdit}
+        >
+          <div className="space-y-4">
+            {state.medications.map((medication) => (
+              <div
+                key={medication.id}
+                className="space-y-2 border-b border-line pb-3 last:border-b-0"
+              >
+                <p className="text-[14px] font-semibold text-ink">
+                  {medication.name}
+                </p>
+                <p className="text-[13px] text-caption">Dosage</p>
+                <div className="flex flex-wrap gap-2">
+                  {MEDICATION_DOSAGES.map((dosage) => (
+                    <ConfirmChip
+                      key={dosage}
+                      selected={medication.dosage === dosage}
+                      onClick={() =>
+                        update({
+                          medications: state.medications.map((item) =>
+                            item.id === medication.id
+                              ? { ...item, dosage }
+                              : item,
+                          ),
+                        })
+                      }
+                    >
+                      {dosage}
+                    </ConfirmChip>
+                  ))}
+                </div>
+                <p className="text-[13px] text-caption">Frequency</p>
+                <CompactSegmented
+                  value={
+                    (MEDICATION_FREQUENCIES as readonly string[]).includes(
+                      medication.frequency,
+                    )
+                      ? (medication.frequency as (typeof MEDICATION_FREQUENCIES)[number])
+                      : null
+                  }
+                  options={MEDICATION_FREQUENCIES.map((value) => ({
+                    value,
+                    label: value,
+                  }))}
+                  ariaLabel={`Frequency for ${medication.name}`}
+                  onChange={(frequency) =>
+                    update({
+                      medications: state.medications.map((item) =>
+                        item.id === medication.id
+                          ? { ...item, frequency }
+                          : item,
+                      ),
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </ReviewSectionCard>
+      ) : null}
+
+      {showAllergies ? (
+        <ReviewSectionCard
+          label="Allergies"
+          value={formatAllergiesList(state.allergies)}
+          editing={editingSection === "allergies"}
+          onStartEdit={() => startSectionEdit("allergies")}
+          onCancel={cancelSectionEdit}
+          onConfirm={stopSectionEdit}
+        >
+          <div className="space-y-4">
+            {state.allergies.map((allergy) => (
+              <div
+                key={allergy.id}
+                className="space-y-2 border-b border-line pb-3 last:border-b-0"
+              >
+                <p className="text-[14px] font-semibold text-ink">
+                  {allergy.name}
+                </p>
+                <p className="text-[13px] text-caption">Reactions</p>
+                <div className="flex flex-wrap gap-2">
+                  {ALLERGY_REACTIONS.map((reaction) => (
+                    <ConfirmChip
+                      key={reaction}
+                      selected={allergy.reactions.includes(reaction)}
+                      onClick={() => {
+                        const reactions = allergy.reactions.includes(reaction)
+                          ? allergy.reactions.filter((item) => item !== reaction)
+                          : [...allergy.reactions, reaction];
+                        update({
+                          allergies: state.allergies.map((item) =>
+                            item.id === allergy.id ? { ...item, reactions } : item,
+                          ),
+                        });
+                      }}
+                    >
+                      {reaction}
+                    </ConfirmChip>
+                  ))}
+                </div>
+                <p className="text-[13px] text-caption">Severity</p>
+                <CompactSegmented
+                  value={allergy.severity}
+                  options={SEVERITY_OPTIONS}
+                  ariaLabel={`Severity for ${allergy.name}`}
+                  onChange={(severity) =>
+                    update({
+                      allergies: state.allergies.map((item) =>
+                        item.id === allergy.id ? { ...item, severity } : item,
+                      ),
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </ReviewSectionCard>
+      ) : null}
+
+      {showConditions ? (
+        <ReviewSectionCard
+          label="Ongoing conditions"
+          value={formatConditionsList(state.conditions)}
+          editing={editingSection === "conditions"}
+          onStartEdit={() => startSectionEdit("conditions")}
+          onCancel={cancelSectionEdit}
+          onConfirm={stopSectionEdit}
+        >
+          <div className="space-y-4">
+            {state.conditions.map((condition) => (
+              <div
+                key={condition.id}
+                className="space-y-2 border-b border-line pb-3 last:border-b-0"
+              >
+                <p className="text-[14px] font-semibold text-ink">
+                  {condition.name}
+                </p>
+                <p className="text-[13px] text-caption">Severity</p>
+                <CompactSegmented
+                  value={condition.severity}
+                  options={SEVERITY_OPTIONS}
+                  ariaLabel={`Severity for ${condition.name}`}
+                  onChange={(severity) =>
+                    update({
+                      conditions: state.conditions.map((item) =>
+                        item.id === condition.id ? { ...item, severity } : item,
+                      ),
+                    })
+                  }
+                />
+                <p className="text-[13px] text-caption">Status</p>
+                <CompactSegmented
+                  value={condition.status}
+                  options={CONDITION_STATUS_OPTIONS}
+                  ariaLabel={`Status for ${condition.name}`}
+                  onChange={(status) =>
+                    update({
+                      conditions: state.conditions.map((item) =>
+                        item.id === condition.id ? { ...item, status } : item,
+                      ),
+                    })
+                  }
+                />
+                <p className="text-[13px] text-caption">Years since diagnosis</p>
+                <CompactSegmented
+                  value={condition.diagnosisYears}
+                  options={CONDITION_DIAGNOSIS_YEARS_OPTIONS}
+                  ariaLabel={`Diagnosis years for ${condition.name}`}
+                  onChange={(diagnosisYears) =>
+                    update({
+                      conditions: state.conditions.map((item) =>
+                        item.id === condition.id
+                          ? { ...item, diagnosisYears }
+                          : item,
+                      ),
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </ReviewSectionCard>
+      ) : null}
+
+      {showSurgeries ? (
+        <ReviewSectionCard
+          label="Past surgeries"
+          value={formatSurgeriesList(state.surgeries)}
+          editing={editingSection === "surgeries"}
+          onStartEdit={() => startSectionEdit("surgeries")}
+          onCancel={cancelSectionEdit}
+          onConfirm={stopSectionEdit}
+        >
+          <div className="space-y-4">
+            {state.surgeries.map((surgery) => (
+              <div
+                key={surgery.id}
+                className="space-y-2 border-b border-line pb-3 last:border-b-0"
+              >
+                <p className="text-[14px] font-semibold text-ink">
+                  {surgery.name}
+                </p>
+                <input
+                  aria-label={`Year for ${surgery.name}`}
+                  inputMode="numeric"
+                  placeholder="Year"
+                  className={confirmControlClass()}
+                  value={surgery.year}
+                  onChange={(event) =>
+                    update({
+                      surgeries: state.surgeries.map((item) =>
+                        item.id === surgery.id
+                          ? {
+                              ...item,
+                              year: event.target.value
+                                .replace(/\D/g, "")
+                                .slice(0, 4),
+                            }
+                          : item,
+                      ),
+                    })
+                  }
+                />
+                <input
+                  aria-label={`Complications for ${surgery.name}`}
+                  placeholder="Complications"
+                  className={confirmControlClass()}
+                  value={surgery.complications}
+                  onChange={(event) =>
+                    update({
+                      surgeries: state.surgeries.map((item) =>
+                        item.id === surgery.id
+                          ? {
+                              ...item,
+                              complications: event.target.value.slice(0, 75),
+                            }
+                          : item,
+                      ),
+                    })
+                  }
+                />
+                <input
+                  aria-label={`Implants for ${surgery.name}`}
+                  placeholder="Implants / hardware"
+                  className={confirmControlClass()}
+                  value={surgery.implants}
+                  onChange={(event) =>
+                    update({
+                      surgeries: state.surgeries.map((item) =>
+                        item.id === surgery.id
+                          ? { ...item, implants: event.target.value.slice(0, 75) }
+                          : item,
+                      ),
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </ReviewSectionCard>
+      ) : null}
       </div>
     </OnboardingShell>
   );
