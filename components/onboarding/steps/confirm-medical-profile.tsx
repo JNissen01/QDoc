@@ -22,7 +22,6 @@ import {
   parseHeightToCm,
   parseWeightToKg,
 } from "@/lib/biometrics-units";
-import { HISTORY_OPTIONS } from "@/lib/history-options";
 import {
   ALLERGY_REACTIONS,
   CONDITION_DIAGNOSIS_YEARS_OPTIONS,
@@ -38,7 +37,6 @@ import {
   formatBiometricsRow,
   formatConditionsList,
   formatFamilyDoctorSummary,
-  formatHistoryCategoriesSummary,
   formatMedicationsList,
   formatPharmacySummary,
   formatSurgeriesList,
@@ -62,7 +60,6 @@ const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
 type ConfirmField =
   | "biometrics"
   | "pronouns"
-  | "history"
   | "medications"
   | "allergies"
   | "conditions"
@@ -76,7 +73,6 @@ type MedicalProfileDraft = Pick<
   | "height"
   | "weight"
   | "pronouns"
-  | "historyCategories"
   | "medications"
   | "allergies"
   | "conditions"
@@ -222,7 +218,6 @@ export function ConfirmMedicalProfileStep() {
       height: state.height,
       weight: state.weight,
       pronouns: state.pronouns,
-      historyCategories: [...state.historyCategories],
       medications: state.medications.map((item) => ({ ...item })),
       allergies: state.allergies.map((item) => ({
         ...item,
@@ -257,49 +252,10 @@ export function ConfirmMedicalProfileStep() {
     stopEditing();
   }
 
-  function handleHistorySelect(category: HistoryCategory) {
-    if (category === "none") {
-      const next: HistoryCategory[] = state.historyCategories.includes("none")
-        ? []
-        : ["none"];
-      update({
-        historyCategories: next,
-        ...(next.includes("none")
-          ? {
-              medications: [],
-              allergies: [],
-              conditions: [],
-              surgeries: [],
-            }
-          : {}),
-      });
-      return;
-    }
-    const withoutNone = state.historyCategories.filter((item) => item !== "none");
-    const next = withoutNone.includes(category)
-      ? withoutNone.filter((item) => item !== category)
-      : [...withoutNone, category];
-    const removed = state.historyCategories.includes(category);
-    update({
-      historyCategories: next,
-      ...(removed && category === "medications" ? { medications: [] } : {}),
-      ...(removed && category === "allergies" ? { allergies: [] } : {}),
-      ...(removed && category === "conditions" ? { conditions: [] } : {}),
-      ...(removed && category === "surgeries" ? { surgeries: [] } : {}),
-    });
-  }
-
   const showMedications = shouldShowCategory("medications", state, exitMode);
   const showAllergies = shouldShowCategory("allergies", state, exitMode);
   const showConditions = shouldShowCategory("conditions", state, exitMode);
   const showSurgeries = shouldShowCategory("surgeries", state, exitMode);
-  const showHistory =
-    exitMode ||
-    state.historyCategories.length > 0 ||
-    showMedications ||
-    showAllergies ||
-    showConditions ||
-    showSurgeries;
 
   const heightSuffix = system === "metric" ? "cm" : "ft";
   const weightSuffix = system === "metric" ? "kg" : "lbs";
@@ -415,36 +371,6 @@ export function ConfirmMedicalProfileStep() {
             </div>
           ) : null}
         </ConfirmRow>
-
-        {showHistory ? (
-          <ConfirmRow
-            label="Medical history"
-            value={formatHistoryCategoriesSummary(state.historyCategories)}
-            editing={editing}
-            active={activeField === "history"}
-            onActivate={() => setActiveField("history")}
-          >
-            {activeField === "history" ? (
-              <div className="mt-2 space-y-2">
-                {HISTORY_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => handleHistorySelect(option.value)}
-                    className={cn(
-                      "w-full rounded-[10px] border px-3 py-2 text-left text-[14px]",
-                      state.historyCategories.includes(option.value)
-                        ? "border-action bg-canvas font-medium text-action"
-                        : "border-line text-ink",
-                    )}
-                  >
-                    {option.title}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
 
         {showMedications ? (
           <ConfirmRow
