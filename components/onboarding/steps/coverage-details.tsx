@@ -329,28 +329,28 @@ export function ConfirmInfoStep() {
         </PrimaryButton>
       }
     >
+      {editing ? null : (
+        <div className="mb-2 flex justify-end">
+          <button
+            type="button"
+            onClick={startEditing}
+            className="text-[16px] leading-[22px] font-medium text-action"
+          >
+            Edit
+          </button>
+        </div>
+      )}
       <div
         className={cn(
           "relative overflow-hidden rounded-[14px] border bg-white px-4",
           editing ? "border-action" : "border-line",
         )}
       >
-        {editing ? null : (
-          <button
-            type="button"
-            onClick={startEditing}
-            aria-label="Edit information"
-            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-          >
-            <Pencil className="size-4" strokeWidth={1.8} />
-          </button>
-        )}
         <ConfirmRow
           label="Issuing Province"
           value={provinceLabel}
           editing={editing}
           active={activeField === "province"}
-          reserveAction={!editing}
           onActivate={() => setActiveField("province")}
         >
           {activeField === "province" ? (
