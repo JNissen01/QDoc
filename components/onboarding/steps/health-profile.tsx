@@ -820,9 +820,9 @@ export function MedicationsStep() {
           {listedMedications.map((medication) => (
             <div
               key={medication.id}
-              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-start justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
                   {medication.name}
                 </p>
@@ -832,7 +832,7 @@ export function MedicationsStep() {
                     .join(" • ")}
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex shrink-0 gap-3">
                 <button
                   type="button"
                   aria-label="Edit medication"
@@ -1121,9 +1121,9 @@ export function AllergiesStep() {
           {listedAllergies.map((allergy) => (
             <div
               key={allergy.id}
-              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-start justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
                   {allergy.name}
                 </p>
@@ -1139,7 +1139,7 @@ export function AllergiesStep() {
                     .join(" • ")}
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex shrink-0 gap-3">
                 <button
                   type="button"
                   aria-label="Edit allergy"
@@ -1363,9 +1363,9 @@ export function ConditionsStep() {
           {listedConditions.map((condition) => (
             <div
               key={condition.id}
-              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-start justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
                   {condition.name}
                 </p>
@@ -1373,7 +1373,7 @@ export function ConditionsStep() {
                   {formatConditionSummary(condition)}
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex shrink-0 gap-3">
                 <button
                   type="button"
                   aria-label="Edit condition"
@@ -1711,7 +1711,7 @@ export function SurgeriesStep() {
           {listedSurgeries.map((surgery) => (
             <div
               key={surgery.id}
-              className="flex items-start justify-between gap-3 rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-start justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[16px] font-semibold text-ink">
