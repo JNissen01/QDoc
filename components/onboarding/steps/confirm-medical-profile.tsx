@@ -499,40 +499,36 @@ export function ConfirmMedicalProfileStep() {
           active={activeField === "biometrics"}
           onActivate={() => setActiveField("biometrics")}
         >
-          {activeField === "biometrics" ? (
-            <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <p className="text-[13px] text-caption">Height ({heightSuffix})</p>
-                  <input
-                    aria-label="Height"
-                    inputMode="decimal"
-                    className={confirmControlClass()}
-                    value={heightDraft}
-                    onChange={(event) => {
-                      const next = event.target.value;
-                      setHeightDraft(next);
-                      const metric = parseHeightToCm(next, system);
-                      if (metric !== null) update({ height: metric });
-                    }}
-                  />
-                </div>
-                <div>
-                  <p className="text-[13px] text-caption">Weight ({weightSuffix})</p>
-                  <input
-                    aria-label="Weight"
-                    inputMode="decimal"
-                    className={confirmControlClass()}
-                    value={weightDraft}
-                    onChange={(event) => {
-                      const next = event.target.value;
-                      setWeightDraft(next);
-                      const metric = parseWeightToKg(next, system);
-                      if (metric !== null) update({ weight: metric });
-                    }}
-                  />
-                </div>
-            </div>
-          ) : null}
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              aria-label={`Height (${heightSuffix})`}
+              inputMode="decimal"
+              className={confirmControlClass()}
+              value={heightDraft}
+              placeholder={heightSuffix}
+              onFocus={() => setActiveField("biometrics")}
+              onChange={(event) => {
+                const next = event.target.value;
+                setHeightDraft(next);
+                const metric = parseHeightToCm(next, system);
+                if (metric !== null) update({ height: metric });
+              }}
+            />
+            <input
+              aria-label={`Weight (${weightSuffix})`}
+              inputMode="decimal"
+              className={confirmControlClass()}
+              value={weightDraft}
+              placeholder={weightSuffix}
+              onFocus={() => setActiveField("biometrics")}
+              onChange={(event) => {
+                const next = event.target.value;
+                setWeightDraft(next);
+                const metric = parseWeightToKg(next, system);
+                if (metric !== null) update({ weight: metric });
+              }}
+            />
+          </div>
         </ConfirmRow>
 
         <ConfirmRow
