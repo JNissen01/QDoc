@@ -592,7 +592,6 @@ export function ConfirmMedicalProfileStep() {
                 <ConfirmChip
                   key={option}
                   selected={state.pronouns === option}
-                  className={option === "Prefer not to say" ? "col-span-2" : undefined}
                   onClick={() => update({ pronouns: option })}
                 >
                   {option}
