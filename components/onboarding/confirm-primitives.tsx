@@ -82,7 +82,7 @@ export function ReviewSectionCard({
           {label}
         </p>
         {editing ? (
-          <div className="mt-3">{children}</div>
+          <div className="mt-4">{children}</div>
         ) : (
           <p className="mt-1 whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink">
             {value}
