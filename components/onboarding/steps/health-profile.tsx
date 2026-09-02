@@ -26,11 +26,11 @@ import {
   MEDICATION_FREQUENCIES,
   MOCK_MEDICATION,
 } from "@/lib/mocks";
+import { HISTORY_OPTIONS } from "@/lib/history-options";
+import { formatConditionSummary } from "@/lib/medical-profile-display";
 import type {
   Allergy,
   Condition,
-  ConditionDiagnosisYears,
-  ConditionStatus,
   HistoryCategory,
   Medication,
   Severity,
@@ -40,33 +40,6 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const HISTORY_OPTIONS: {
-  value: HistoryCategory;
-  title: string;
-  description?: string;
-}[] = [
-  {
-    value: "medications",
-    title: "Medications",
-    description: "Prescriptions, OTC drugs, or supplements",
-  },
-  {
-    value: "allergies",
-    title: "Allergies",
-    description: "Drug, food, or environmental allergies",
-  },
-  {
-    value: "conditions",
-    title: "Ongoing conditions",
-    description: "Diagnoses you’re currently managing",
-  },
-  {
-    value: "surgeries",
-    title: "Past surgeries",
-    description: "Any prior procedures or operations",
-  },
-  { value: "none", title: "None of these apply to me" },
-];
 
 export function MedicalHistoryStep() {
   const { state, update, goNext } = useStepNav("medical-history");
@@ -1208,34 +1181,6 @@ function isConditionComplete(condition: Condition) {
       condition.status &&
       condition.diagnosisYears,
   );
-}
-
-function formatConditionStatus(status: ConditionStatus) {
-  return (
-    CONDITION_STATUS_OPTIONS.find((option) => option.value === status)?.label ??
-    status
-  );
-}
-
-function formatConditionDiagnosisYears(years: ConditionDiagnosisYears) {
-  return (
-    CONDITION_DIAGNOSIS_YEARS_OPTIONS.find((option) => option.value === years)
-      ?.label ?? years
-  );
-}
-
-function formatConditionSummary(condition: Condition) {
-  return [
-    condition.severity
-      ? condition.severity.charAt(0).toUpperCase() + condition.severity.slice(1)
-      : null,
-    condition.status ? formatConditionStatus(condition.status) : null,
-    condition.diagnosisYears
-      ? formatConditionDiagnosisYears(condition.diagnosisYears)
-      : null,
-  ]
-    .filter(Boolean)
-    .join(" • ");
 }
 
 function ConditionEntryCard({

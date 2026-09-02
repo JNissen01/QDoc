@@ -12,55 +12,16 @@ import {
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { filterByQuery, MOCK_CLINICS, MOCK_PHARMACIES } from "@/lib/mocks";
+import {
+  formatHeightDisplay,
+  formatWeightDisplay,
+  parseHeightToCm,
+  parseWeightToKg,
+} from "@/lib/biometrics-units";
 import type { MeasurementSystem } from "@/lib/onboarding-state";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-const CM_PER_FT = 30.48;
-const LBS_PER_KG = 2.2046226218;
-
-function roundTo(value: number, places: number) {
-  const factor = 10 ** places;
-  return Math.round(value * factor) / factor;
-}
-
-function formatHeightDisplay(cm: string, system: MeasurementSystem) {
-  if (!cm.trim()) return "";
-  const n = Number(cm);
-  if (!Number.isFinite(n)) return "";
-  return system === "metric"
-    ? String(roundTo(n, 1))
-    : String(roundTo(n / CM_PER_FT, 2));
-}
-
-function formatWeightDisplay(kg: string, system: MeasurementSystem) {
-  if (!kg.trim()) return "";
-  const n = Number(kg);
-  if (!Number.isFinite(n)) return "";
-  return system === "metric"
-    ? String(roundTo(n, 1))
-    : String(roundTo(n * LBS_PER_KG, 1));
-}
-
-/** Returns metric string, "" for empty, or null if input is not yet a number. */
-function parseHeightToCm(display: string, system: MeasurementSystem) {
-  if (!display.trim()) return "";
-  const n = Number(display);
-  if (!Number.isFinite(n)) return null;
-  return String(
-    system === "metric" ? roundTo(n, 2) : roundTo(n * CM_PER_FT, 2),
-  );
-}
-
-function parseWeightToKg(display: string, system: MeasurementSystem) {
-  if (!display.trim()) return "";
-  const n = Number(display);
-  if (!Number.isFinite(n)) return null;
-  return String(
-    system === "metric" ? roundTo(n, 2) : roundTo(n / LBS_PER_KG, 2),
-  );
-}
 
 function UnitField({
   label,
