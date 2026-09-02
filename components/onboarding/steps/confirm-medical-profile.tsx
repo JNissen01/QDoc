@@ -53,8 +53,6 @@ import type {
 } from "@/lib/onboarding-state";
 import { cn } from "@/lib/utils";
 
-const PRONOUNS = ["She/her", "He/him", "They/them", "Prefer not to say"];
-
 type ConfirmField =
   | "biometrics"
   | "pronouns"
@@ -586,19 +584,14 @@ export function ConfirmMedicalProfileStep() {
           active={activeField === "pronouns"}
           onActivate={() => setActiveField("pronouns")}
         >
-          {activeField === "pronouns" ? (
-            <div className="mt-2 grid grid-cols-2 gap-2" role="group" aria-label="Pronouns">
-              {PRONOUNS.map((option) => (
-                <ConfirmChip
-                  key={option}
-                  selected={state.pronouns === option}
-                  onClick={() => update({ pronouns: option })}
-                >
-                  {option}
-                </ConfirmChip>
-              ))}
-            </div>
-          ) : null}
+          <input
+            aria-label="Pronouns"
+            className={confirmControlClass()}
+            value={state.pronouns}
+            placeholder="e.g. They/them"
+            onFocus={() => setActiveField("pronouns")}
+            onChange={(event) => update({ pronouns: event.target.value })}
+          />
         </ConfirmRow>
 
         {personalEditing ? (
