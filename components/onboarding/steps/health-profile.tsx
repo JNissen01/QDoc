@@ -820,7 +820,7 @@ export function MedicationsStep() {
           {listedMedications.map((medication) => (
             <div
               key={medication.id}
-              className="flex items-start justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
@@ -1121,7 +1121,7 @@ export function AllergiesStep() {
           {listedAllergies.map((allergy) => (
             <div
               key={allergy.id}
-              className="flex items-start justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
@@ -1363,7 +1363,7 @@ export function ConditionsStep() {
           {listedConditions.map((condition) => (
             <div
               key={condition.id}
-              className="flex items-start justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
@@ -1711,7 +1711,7 @@ export function SurgeriesStep() {
           {listedSurgeries.map((surgery) => (
             <div
               key={surgery.id}
-              className="flex items-start justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[16px] font-semibold text-ink">
