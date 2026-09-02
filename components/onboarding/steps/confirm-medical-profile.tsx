@@ -5,7 +5,6 @@ import { Pencil } from "lucide-react";
 import {
   ConfirmChip,
   ConfirmRow,
-  ReviewSectionCard,
   confirmControlClass,
 } from "@/components/onboarding/confirm-primitives";
 import { OnboardingShell } from "@/components/onboarding/shell";
@@ -81,6 +80,12 @@ const PERSONAL_SECTIONS = new Set<ConfirmField>(["biometrics", "pronouns"]);
 const CARE_TEAM_SECTIONS = new Set<ConfirmField>([
   "family-doctor",
   "pharmacy",
+]);
+const HISTORY_SECTIONS = new Set<ConfirmField>([
+  "medications",
+  "allergies",
+  "conditions",
+  "surgeries",
 ]);
 
 function ReviewGroup({
@@ -173,6 +178,8 @@ export function ConfirmMedicalProfileStep() {
     editingSection !== null && PERSONAL_SECTIONS.has(editingSection);
   const careTeamEditing =
     editingSection !== null && CARE_TEAM_SECTIONS.has(editingSection);
+  const historyEditing =
+    editingSection !== null && HISTORY_SECTIONS.has(editingSection);
   const [draft, setDraft] = useState<MedicalProfileDraft | null>(null);
   const [heightDraft, setHeightDraft] = useState("");
   const [weightDraft, setWeightDraft] = useState("");
@@ -218,7 +225,11 @@ export function ConfirmMedicalProfileStep() {
       setWeightDraft(formatWeightDisplay(state.weight, system));
     }
     setEditingSection(section);
-    if (PERSONAL_SECTIONS.has(section) || CARE_TEAM_SECTIONS.has(section)) {
+    if (
+      PERSONAL_SECTIONS.has(section) ||
+      CARE_TEAM_SECTIONS.has(section) ||
+      HISTORY_SECTIONS.has(section)
+    ) {
       setActiveField(section);
     } else {
       setActiveField(null);
@@ -510,130 +521,178 @@ export function ConfirmMedicalProfileStep() {
 
       {showMedications || showAllergies || showConditions || showSurgeries ? (
       <ReviewGroup title="Medical history">
-      <div className="space-y-3">
-      {showMedications ? (
-        <ReviewSectionCard
-          label="Medications"
-          value={formatMedicationsList(state.medications)}
-          editing={editingSection === "medications"}
-          onStartEdit={() => startSectionEdit("medications")}
-          onCancel={cancelSectionEdit}
-          onConfirm={stopSectionEdit}
-        >
-          <div className="space-y-4">
-            {state.medications.map((medication) => (
-              <MedicationEntryCard
-                key={medication.id}
-                reviewMode
-                draft={medication}
-                isEditing
-                onChange={(next) =>
-                  update({
-                    medications: state.medications.map((item) =>
-                      item.id === medication.id ? next : item,
-                    ),
-                  })
-                }
-                onDismiss={() => {}}
-                onSave={() => {}}
-              />
-            ))}
-          </div>
-        </ReviewSectionCard>
-      ) : null}
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-[14px] border bg-white px-4",
+          historyEditing ? "border-action" : "border-line",
+        )}
+      >
+        {!historyEditing ? (
+          <button
+            type="button"
+            onClick={() =>
+              startSectionEdit(
+                showMedications
+                  ? "medications"
+                  : showAllergies
+                    ? "allergies"
+                    : showConditions
+                      ? "conditions"
+                      : "surgeries",
+              )
+            }
+            aria-label="Edit medical history"
+            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
+          >
+            <Pencil className="size-4" strokeWidth={1.8} />
+          </button>
+        ) : null}
 
-      {showAllergies ? (
-        <ReviewSectionCard
-          label="Allergies"
-          value={formatAllergiesList(state.allergies)}
-          editing={editingSection === "allergies"}
-          onStartEdit={() => startSectionEdit("allergies")}
-          onCancel={cancelSectionEdit}
-          onConfirm={stopSectionEdit}
-        >
-          <div className="space-y-4">
-            {state.allergies.map((allergy) => (
-              <AllergyEntryCard
-                key={allergy.id}
-                reviewMode
-                draft={allergy}
-                isEditing
-                onChange={(next) =>
-                  update({
-                    allergies: state.allergies.map((item) =>
-                      item.id === allergy.id ? next : item,
-                    ),
-                  })
-                }
-                onDismiss={() => {}}
-                onSave={() => {}}
-              />
-            ))}
-          </div>
-        </ReviewSectionCard>
-      ) : null}
+        {showMedications ? (
+          <ConfirmRow
+            label="Medications"
+            value={formatMedicationsList(state.medications)}
+            editing={historyEditing}
+            active={activeField === "medications"}
+            reserveAction={!historyEditing}
+            onActivate={() => setActiveField("medications")}
+          >
+            {activeField === "medications" ? (
+              <div className="mt-2 space-y-4">
+                {state.medications.map((medication) => (
+                  <MedicationEntryCard
+                    key={medication.id}
+                    reviewMode
+                    draft={medication}
+                    isEditing
+                    onChange={(next) =>
+                      update({
+                        medications: state.medications.map((item) =>
+                          item.id === medication.id ? next : item,
+                        ),
+                      })
+                    }
+                    onDismiss={() => {}}
+                    onSave={() => {}}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </ConfirmRow>
+        ) : null}
 
-      {showConditions ? (
-        <ReviewSectionCard
-          label="Ongoing conditions"
-          value={formatConditionsList(state.conditions)}
-          editing={editingSection === "conditions"}
-          onStartEdit={() => startSectionEdit("conditions")}
-          onCancel={cancelSectionEdit}
-          onConfirm={stopSectionEdit}
-        >
-          <div className="space-y-4">
-            {state.conditions.map((condition) => (
-              <ConditionEntryCard
-                key={condition.id}
-                reviewMode
-                draft={condition}
-                isEditing
-                onChange={(next) =>
-                  update({
-                    conditions: state.conditions.map((item) =>
-                      item.id === condition.id ? next : item,
-                    ),
-                  })
-                }
-                onDismiss={() => {}}
-                onSave={() => {}}
-              />
-            ))}
-          </div>
-        </ReviewSectionCard>
-      ) : null}
+        {showAllergies ? (
+          <ConfirmRow
+            label="Allergies"
+            value={formatAllergiesList(state.allergies)}
+            editing={historyEditing}
+            active={activeField === "allergies"}
+            onActivate={() => setActiveField("allergies")}
+          >
+            {activeField === "allergies" ? (
+              <div className="mt-2 space-y-4">
+                {state.allergies.map((allergy) => (
+                  <AllergyEntryCard
+                    key={allergy.id}
+                    reviewMode
+                    draft={allergy}
+                    isEditing
+                    onChange={(next) =>
+                      update({
+                        allergies: state.allergies.map((item) =>
+                          item.id === allergy.id ? next : item,
+                        ),
+                      })
+                    }
+                    onDismiss={() => {}}
+                    onSave={() => {}}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </ConfirmRow>
+        ) : null}
 
-      {showSurgeries ? (
-        <ReviewSectionCard
-          label="Past surgeries"
-          value={formatSurgeriesList(state.surgeries)}
-          editing={editingSection === "surgeries"}
-          onStartEdit={() => startSectionEdit("surgeries")}
-          onCancel={cancelSectionEdit}
-          onConfirm={stopSectionEdit}
-        >
-          <div className="space-y-4">
-            {state.surgeries.map((surgery) => (
-              <SurgeryEntryCard
-                key={surgery.id}
-                reviewMode
-                draft={surgery}
-                isEditing
-                onChange={(next) =>
-                  update({
-                    surgeries: state.surgeries.map((item) =>
-                      item.id === surgery.id ? next : item,
-                    ),
-                  })
-                }
-                onDismiss={() => {}}
-                onSave={() => {}}
-              />
-            ))}
+        {showConditions ? (
+          <ConfirmRow
+            label="Ongoing conditions"
+            value={formatConditionsList(state.conditions)}
+            editing={historyEditing}
+            active={activeField === "conditions"}
+            onActivate={() => setActiveField("conditions")}
+          >
+            {activeField === "conditions" ? (
+              <div className="mt-2 space-y-4">
+                {state.conditions.map((condition) => (
+                  <ConditionEntryCard
+                    key={condition.id}
+                    reviewMode
+                    draft={condition}
+                    isEditing
+                    onChange={(next) =>
+                      update({
+                        conditions: state.conditions.map((item) =>
+                          item.id === condition.id ? next : item,
+                        ),
+                      })
+                    }
+                    onDismiss={() => {}}
+                    onSave={() => {}}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </ConfirmRow>
+        ) : null}
+
+        {showSurgeries ? (
+          <ConfirmRow
+            label="Past surgeries"
+            value={formatSurgeriesList(state.surgeries)}
+            editing={historyEditing}
+            active={activeField === "surgeries"}
+            onActivate={() => setActiveField("surgeries")}
+          >
+            {activeField === "surgeries" ? (
+              <div className="mt-2 space-y-4">
+                {state.surgeries.map((surgery) => (
+                  <SurgeryEntryCard
+                    key={surgery.id}
+                    reviewMode
+                    draft={surgery}
+                    isEditing
+                    onChange={(next) =>
+                      update({
+                        surgeries: state.surgeries.map((item) =>
+                          item.id === surgery.id ? next : item,
+                        ),
+                      })
+                    }
+                    onDismiss={() => {}}
+                    onSave={() => {}}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </ConfirmRow>
+        ) : null}
+
+        {historyEditing ? (
+          <div className="flex items-center gap-3 py-3">
+            <GhostButton
+              className="min-w-0 w-auto flex-1 basis-0"
+              onClick={cancelSectionEdit}
+            >
+              Cancel
+            </GhostButton>
+            <PrimaryButton
+              className="h-10 min-w-0 w-auto flex-1 basis-0 text-[16px] leading-[22px]"
+              onClick={stopSectionEdit}
+            >
+              Confirm Edits
+            </PrimaryButton>
           </div>
-        </ReviewSectionCard>
-      ) : null}
+        ) : null}
       </div>
       </ReviewGroup>
       ) : null}
