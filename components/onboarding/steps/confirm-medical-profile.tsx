@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Pencil } from "lucide-react";
 import {
   ConfirmChip,
@@ -77,12 +77,28 @@ type MedicalProfileDraft = Pick<
   | "pharmacy"
 >;
 
-const MAIN_SECTIONS = new Set<ConfirmField>([
-  "biometrics",
-  "pronouns",
+const PERSONAL_SECTIONS = new Set<ConfirmField>(["biometrics", "pronouns"]);
+const CARE_TEAM_SECTIONS = new Set<ConfirmField>([
   "family-doctor",
   "pharmacy",
 ]);
+
+function ReviewGroup({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="space-y-3">
+      <h2 className="text-[16px] leading-[22px] font-semibold text-ink">
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
 
 function shouldShowCategory(
   category: HistoryCategory,
@@ -153,8 +169,10 @@ export function ConfirmMedicalProfileStep() {
   }, []);
   const [editingSection, setEditingSection] = useState<ConfirmField | null>(null);
   const [activeField, setActiveField] = useState<ConfirmField | null>(null);
-  const mainEditing =
-    editingSection !== null && MAIN_SECTIONS.has(editingSection);
+  const personalEditing =
+    editingSection !== null && PERSONAL_SECTIONS.has(editingSection);
+  const careTeamEditing =
+    editingSection !== null && CARE_TEAM_SECTIONS.has(editingSection);
   const [draft, setDraft] = useState<MedicalProfileDraft | null>(null);
   const [heightDraft, setHeightDraft] = useState("");
   const [weightDraft, setWeightDraft] = useState("");
@@ -200,7 +218,7 @@ export function ConfirmMedicalProfileStep() {
       setWeightDraft(formatWeightDisplay(state.weight, system));
     }
     setEditingSection(section);
-    if (MAIN_SECTIONS.has(section)) {
+    if (PERSONAL_SECTIONS.has(section) || CARE_TEAM_SECTIONS.has(section)) {
       setActiveField(section);
     } else {
       setActiveField(null);
@@ -254,18 +272,19 @@ export function ConfirmMedicalProfileStep() {
         </PrimaryButton>
       }
     >
-      <div className="space-y-3">
+      <div className="space-y-6">
+      <ReviewGroup title="Personal">
       <div
         className={cn(
           "relative overflow-hidden rounded-[14px] border bg-white px-4",
-          mainEditing ? "border-action" : "border-line",
+          personalEditing ? "border-action" : "border-line",
         )}
       >
-        {!mainEditing ? (
+        {!personalEditing ? (
           <button
             type="button"
             onClick={() => startSectionEdit("biometrics")}
-            aria-label="Edit information"
+            aria-label="Edit personal information"
             className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
           >
             <Pencil className="size-4" strokeWidth={1.8} />
@@ -275,9 +294,9 @@ export function ConfirmMedicalProfileStep() {
         <ConfirmRow
           label="Height / weight"
           value={formatBiometricsRow(state.height, state.weight, system)}
-          editing={mainEditing}
+          editing={personalEditing}
           active={activeField === "biometrics"}
-          reserveAction={!mainEditing}
+          reserveAction={!personalEditing}
           onActivate={() => setActiveField("biometrics")}
         >
           {activeField === "biometrics" ? (
@@ -325,7 +344,7 @@ export function ConfirmMedicalProfileStep() {
         <ConfirmRow
           label="Pronouns"
           value={state.pronouns || "—"}
-          editing={mainEditing}
+          editing={personalEditing}
           active={activeField === "pronouns"}
           onActivate={() => setActiveField("pronouns")}
         >
@@ -345,14 +364,52 @@ export function ConfirmMedicalProfileStep() {
           ) : null}
         </ConfirmRow>
 
+        {personalEditing ? (
+          <div className="flex items-center gap-3 py-3">
+            <GhostButton
+              className="min-w-0 w-auto flex-1 basis-0"
+              onClick={cancelSectionEdit}
+            >
+              Cancel
+            </GhostButton>
+            <PrimaryButton
+              className="h-10 min-w-0 w-auto flex-1 basis-0 text-[16px] leading-[22px]"
+              onClick={stopSectionEdit}
+            >
+              Confirm Edits
+            </PrimaryButton>
+          </div>
+        ) : null}
+      </div>
+      </ReviewGroup>
+
+      <ReviewGroup title="Care team">
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-[14px] border bg-white px-4",
+          careTeamEditing ? "border-action" : "border-line",
+        )}
+      >
+        {!careTeamEditing ? (
+          <button
+            type="button"
+            onClick={() => startSectionEdit("family-doctor")}
+            aria-label="Edit care team"
+            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
+          >
+            <Pencil className="size-4" strokeWidth={1.8} />
+          </button>
+        ) : null}
+
         <ConfirmRow
           label="Family doctor"
           value={formatFamilyDoctorSummary(
             state.hasFamilyDoctor,
             state.familyDoctor,
           )}
-          editing={mainEditing}
+          editing={careTeamEditing}
           active={activeField === "family-doctor"}
+          reserveAction={!careTeamEditing}
           onActivate={() => setActiveField("family-doctor")}
         >
           {activeField === "family-doctor" ? (
@@ -403,7 +460,7 @@ export function ConfirmMedicalProfileStep() {
         <ConfirmRow
           label="Pharmacy"
           value={formatPharmacySummary(state.pharmacy)}
-          editing={mainEditing}
+          editing={careTeamEditing}
           active={activeField === "pharmacy"}
           onActivate={() => setActiveField("pharmacy")}
         >
@@ -432,7 +489,7 @@ export function ConfirmMedicalProfileStep() {
           ) : null}
         </ConfirmRow>
 
-        {mainEditing ? (
+        {careTeamEditing ? (
           <div className="flex items-center gap-3 py-3">
             <GhostButton
               className="min-w-0 w-auto flex-1 basis-0"
@@ -449,7 +506,11 @@ export function ConfirmMedicalProfileStep() {
           </div>
         ) : null}
       </div>
+      </ReviewGroup>
 
+      {showMedications || showAllergies || showConditions || showSurgeries ? (
+      <ReviewGroup title="Medical history">
+      <div className="space-y-3">
       {showMedications ? (
         <ReviewSectionCard
           label="Medications"
@@ -572,6 +633,9 @@ export function ConfirmMedicalProfileStep() {
             ))}
           </div>
         </ReviewSectionCard>
+      ) : null}
+      </div>
+      </ReviewGroup>
       ) : null}
       </div>
     </OnboardingShell>
