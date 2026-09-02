@@ -34,7 +34,7 @@ function IncompleteRingIcon({ className }: { className?: string }) {
       className={className}
       aria-hidden
     >
-      <circle cx="12" cy="12" r="9" stroke="#E5B83D" strokeWidth="2" />
+      <circle cx="12" cy="12" r="9" stroke="#d2d8ef" strokeWidth="2" />
     </svg>
   );
 }
