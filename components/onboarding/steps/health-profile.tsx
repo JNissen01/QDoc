@@ -703,7 +703,7 @@ function SearchCommitInput({
             onClick={commit}
             className="flex size-7 items-center justify-center text-action"
           >
-            <ArrowRight className="size-4" />
+            <ArrowRight className="size-[1.1rem]" />
           </button>
         </div>
       ) : null}
