@@ -92,7 +92,7 @@ export function MedicalHistoryStep() {
       title="What does your medical history look like?"
       subtitle="Select all categories that apply to your medical history. We will only ask about what’s relevant to you."
       footer={
-        <StepFooter onSkip={() => goNext()}>
+        <StepFooter hideSkip>
           <PrimaryButton
             disabled={selected.length === 0}
             onClick={() => goNext()}
