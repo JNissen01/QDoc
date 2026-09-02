@@ -172,7 +172,8 @@ export function ConfirmRow({
         <p
           className={cn(
             "text-[13px] leading-4",
-            editing && active ? "font-medium text-action" : "text-caption",
+            editing ? "font-medium" : null,
+            editing && active ? "text-action" : "text-caption",
           )}
         >
           {label}
