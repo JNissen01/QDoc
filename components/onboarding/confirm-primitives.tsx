@@ -160,11 +160,9 @@ export function ConfirmRow({
     <div
       className={cn(
         reserveAction && "pr-12",
-        editing && active
-          ? "-mx-2 rounded-[12px] bg-white px-3 py-4"
-          : editing
-            ? "-mx-4 px-4 py-4"
-            : "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
+        editing
+          ? "-mx-4 px-4 py-4"
+          : "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
       )}
       onClick={() => {
         if (editing) onActivate?.();
