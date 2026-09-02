@@ -205,7 +205,7 @@ export function FamilyDoctorStep() {
       title="Do you have a family doctor?"
       subtitle="Optional. If you have one, we can keep their clinic on file for referrals."
       footer={
-        <StepFooter onSkip={() => goNext()}>
+        <StepFooter hideSkip>
           <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
             Continue
           </PrimaryButton>
