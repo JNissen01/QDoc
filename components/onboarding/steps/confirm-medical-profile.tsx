@@ -507,8 +507,8 @@ export function ConfirmMedicalProfileStep() {
           active={activeField === "biometrics"}
           onActivate={() => setActiveField("biometrics")}
         >
-          <div className="grid grid-cols-2 gap-2">
-            <label className="group flex min-w-0 items-baseline gap-2">
+          <div className="mt-1 grid grid-cols-2 gap-x-4 gap-y-2">
+            <label className="group flex min-w-0 items-baseline gap-3">
               <span className="shrink-0 text-[13px] leading-[22px] text-caption group-focus-within:font-medium group-focus-within:text-action">
                 Height ({heightSuffix})
               </span>
@@ -526,7 +526,7 @@ export function ConfirmMedicalProfileStep() {
                 }}
               />
             </label>
-            <label className="group flex min-w-0 items-baseline gap-2">
+            <label className="group flex min-w-0 items-baseline gap-3">
               <span className="shrink-0 text-[13px] leading-[22px] text-caption group-focus-within:font-medium group-focus-within:text-action">
                 Weight ({weightSuffix})
               </span>
