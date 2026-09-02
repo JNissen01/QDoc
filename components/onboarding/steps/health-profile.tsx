@@ -1110,7 +1110,7 @@ export function AllergiesStep() {
       title="Any allergies we should know about?"
       subtitle="Enter the name of any drug, food, or environmental allergies, or scan a label to enter automatically."
       footer={
-        <StepFooter onSkip={() => goNext()}>
+        <StepFooter hideSkip disabled={!canContinue}>
           <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
             Continue
           </PrimaryButton>
@@ -1369,7 +1369,7 @@ export function ConditionsStep() {
       title="Do you have any ongoing conditions?"
       subtitle="Enter diagnoses you’re currently managing so your provider has the full picture."
       footer={
-        <StepFooter onSkip={() => goNext()}>
+        <StepFooter hideSkip disabled={!canContinue}>
           <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
             Continue
           </PrimaryButton>
@@ -1706,7 +1706,7 @@ export function SurgeriesStep() {
       title="Have you had any past surgeries?"
       subtitle="Add prior procedures or operations so they’re on file for this visit."
       footer={
-        <StepFooter onSkip={() => goNext()}>
+        <StepFooter hideSkip disabled={!canContinue}>
           <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
             Continue
           </PrimaryButton>
