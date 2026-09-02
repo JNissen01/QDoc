@@ -507,15 +507,15 @@ export function ConfirmMedicalProfileStep() {
           active={activeField === "biometrics"}
           onActivate={() => setActiveField("biometrics")}
         >
-          <div className="mt-1 space-y-3">
-            <label className="group block">
-              <span className="text-[13px] leading-4 text-caption group-focus-within:font-medium group-focus-within:text-action">
+          <div className="mt-1 space-y-2">
+            <label className="group flex min-w-0 items-baseline justify-between gap-4">
+              <span className="shrink-0 text-[13px] leading-[22px] text-caption group-focus-within:font-medium group-focus-within:text-action">
                 Height ({heightSuffix})
               </span>
               <input
                 aria-label={`Height (${heightSuffix})`}
                 inputMode="decimal"
-                className={confirmControlClass()}
+                className="min-w-0 flex-1 bg-transparent text-right text-[16px] leading-[22px] font-medium text-ink outline-none"
                 value={heightDraft}
                 onFocus={() => setActiveField("biometrics")}
                 onChange={(event) => {
@@ -526,14 +526,14 @@ export function ConfirmMedicalProfileStep() {
                 }}
               />
             </label>
-            <label className="group block">
-              <span className="text-[13px] leading-4 text-caption group-focus-within:font-medium group-focus-within:text-action">
+            <label className="group flex min-w-0 items-baseline justify-between gap-4">
+              <span className="shrink-0 text-[13px] leading-[22px] text-caption group-focus-within:font-medium group-focus-within:text-action">
                 Weight ({weightSuffix})
               </span>
               <input
                 aria-label={`Weight (${weightSuffix})`}
                 inputMode="decimal"
-                className={confirmControlClass()}
+                className="min-w-0 flex-1 bg-transparent text-right text-[16px] leading-[22px] font-medium text-ink outline-none"
                 value={weightDraft}
                 onFocus={() => setActiveField("biometrics")}
                 onChange={(event) => {
