@@ -202,11 +202,7 @@ export function OffRampStep() {
       step="off-ramp"
       hideBack
       title="Join the waitlist"
-      subtitle={
-        state.waitlistJoined
-          ? `You’re on the list. We’ll email you when QDoc is available in ${location || "your area"}.`
-          : "QDoc can’t be used in your specific region. Enter your location and email and we’ll notify you when QDoc is available in your area."
-      }
+      subtitle="QDoc can’t be used in your specific region. Enter your location and email and we’ll notify you when QDoc is available in your area."
       footer={
         <div className="space-y-2">
           <PrimaryButton
@@ -247,6 +243,11 @@ export function OffRampStep() {
             })
           }
         />
+        {state.waitlistJoined ? (
+          <p className="text-[16px] leading-[22px] font-normal text-body">
+            {`You’re on the list. We’ll email you when QDoc is available in ${location || "your area"}.`}
+          </p>
+        ) : null}
       </div>
 
       <p className="mt-6 text-[14px] leading-[18px] font-normal text-caption">
