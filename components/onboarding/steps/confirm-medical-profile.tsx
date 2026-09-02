@@ -494,7 +494,16 @@ export function ConfirmMedicalProfileStep() {
       >
         <ConfirmRow
           label="Body metrics"
-          value={formatBiometricsRow(state.height, state.weight, system)}
+          value={[
+            state.height.trim()
+              ? `Height · ${formatHeightDisplay(state.height, system)} ${heightSuffix}`
+              : null,
+            state.weight.trim()
+              ? `Weight · ${formatWeightDisplay(state.weight, system)} ${weightSuffix}`
+              : null,
+          ]
+            .filter(Boolean)
+            .join("\n\n") || "—"}
           editing={personalEditing}
           active={activeField === "biometrics"}
           onActivate={() => setActiveField("biometrics")}
