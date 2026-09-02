@@ -388,7 +388,7 @@ export function ConfirmMedicalProfileStep() {
     switch (category) {
       case "medications":
         return (
-          <div className="space-y-4">
+          <div>
             {state.medications.map((medication) => (
               <MedicationEntryCard
                 key={medication.id}
@@ -410,7 +410,7 @@ export function ConfirmMedicalProfileStep() {
         );
       case "allergies":
         return (
-          <div className="space-y-4">
+          <div>
             {state.allergies.map((allergy) => (
               <AllergyEntryCard
                 key={allergy.id}
@@ -432,7 +432,7 @@ export function ConfirmMedicalProfileStep() {
         );
       case "conditions":
         return (
-          <div className="space-y-4">
+          <div>
             {state.conditions.map((condition) => (
               <ConditionEntryCard
                 key={condition.id}
@@ -454,7 +454,7 @@ export function ConfirmMedicalProfileStep() {
         );
       case "surgeries":
         return (
-          <div className="space-y-4">
+          <div>
             {state.surgeries.map((surgery) => (
               <SurgeryEntryCard
                 key={surgery.id}

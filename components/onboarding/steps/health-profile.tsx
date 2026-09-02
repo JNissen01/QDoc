@@ -447,7 +447,8 @@ export function MedicationEntryCard({
     <div
       className={cn(
         "rounded-[14px] border border-line bg-white p-4 shadow-sm",
-        reviewMode && "border-0 p-0 shadow-none border-b border-line pb-4 last:border-b-0 last:pb-0",
+        reviewMode &&
+          "rounded-none border-0 p-0 shadow-none -mx-4 px-4 border-b border-line pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0",
       )}
     >
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -928,7 +929,8 @@ export function AllergyEntryCard({
     <div
       className={cn(
         "rounded-[14px] border border-line bg-white p-4 shadow-sm",
-        reviewMode && "border-0 p-0 shadow-none border-b border-line pb-4 last:border-b-0 last:pb-0",
+        reviewMode &&
+          "rounded-none border-0 p-0 shadow-none -mx-4 px-4 border-b border-line pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0",
       )}
     >
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -1228,7 +1230,8 @@ export function ConditionEntryCard({
     <div
       className={cn(
         "rounded-[14px] border border-line bg-white p-4 shadow-sm",
-        reviewMode && "border-0 p-0 shadow-none border-b border-line pb-4 last:border-b-0 last:pb-0",
+        reviewMode &&
+          "rounded-none border-0 p-0 shadow-none -mx-4 px-4 border-b border-line pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0",
       )}
     >
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -1579,7 +1582,8 @@ export function SurgeryEntryCard({
     <div
       className={cn(
         "rounded-[14px] border border-line bg-white p-4 shadow-sm",
-        reviewMode && "border-0 p-0 shadow-none border-b border-line pb-4 last:border-b-0 last:pb-0",
+        reviewMode &&
+          "rounded-none border-0 p-0 shadow-none -mx-4 px-4 border-b border-line pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0",
       )}
     >
       <div className="mb-4 flex items-start justify-between gap-3">
