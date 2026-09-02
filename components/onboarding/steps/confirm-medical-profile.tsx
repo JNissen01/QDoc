@@ -5,6 +5,7 @@ import { Pencil } from "lucide-react";
 import {
   ConfirmChip,
   ConfirmRow,
+  ReviewSectionCard,
   confirmControlClass,
 } from "@/components/onboarding/confirm-primitives";
 import { OnboardingShell } from "@/components/onboarding/shell";
@@ -43,9 +44,13 @@ import {
   formatSurgeriesList,
 } from "@/lib/medical-profile-display";
 import type {
+  Allergy,
+  Condition,
   HistoryCategory,
   MeasurementSystem,
+  Medication,
   OnboardingState,
+  Surgery,
 } from "@/lib/onboarding-state";
 import { cn } from "@/lib/utils";
 
@@ -60,6 +65,8 @@ type ConfirmField =
   | "surgeries"
   | "family-doctor"
   | "pharmacy";
+
+type HistoryField = "medications" | "allergies" | "conditions" | "surgeries";
 
 type MedicalProfileDraft = Pick<
   OnboardingState,
@@ -76,17 +83,46 @@ type MedicalProfileDraft = Pick<
   | "pharmacy"
 >;
 
+type HistorySlice = {
+  medications: Medication[];
+  allergies: Allergy[];
+  conditions: Condition[];
+  surgeries: Surgery[];
+};
+
 const PERSONAL_SECTIONS = new Set<ConfirmField>(["biometrics", "pronouns"]);
 const CARE_TEAM_SECTIONS = new Set<ConfirmField>([
   "family-doctor",
   "pharmacy",
 ]);
-const HISTORY_SECTIONS = new Set<ConfirmField>([
-  "medications",
-  "allergies",
-  "conditions",
-  "surgeries",
-]);
+
+function cloneHistorySlice(state: HistorySlice): HistorySlice {
+  return {
+    medications: state.medications.map((item) => ({ ...item })),
+    allergies: state.allergies.map((item) => ({
+      ...item,
+      reactions: [...item.reactions],
+    })),
+    conditions: state.conditions.map((item) => ({ ...item })),
+    surgeries: state.surgeries.map((item) => ({ ...item })),
+  };
+}
+
+function sliceForCategory(
+  category: HistoryField,
+  state: HistorySlice,
+): Partial<HistorySlice> {
+  switch (category) {
+    case "medications":
+      return { medications: state.medications };
+    case "allergies":
+      return { allergies: state.allergies };
+    case "conditions":
+      return { conditions: state.conditions };
+    case "surgeries":
+      return { surgeries: state.surgeries };
+  }
+}
 
 function ReviewGroup({
   title,
@@ -172,14 +208,19 @@ export function ConfirmMedicalProfileStep() {
     const params = new URLSearchParams(window.location.search);
     setExitMode(params.get("exit") === "1");
   }, []);
-  const [editingSection, setEditingSection] = useState<ConfirmField | null>(null);
+  const [editingSection, setEditingSection] = useState<ConfirmField | null>(
+    null,
+  );
   const [activeField, setActiveField] = useState<ConfirmField | null>(null);
+  const [historyBroken, setHistoryBroken] = useState(false);
+  const [openHistoryCategory, setOpenHistoryCategory] =
+    useState<HistoryField | null>(null);
+  const [historyCategoryDraft, setHistoryCategoryDraft] =
+    useState<HistorySlice | null>(null);
   const personalEditing =
     editingSection !== null && PERSONAL_SECTIONS.has(editingSection);
   const careTeamEditing =
     editingSection !== null && CARE_TEAM_SECTIONS.has(editingSection);
-  const historyEditing =
-    editingSection !== null && HISTORY_SECTIONS.has(editingSection);
   const [draft, setDraft] = useState<MedicalProfileDraft | null>(null);
   const [heightDraft, setHeightDraft] = useState("");
   const [weightDraft, setWeightDraft] = useState("");
@@ -195,6 +236,23 @@ export function ConfirmMedicalProfileStep() {
     () => filterByQuery(MOCK_PHARMACIES, pharmacyQuery),
     [pharmacyQuery],
   );
+
+  const currentHistorySlice = useMemo(
+    () => ({
+      medications: state.medications,
+      allergies: state.allergies,
+      conditions: state.conditions,
+      surgeries: state.surgeries,
+    }),
+    [state.medications, state.allergies, state.conditions, state.surgeries],
+  );
+
+  const isHistoryDirty = useMemo(() => {
+    if (!openHistoryCategory || !historyCategoryDraft) return false;
+    const live = sliceForCategory(openHistoryCategory, currentHistorySlice);
+    const snap = sliceForCategory(openHistoryCategory, historyCategoryDraft);
+    return JSON.stringify(live) !== JSON.stringify(snap);
+  }, [openHistoryCategory, historyCategoryDraft, currentHistorySlice]);
 
   useEffect(() => {
     if (!ready) return;
@@ -225,11 +283,7 @@ export function ConfirmMedicalProfileStep() {
       setWeightDraft(formatWeightDisplay(state.weight, system));
     }
     setEditingSection(section);
-    if (
-      PERSONAL_SECTIONS.has(section) ||
-      CARE_TEAM_SECTIONS.has(section) ||
-      HISTORY_SECTIONS.has(section)
-    ) {
+    if (PERSONAL_SECTIONS.has(section) || CARE_TEAM_SECTIONS.has(section)) {
       setActiveField(section);
     } else {
       setActiveField(null);
@@ -253,14 +307,175 @@ export function ConfirmMedicalProfileStep() {
     stopSectionEdit();
   }
 
+  function breakApartHistory() {
+    setHistoryBroken(true);
+    setOpenHistoryCategory(null);
+    setHistoryCategoryDraft(null);
+  }
+
+  function doneHistoryBroken() {
+    if (openHistoryCategory && isHistoryDirty) return;
+    setOpenHistoryCategory(null);
+    setHistoryCategoryDraft(null);
+    setHistoryBroken(false);
+  }
+
+  function openHistorySection(category: HistoryField) {
+    if (openHistoryCategory === category) return;
+    if (openHistoryCategory && isHistoryDirty) return;
+    setOpenHistoryCategory(category);
+    setHistoryCategoryDraft(cloneHistorySlice(currentHistorySlice));
+  }
+
+  function cancelHistoryCategory() {
+    if (historyCategoryDraft && openHistoryCategory) {
+      update(sliceForCategory(openHistoryCategory, historyCategoryDraft));
+    }
+    setOpenHistoryCategory(null);
+    setHistoryCategoryDraft(null);
+  }
+
+  function confirmHistoryCategory() {
+    setOpenHistoryCategory(null);
+    setHistoryCategoryDraft(null);
+  }
+
   const showMedications = shouldShowCategory("medications", state, exitMode);
   const showAllergies = shouldShowCategory("allergies", state, exitMode);
   const showConditions = shouldShowCategory("conditions", state, exitMode);
   const showSurgeries = shouldShowCategory("surgeries", state, exitMode);
+  const hasHistory =
+    showMedications || showAllergies || showConditions || showSurgeries;
 
   const heightSuffix = system === "metric" ? "cm" : "ft";
   const weightSuffix = system === "metric" ? "kg" : "lbs";
+  const footerLocked =
+    personalEditing || careTeamEditing || openHistoryCategory !== null;
 
+  const historyCategories: {
+    id: HistoryField;
+    label: string;
+    show: boolean;
+    value: string;
+  }[] = [
+    {
+      id: "medications",
+      label: "Medications",
+      show: showMedications,
+      value: formatMedicationsList(state.medications),
+    },
+    {
+      id: "allergies",
+      label: "Allergies",
+      show: showAllergies,
+      value: formatAllergiesList(state.allergies),
+    },
+    {
+      id: "conditions",
+      label: "Ongoing conditions",
+      show: showConditions,
+      value: formatConditionsList(state.conditions),
+    },
+    {
+      id: "surgeries",
+      label: "Past surgeries",
+      show: showSurgeries,
+      value: formatSurgeriesList(state.surgeries),
+    },
+  ];
+
+  function renderHistoryEditors(category: HistoryField) {
+    switch (category) {
+      case "medications":
+        return (
+          <div className="space-y-4">
+            {state.medications.map((medication) => (
+              <MedicationEntryCard
+                key={medication.id}
+                reviewMode
+                draft={medication}
+                isEditing
+                onChange={(next) =>
+                  update({
+                    medications: state.medications.map((item) =>
+                      item.id === medication.id ? next : item,
+                    ),
+                  })
+                }
+                onDismiss={() => {}}
+                onSave={() => {}}
+              />
+            ))}
+          </div>
+        );
+      case "allergies":
+        return (
+          <div className="space-y-4">
+            {state.allergies.map((allergy) => (
+              <AllergyEntryCard
+                key={allergy.id}
+                reviewMode
+                draft={allergy}
+                isEditing
+                onChange={(next) =>
+                  update({
+                    allergies: state.allergies.map((item) =>
+                      item.id === allergy.id ? next : item,
+                    ),
+                  })
+                }
+                onDismiss={() => {}}
+                onSave={() => {}}
+              />
+            ))}
+          </div>
+        );
+      case "conditions":
+        return (
+          <div className="space-y-4">
+            {state.conditions.map((condition) => (
+              <ConditionEntryCard
+                key={condition.id}
+                reviewMode
+                draft={condition}
+                isEditing
+                onChange={(next) =>
+                  update({
+                    conditions: state.conditions.map((item) =>
+                      item.id === condition.id ? next : item,
+                    ),
+                  })
+                }
+                onDismiss={() => {}}
+                onSave={() => {}}
+              />
+            ))}
+          </div>
+        );
+      case "surgeries":
+        return (
+          <div className="space-y-4">
+            {state.surgeries.map((surgery) => (
+              <SurgeryEntryCard
+                key={surgery.id}
+                reviewMode
+                draft={surgery}
+                isEditing
+                onChange={(next) =>
+                  update({
+                    surgeries: state.surgeries.map((item) =>
+                      item.id === surgery.id ? next : item,
+                    ),
+                  })
+                }
+                onDismiss={() => {}}
+                onSave={() => {}}
+              />
+            ))}
+          </div>
+        );
+    }
+  }
   return (
     <OnboardingShell
       step="confirm-medical-profile"
@@ -276,7 +491,7 @@ export function ConfirmMedicalProfileStep() {
       }
       footer={
         <PrimaryButton
-          disabled={editingSection !== null}
+          disabled={footerLocked}
           onClick={() => (exitMode ? goTo("dashboard") : goNext())}
         >
           {exitMode ? "Exit" : "Confirm"}
@@ -519,182 +734,64 @@ export function ConfirmMedicalProfileStep() {
       </div>
       </ReviewGroup>
 
-      {showMedications || showAllergies || showConditions || showSurgeries ? (
-      <ReviewGroup title="Medical history">
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-[14px] border bg-white px-4",
-          historyEditing ? "border-action" : "border-line",
-        )}
-      >
-        {!historyEditing ? (
-          <button
-            type="button"
-            onClick={() =>
-              startSectionEdit(
-                showMedications
-                  ? "medications"
-                  : showAllergies
-                    ? "allergies"
-                    : showConditions
-                      ? "conditions"
-                      : "surgeries",
-              )
-            }
-            aria-label="Edit medical history"
-            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-          >
-            <Pencil className="size-4" strokeWidth={1.8} />
-          </button>
-        ) : null}
-
-        {showMedications ? (
-          <ConfirmRow
-            label="Medications"
-            value={formatMedicationsList(state.medications)}
-            editing={historyEditing}
-            active={activeField === "medications"}
-            reserveAction={!historyEditing}
-            onActivate={() => setActiveField("medications")}
-          >
-            {activeField === "medications" ? (
-              <div className="mt-2 space-y-4">
-                {state.medications.map((medication) => (
-                  <MedicationEntryCard
-                    key={medication.id}
-                    reviewMode
-                    draft={medication}
-                    isEditing
-                    onChange={(next) =>
-                      update({
-                        medications: state.medications.map((item) =>
-                          item.id === medication.id ? next : item,
-                        ),
-                      })
-                    }
-                    onDismiss={() => {}}
-                    onSave={() => {}}
+      {hasHistory ? (
+        <ReviewGroup title="Medical history">
+          {!historyBroken ? (
+            <div className="relative overflow-hidden rounded-[14px] border border-line bg-white px-4">
+              <button
+                type="button"
+                onClick={breakApartHistory}
+                aria-label="Edit medical history"
+                className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
+              >
+                <Pencil className="size-4" strokeWidth={1.8} />
+              </button>
+              {historyCategories
+                .filter((category) => category.show)
+                .map((category) => (
+                  <ConfirmRow
+                    key={category.id}
+                    label={category.label}
+                    value={category.value}
+                    editing={false}
+                    active={false}
+                    reserveAction
                   />
                 ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
-
-        {showAllergies ? (
-          <ConfirmRow
-            label="Allergies"
-            value={formatAllergiesList(state.allergies)}
-            editing={historyEditing}
-            active={activeField === "allergies"}
-            onActivate={() => setActiveField("allergies")}
-          >
-            {activeField === "allergies" ? (
-              <div className="mt-2 space-y-4">
-                {state.allergies.map((allergy) => (
-                  <AllergyEntryCard
-                    key={allergy.id}
-                    reviewMode
-                    draft={allergy}
-                    isEditing
-                    onChange={(next) =>
-                      update({
-                        allergies: state.allergies.map((item) =>
-                          item.id === allergy.id ? next : item,
-                        ),
-                      })
-                    }
-                    onDismiss={() => {}}
-                    onSave={() => {}}
-                  />
-                ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
-
-        {showConditions ? (
-          <ConfirmRow
-            label="Ongoing conditions"
-            value={formatConditionsList(state.conditions)}
-            editing={historyEditing}
-            active={activeField === "conditions"}
-            onActivate={() => setActiveField("conditions")}
-          >
-            {activeField === "conditions" ? (
-              <div className="mt-2 space-y-4">
-                {state.conditions.map((condition) => (
-                  <ConditionEntryCard
-                    key={condition.id}
-                    reviewMode
-                    draft={condition}
-                    isEditing
-                    onChange={(next) =>
-                      update({
-                        conditions: state.conditions.map((item) =>
-                          item.id === condition.id ? next : item,
-                        ),
-                      })
-                    }
-                    onDismiss={() => {}}
-                    onSave={() => {}}
-                  />
-                ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
-
-        {showSurgeries ? (
-          <ConfirmRow
-            label="Past surgeries"
-            value={formatSurgeriesList(state.surgeries)}
-            editing={historyEditing}
-            active={activeField === "surgeries"}
-            onActivate={() => setActiveField("surgeries")}
-          >
-            {activeField === "surgeries" ? (
-              <div className="mt-2 space-y-4">
-                {state.surgeries.map((surgery) => (
-                  <SurgeryEntryCard
-                    key={surgery.id}
-                    reviewMode
-                    draft={surgery}
-                    isEditing
-                    onChange={(next) =>
-                      update({
-                        surgeries: state.surgeries.map((item) =>
-                          item.id === surgery.id ? next : item,
-                        ),
-                      })
-                    }
-                    onDismiss={() => {}}
-                    onSave={() => {}}
-                  />
-                ))}
-              </div>
-            ) : null}
-          </ConfirmRow>
-        ) : null}
-
-        {historyEditing ? (
-          <div className="flex items-center gap-3 py-3">
-            <GhostButton
-              className="min-w-0 w-auto flex-1 basis-0"
-              onClick={cancelSectionEdit}
-            >
-              Cancel
-            </GhostButton>
-            <PrimaryButton
-              className="h-10 min-w-0 w-auto flex-1 basis-0 text-[16px] leading-[22px]"
-              onClick={stopSectionEdit}
-            >
-              Confirm Edits
-            </PrimaryButton>
-          </div>
-        ) : null}
-      </div>
-      </ReviewGroup>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {historyCategories
+                .filter((category) => category.show)
+                .map((category) => {
+                  const isOpen = openHistoryCategory === category.id;
+                  return (
+                    <ReviewSectionCard
+                      key={category.id}
+                      label={category.label}
+                      value={category.value}
+                      editing={isOpen}
+                      onStartEdit={() => openHistorySection(category.id)}
+                      onCancel={cancelHistoryCategory}
+                      onConfirm={confirmHistoryCategory}
+                    >
+                      {renderHistoryEditors(category.id)}
+                    </ReviewSectionCard>
+                  );
+                })}
+              {!openHistoryCategory ? (
+                <div className="flex justify-end pt-1">
+                  <PrimaryButton
+                    className="h-10 w-auto px-5 text-[16px] leading-[22px]"
+                    onClick={doneHistoryBroken}
+                  >
+                    Done
+                  </PrimaryButton>
+                </div>
+              ) : null}
+            </div>
+          )}
+        </ReviewGroup>
       ) : null}
       </div>
     </OnboardingShell>
