@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Pencil } from "lucide-react";
 import { GhostButton, PrimaryButton } from "@/components/onboarding/primitives";
 import { cn } from "@/lib/utils";
 
