@@ -246,7 +246,7 @@ export function AddressStep() {
             Address
           </p>
           <SearchField
-            placeholder="Search here"
+            placeholder="123 Main St"
             value={state.address}
             onChange={(event) => update({ address: event.target.value })}
           />
