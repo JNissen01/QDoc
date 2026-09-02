@@ -108,19 +108,19 @@ export function formatBiometricsRow(
 
 export function formatMedicationsList(medications: Medication[]) {
   if (medications.length === 0) return "—";
-  return medications.map(formatMedicationSummary).join("\n");
+  return medications.map(formatMedicationSummary).join("\n\n");
 }
 
 export function formatAllergiesList(allergies: Allergy[]) {
   if (allergies.length === 0) return "—";
-  return allergies.map(formatAllergySummary).join("\n");
+  return allergies.map(formatAllergySummary).join("\n\n");
 }
 
 export function formatConditionsList(conditions: Condition[]) {
   if (conditions.length === 0) return "—";
   return conditions
     .map((condition) => `${condition.name} — ${formatConditionSummary(condition)}`)
-    .join("\n");
+    .join("\n\n");
 }
 
 export function formatSurgeriesList(surgeries: Surgery[]) {

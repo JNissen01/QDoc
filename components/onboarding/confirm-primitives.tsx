@@ -9,6 +9,40 @@ export function confirmControlClass() {
   return "mt-1 w-full bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none";
 }
 
+function SummaryEntries({ value }: { value: string }) {
+  const entries =
+    value && value !== "—"
+      ? value
+          .split("\n\n")
+          .map((entry) => entry.trim())
+          .filter(Boolean)
+      : [];
+
+  if (entries.length <= 1) {
+    return (
+      <p className="mt-1 whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink">
+        {value}
+      </p>
+    );
+  }
+
+  return (
+    <ul className="mt-1">
+      {entries.map((entry, index) => (
+        <li
+          key={`${index}-${entry.slice(0, 24)}`}
+          className={cn(
+            "whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink",
+            index < entries.length - 1 && "mb-3 border-b border-line pb-3",
+          )}
+        >
+          {entry}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function ConfirmChip({
   selected,
   children,
@@ -87,9 +121,7 @@ export function ReviewSectionCard({
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
             <p className="text-[13px] leading-4 text-caption">{label}</p>
-            <p className="mt-1 whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink">
-              {value}
-            </p>
+            <SummaryEntries value={value} />
           </div>
           <button
             type="button"
@@ -150,9 +182,7 @@ export function ConfirmRow({
         {showEditor ? (
           children
         ) : (
-          <p className="mt-1 whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink">
-            {value}
-          </p>
+          <SummaryEntries value={value} />
         )}
       </div>
     </div>
