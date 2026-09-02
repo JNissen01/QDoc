@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Pencil } from "lucide-react";
 import {
   ConfirmChip,
   ConfirmRow,
@@ -126,16 +125,32 @@ function sliceForCategory(
 
 function ReviewGroup({
   title,
+  onEdit,
+  editAriaLabel,
   children,
 }: {
   title: string;
+  onEdit?: () => void;
+  editAriaLabel?: string;
   children: ReactNode;
 }) {
   return (
     <section className="space-y-3">
-      <h2 className="text-[16px] leading-[22px] font-semibold text-ink">
-        {title}
-      </h2>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-[16px] leading-[22px] font-semibold text-ink">
+          {title}
+        </h2>
+        {onEdit ? (
+          <button
+            type="button"
+            onClick={onEdit}
+            aria-label={editAriaLabel}
+            className="text-[16px] leading-[22px] font-medium text-action"
+          >
+            Edit
+          </button>
+        ) : null}
+      </div>
       {children}
     </section>
   );
@@ -499,30 +514,24 @@ export function ConfirmMedicalProfileStep() {
       }
     >
       <div className="space-y-6">
-      <ReviewGroup title="Personal">
+      <ReviewGroup
+        title="Personal"
+        onEdit={
+          personalEditing ? undefined : () => startSectionEdit("biometrics")
+        }
+        editAriaLabel="Edit personal information"
+      >
       <div
         className={cn(
-          "relative overflow-hidden rounded-[14px] border bg-white px-4",
+          "overflow-hidden rounded-[14px] border bg-white px-4",
           personalEditing ? "border-action" : "border-line",
         )}
       >
-        {!personalEditing ? (
-          <button
-            type="button"
-            onClick={() => startSectionEdit("biometrics")}
-            aria-label="Edit personal information"
-            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-          >
-            <Pencil className="size-4" strokeWidth={1.8} />
-          </button>
-        ) : null}
-
         <ConfirmRow
           label="Height / weight"
           value={formatBiometricsRow(state.height, state.weight, system)}
           editing={personalEditing}
           active={activeField === "biometrics"}
-          reserveAction={!personalEditing}
           onActivate={() => setActiveField("biometrics")}
         >
           {activeField === "biometrics" ? (
@@ -609,24 +618,19 @@ export function ConfirmMedicalProfileStep() {
       </div>
       </ReviewGroup>
 
-      <ReviewGroup title="Care team">
+      <ReviewGroup
+        title="Care team"
+        onEdit={
+          careTeamEditing ? undefined : () => startSectionEdit("family-doctor")
+        }
+        editAriaLabel="Edit care team"
+      >
       <div
         className={cn(
-          "relative overflow-hidden rounded-[14px] border bg-white px-4",
+          "overflow-hidden rounded-[14px] border bg-white px-4",
           careTeamEditing ? "border-action" : "border-line",
         )}
       >
-        {!careTeamEditing ? (
-          <button
-            type="button"
-            onClick={() => startSectionEdit("family-doctor")}
-            aria-label="Edit care team"
-            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-          >
-            <Pencil className="size-4" strokeWidth={1.8} />
-          </button>
-        ) : null}
-
         <ConfirmRow
           label="Family doctor"
           value={formatFamilyDoctorSummary(
@@ -635,7 +639,6 @@ export function ConfirmMedicalProfileStep() {
           )}
           editing={careTeamEditing}
           active={activeField === "family-doctor"}
-          reserveAction={!careTeamEditing}
           onActivate={() => setActiveField("family-doctor")}
         >
           {activeField === "family-doctor" ? (
@@ -735,17 +738,13 @@ export function ConfirmMedicalProfileStep() {
       </ReviewGroup>
 
       {hasHistory ? (
-        <ReviewGroup title="Medical history">
+        <ReviewGroup
+          title="Medical history"
+          onEdit={historyBroken ? undefined : breakApartHistory}
+          editAriaLabel="Edit medical history"
+        >
           {!historyBroken ? (
-            <div className="relative overflow-hidden rounded-[14px] border border-line bg-white px-4">
-              <button
-                type="button"
-                onClick={breakApartHistory}
-                aria-label="Edit medical history"
-                className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-              >
-                <Pencil className="size-4" strokeWidth={1.8} />
-              </button>
+            <div className="overflow-hidden rounded-[14px] border border-line bg-white px-4">
               {historyCategories
                 .filter((category) => category.show)
                 .map((category) => (
@@ -755,7 +754,6 @@ export function ConfirmMedicalProfileStep() {
                     value={category.value}
                     editing={false}
                     active={false}
-                    reserveAction
                   />
                 ))}
             </div>

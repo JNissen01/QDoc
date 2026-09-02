@@ -58,21 +58,11 @@ export function ReviewSectionCard({
   return (
     <div
       className={cn(
-        "relative rounded-[14px] border bg-white px-4 py-4",
+        "rounded-[14px] border bg-white px-4 py-4",
         editing ? "border-action" : "border-line",
       )}
     >
-      {editing ? null : (
-        <button
-          type="button"
-          onClick={onStartEdit}
-          aria-label={`Edit ${label}`}
-          className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-        >
-          <Pencil className="size-4" strokeWidth={1.8} />
-        </button>
-      )}
-      <div className={cn(!editing && "pr-10")}>
+      <div className="flex items-start justify-between gap-3">
         <p
           className={cn(
             "text-[13px] leading-4",
@@ -81,14 +71,24 @@ export function ReviewSectionCard({
         >
           {label}
         </p>
-        {editing ? (
-          <div className="mt-4">{children}</div>
-        ) : (
-          <p className="mt-1 whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink">
-            {value}
-          </p>
+        {editing ? null : (
+          <button
+            type="button"
+            onClick={onStartEdit}
+            aria-label={`Edit ${label}`}
+            className="shrink-0 text-[16px] leading-[22px] font-medium text-action"
+          >
+            Edit
+          </button>
         )}
       </div>
+      {editing ? (
+        <div className="mt-4">{children}</div>
+      ) : (
+        <p className="mt-1 whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink">
+          {value}
+        </p>
+      )}
       {editing ? (
         <div className="mt-4 flex items-center gap-3">
           <GhostButton
