@@ -653,6 +653,64 @@ function MedicationEntryCard({
   );
 }
 
+function SearchCommitInput({
+  value,
+  placeholder,
+  commitLabel,
+  onChange,
+  onCommit,
+}: {
+  value: string;
+  placeholder: string;
+  commitLabel: string;
+  onChange: (value: string) => void;
+  onCommit: (value: string) => void;
+}) {
+  const trimmed = value.trim();
+  const canCommit = trimmed.length > 0;
+
+  function commit() {
+    if (!canCommit) return;
+    onCommit(trimmed);
+  }
+
+  return (
+    <div className="relative">
+      <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
+      <Input
+        value={value}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+        onBlur={commit}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            commit();
+          }
+        }}
+        className={cn(
+          "h-[70px] rounded-[14px] border border-line bg-white pl-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
+          canCommit ? "pr-11" : "pr-4",
+          inputValueClass,
+        )}
+      />
+      {canCommit ? (
+        <div className="absolute inset-y-0 right-1.5 flex items-center">
+          <button
+            type="button"
+            aria-label={commitLabel}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={commit}
+            className="flex size-7 items-center justify-center text-action"
+          >
+            <ArrowRight className="size-4" />
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function MedicationSearchBlock({
   query,
   onQueryChange,
@@ -667,29 +725,13 @@ function MedicationSearchBlock({
       <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
         Medication name
       </p>
-      <div className="relative">
-        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
-        <Input
-          value={query}
-          placeholder="e.g. Lexapro"
-          onChange={(event) => onQueryChange(event.target.value)}
-          onBlur={() => {
-            const value = query.trim();
-            if (value) onCommitName(value);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              const value = query.trim();
-              if (value) onCommitName(value);
-            }
-          }}
-          className={cn(
-            "h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
-            inputValueClass,
-          )}
-        />
-      </div>
+      <SearchCommitInput
+        value={query}
+        placeholder="e.g. Lexapro"
+        commitLabel="Add medication"
+        onChange={onQueryChange}
+        onCommit={onCommitName}
+      />
       <p className="mt-5 mb-2 text-[16px] leading-[1rem] font-medium text-ink">
         Common medications
       </p>
@@ -1752,29 +1794,13 @@ function NamedHistorySearchBlock({
       <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
         {fieldLabel}
       </p>
-      <div className="relative">
-        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
-        <Input
-          value={query}
-          placeholder={placeholder}
-          onChange={(event) => onQueryChange(event.target.value)}
-          onBlur={() => {
-            const value = query.trim();
-            if (value) onCommitName(value);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              const value = query.trim();
-              if (value) onCommitName(value);
-            }
-          }}
-          className={cn(
-            "h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
-            inputValueClass,
-          )}
-        />
-      </div>
+      <SearchCommitInput
+        value={query}
+        placeholder={placeholder}
+        commitLabel={`Add ${fieldLabel.replace(/\s+name$/i, "").toLowerCase()}`}
+        onChange={onQueryChange}
+        onCommit={onCommitName}
+      />
       <p className="mt-5 mb-2 text-[16px] leading-[1rem] font-medium text-ink">
         {commonLabel}
       </p>
