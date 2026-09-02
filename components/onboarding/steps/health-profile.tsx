@@ -185,7 +185,11 @@ function SoftChip({
       : "border border-line bg-white font-normal text-ink",
   );
   const removeClass =
-    selected && appearance === "filled" ? "text-white" : "text-ink";
+    selected && appearance === "filled"
+      ? "text-white"
+      : selected && appearance === "outlined"
+        ? "text-action"
+        : "text-ink";
 
   if (!onRemove) {
     return (
