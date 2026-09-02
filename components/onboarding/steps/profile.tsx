@@ -7,7 +7,6 @@ import {
   LockNote,
   PrimaryButton,
   RadioDot,
-  SearchField,
   SelectorCard,
   StepFooter,
 } from "@/components/onboarding/primitives";
@@ -241,16 +240,12 @@ export function AddressStep() {
         Use My Current Location
       </button>
       <div className="space-y-4 text-left">
-        <div className="flex flex-col gap-2">
-          <p className="text-[16px] leading-[1rem] font-medium text-ink">
-            Address
-          </p>
-          <SearchField
-            placeholder="123 Main St"
-            value={state.address}
-            onChange={(event) => update({ address: event.target.value })}
-          />
-        </div>
+        <Field
+          label="Address"
+          placeholder="123 main St"
+          value={state.address}
+          onChange={(event) => update({ address: event.target.value })}
+        />
         <div className="grid grid-cols-2 gap-3">
           <Field
             label="Postal code"
