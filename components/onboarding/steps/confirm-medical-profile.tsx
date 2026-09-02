@@ -125,13 +125,15 @@ function sliceForCategory(
 
 function ReviewGroup({
   title,
-  onEdit,
-  editAriaLabel,
+  actionLabel,
+  onAction,
+  actionAriaLabel,
   children,
 }: {
   title: string;
-  onEdit?: () => void;
-  editAriaLabel?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  actionAriaLabel?: string;
   children: ReactNode;
 }) {
   return (
@@ -140,14 +142,14 @@ function ReviewGroup({
         <h2 className="text-[16px] leading-[22px] font-semibold text-ink">
           {title}
         </h2>
-        {onEdit ? (
+        {onAction && actionLabel ? (
           <button
             type="button"
-            onClick={onEdit}
-            aria-label={editAriaLabel}
+            onClick={onAction}
+            aria-label={actionAriaLabel ?? actionLabel}
             className="text-[16px] leading-[22px] font-medium text-action"
           >
-            Edit
+            {actionLabel}
           </button>
         ) : null}
       </div>
@@ -516,10 +518,11 @@ export function ConfirmMedicalProfileStep() {
       <div className="space-y-6">
       <ReviewGroup
         title="Personal"
-        onEdit={
+        actionLabel={personalEditing ? undefined : "Edit"}
+        onAction={
           personalEditing ? undefined : () => startSectionEdit("biometrics")
         }
-        editAriaLabel="Edit personal information"
+        actionAriaLabel="Edit personal information"
       >
       <div
         className={cn(
@@ -620,10 +623,11 @@ export function ConfirmMedicalProfileStep() {
 
       <ReviewGroup
         title="Care team"
-        onEdit={
+        actionLabel={careTeamEditing ? undefined : "Edit"}
+        onAction={
           careTeamEditing ? undefined : () => startSectionEdit("family-doctor")
         }
-        editAriaLabel="Edit care team"
+        actionAriaLabel="Edit care team"
       >
       <div
         className={cn(
@@ -740,8 +744,23 @@ export function ConfirmMedicalProfileStep() {
       {hasHistory ? (
         <ReviewGroup
           title="Medical history"
-          onEdit={historyBroken ? undefined : breakApartHistory}
-          editAriaLabel="Edit medical history"
+          actionLabel={
+            historyBroken
+              ? openHistoryCategory
+                ? undefined
+                : "Done"
+              : "Edit"
+          }
+          onAction={
+            historyBroken
+              ? openHistoryCategory
+                ? undefined
+                : doneHistoryBroken
+              : breakApartHistory
+          }
+          actionAriaLabel={
+            historyBroken ? "Done editing medical history" : "Edit medical history"
+          }
         >
           {!historyBroken ? (
             <div className="overflow-hidden rounded-[14px] border border-line bg-white px-4">
@@ -777,16 +796,6 @@ export function ConfirmMedicalProfileStep() {
                     </ReviewSectionCard>
                   );
                 })}
-              {!openHistoryCategory ? (
-                <div className="flex justify-end pt-1">
-                  <PrimaryButton
-                    className="h-10 w-auto px-5 text-[16px] leading-[22px]"
-                    onClick={doneHistoryBroken}
-                  >
-                    Done
-                  </PrimaryButton>
-                </div>
-              ) : null}
             </div>
           )}
         </ReviewGroup>
