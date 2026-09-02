@@ -35,7 +35,6 @@ import {
 } from "@/lib/mocks";
 import {
   formatAllergiesList,
-  formatBiometricsRow,
   formatConditionsList,
   formatFamilyDoctorSummary,
   formatMedicationsList,
@@ -509,12 +508,14 @@ export function ConfirmMedicalProfileStep() {
           onActivate={() => setActiveField("biometrics")}
         >
           <div className="grid grid-cols-2 gap-2">
-            <div>
-              <p className="text-[13px] text-caption">Height ({heightSuffix})</p>
+            <label className="group flex min-w-0 items-baseline gap-2">
+              <span className="shrink-0 text-[13px] leading-[22px] text-caption group-focus-within:font-medium group-focus-within:text-action">
+                Height ({heightSuffix})
+              </span>
               <input
                 aria-label={`Height (${heightSuffix})`}
                 inputMode="decimal"
-                className={confirmControlClass()}
+                className="min-w-0 flex-1 bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none"
                 value={heightDraft}
                 onFocus={() => setActiveField("biometrics")}
                 onChange={(event) => {
@@ -524,13 +525,15 @@ export function ConfirmMedicalProfileStep() {
                   if (metric !== null) update({ height: metric });
                 }}
               />
-            </div>
-            <div>
-              <p className="text-[13px] text-caption">Weight ({weightSuffix})</p>
+            </label>
+            <label className="group flex min-w-0 items-baseline gap-2">
+              <span className="shrink-0 text-[13px] leading-[22px] text-caption group-focus-within:font-medium group-focus-within:text-action">
+                Weight ({weightSuffix})
+              </span>
               <input
                 aria-label={`Weight (${weightSuffix})`}
                 inputMode="decimal"
-                className={confirmControlClass()}
+                className="min-w-0 flex-1 bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none"
                 value={weightDraft}
                 onFocus={() => setActiveField("biometrics")}
                 onChange={(event) => {
@@ -540,7 +543,7 @@ export function ConfirmMedicalProfileStep() {
                   if (metric !== null) update({ weight: metric });
                 }}
               />
-            </div>
+            </label>
           </div>
         </ConfirmRow>
 
