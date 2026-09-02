@@ -46,7 +46,6 @@ import type {
   Allergy,
   Condition,
   HistoryCategory,
-  MeasurementSystem,
   Medication,
   OnboardingState,
   Surgery,
@@ -176,41 +175,6 @@ function shouldShowCategory(
     }
   }
   return state.historyCategories.includes(category);
-}
-
-function MeasurementToggle({
-  value,
-  onChange,
-}: {
-  value: MeasurementSystem;
-  onChange: (value: MeasurementSystem) => void;
-}) {
-  const options: { value: MeasurementSystem; label: string }[] = [
-    { value: "metric", label: "Metric" },
-    { value: "imperial", label: "Imperial" },
-  ];
-  return (
-    <div
-      className="mt-2 flex h-10 items-center rounded-[12px] border border-line bg-white p-1"
-      role="group"
-      aria-label="Measurement System"
-    >
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          aria-pressed={value === option.value}
-          onClick={() => onChange(option.value)}
-          className={cn(
-            "flex h-full flex-1 items-center justify-center rounded-[10px] text-[13px] font-medium",
-            value === option.value ? "bg-secondary text-ink" : "text-ink",
-          )}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  );
 }
 
 export function ConfirmMedicalProfileStep() {
@@ -536,12 +500,7 @@ export function ConfirmMedicalProfileStep() {
           onActivate={() => setActiveField("biometrics")}
         >
           {activeField === "biometrics" ? (
-            <div className="space-y-3">
-              <MeasurementToggle
-                value={system}
-                onChange={(measurementSystem) => update({ measurementSystem })}
-              />
-              <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2">
                 <div>
                   <p className="text-[13px] text-caption">Height ({heightSuffix})</p>
                   <input
@@ -572,7 +531,6 @@ export function ConfirmMedicalProfileStep() {
                     }}
                   />
                 </div>
-              </div>
             </div>
           ) : null}
         </ConfirmRow>
