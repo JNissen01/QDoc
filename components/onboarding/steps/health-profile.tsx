@@ -409,15 +409,17 @@ function ClearableInput({
   );
 }
 
-function MedicationEntryCard({
+export function MedicationEntryCard({
   draft,
   isEditing,
+  reviewMode = false,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Medication;
   isEditing: boolean;
+  reviewMode?: boolean;
   onChange: (next: Medication) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -438,19 +440,26 @@ function MedicationEntryCard({
   );
 
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-[14px] border border-line bg-white p-4 shadow-sm",
+        reviewMode && "border-0 p-0 shadow-none border-b border-line pb-4 last:border-b-0 last:pb-0",
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">
           {draft.name}
         </p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label="Cancel medication entry"
-        >
-          <X className="size-5" />
-        </button>
+        {reviewMode ? null : (
+          <button
+            type="button"
+            className="shrink-0 text-caption"
+            onClick={onDismiss}
+            aria-label="Cancel medication entry"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-4">
@@ -616,12 +625,14 @@ function MedicationEntryCard({
         </div>
       </div>
 
-      <EntryCardSaveButton
-        isEditing={isEditing}
-        addLabel="Add medication"
-        disabled={!isMedicationComplete(draft)}
-        onSave={onSave}
-      />
+      {reviewMode ? null : (
+        <EntryCardSaveButton
+          isEditing={isEditing}
+          addLabel="Add medication"
+          disabled={!isMedicationComplete(draft)}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }
@@ -881,15 +892,17 @@ function isPresetReaction(value: string) {
   return ALLERGY_REACTIONS.includes(value);
 }
 
-function AllergyEntryCard({
+export function AllergyEntryCard({
   draft,
   isEditing,
+  reviewMode = false,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Allergy;
   isEditing: boolean;
+  reviewMode?: boolean;
   onChange: (next: Allergy) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -908,19 +921,26 @@ function AllergyEntryCard({
   }
 
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-[14px] border border-line bg-white p-4 shadow-sm",
+        reviewMode && "border-0 p-0 shadow-none border-b border-line pb-4 last:border-b-0 last:pb-0",
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">
           {draft.name}
         </p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label="Cancel allergy entry"
-        >
-          <X className="size-5" />
-        </button>
+        {reviewMode ? null : (
+          <button
+            type="button"
+            className="shrink-0 text-caption"
+            onClick={onDismiss}
+            aria-label="Cancel allergy entry"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-5">
@@ -1025,12 +1045,14 @@ function AllergyEntryCard({
         </div>
       </div>
 
-      <EntryCardSaveButton
-        isEditing={isEditing}
-        addLabel="Add allergy"
-        disabled={!isAllergyComplete(draft)}
-        onSave={onSave}
-      />
+      {reviewMode ? null : (
+        <EntryCardSaveButton
+          isEditing={isEditing}
+          addLabel="Add allergy"
+          disabled={!isAllergyComplete(draft)}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }
@@ -1183,33 +1205,42 @@ function isConditionComplete(condition: Condition) {
   );
 }
 
-function ConditionEntryCard({
+export function ConditionEntryCard({
   draft,
   isEditing,
+  reviewMode = false,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Condition;
   isEditing: boolean;
+  reviewMode?: boolean;
   onChange: (next: Condition) => void;
   onDismiss: () => void;
   onSave: () => void;
 }) {
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-[14px] border border-line bg-white p-4 shadow-sm",
+        reviewMode && "border-0 p-0 shadow-none border-b border-line pb-4 last:border-b-0 last:pb-0",
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">
           {draft.name}
         </p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label="Cancel condition entry"
-        >
-          <X className="size-5" />
-        </button>
+        {reviewMode ? null : (
+          <button
+            type="button"
+            className="shrink-0 text-caption"
+            onClick={onDismiss}
+            aria-label="Cancel condition entry"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-5">
@@ -1250,12 +1281,14 @@ function ConditionEntryCard({
         </div>
       </div>
 
-      <EntryCardSaveButton
-        isEditing={isEditing}
-        addLabel="Add condition"
-        disabled={!isConditionComplete(draft)}
-        onSave={onSave}
-      />
+      {reviewMode ? null : (
+        <EntryCardSaveButton
+          isEditing={isEditing}
+          addLabel="Add condition"
+          disabled={!isConditionComplete(draft)}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }
@@ -1521,15 +1554,17 @@ function SurgeryListDetails({ surgery }: { surgery: Surgery }) {
   );
 }
 
-function SurgeryEntryCard({
+export function SurgeryEntryCard({
   draft,
   isEditing,
+  reviewMode = false,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Surgery;
   isEditing: boolean;
+  reviewMode?: boolean;
   onChange: (next: Surgery) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -1537,19 +1572,26 @@ function SurgeryEntryCard({
   const yearError = getSurgeryYearError(draft.year);
 
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-[14px] border border-line bg-white p-4 shadow-sm",
+        reviewMode && "border-0 p-0 shadow-none border-b border-line pb-4 last:border-b-0 last:pb-0",
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">
           {draft.name}
         </p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label="Cancel surgery entry"
-        >
-          <X className="size-5" />
-        </button>
+        {reviewMode ? null : (
+          <button
+            type="button"
+            className="shrink-0 text-caption"
+            onClick={onDismiss}
+            aria-label="Cancel surgery entry"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-5">
@@ -1584,12 +1626,14 @@ function SurgeryEntryCard({
         />
       </div>
 
-      <EntryCardSaveButton
-        isEditing={isEditing}
-        addLabel="Add surgery"
-        disabled={!isSurgeryComplete(draft)}
-        onSave={onSave}
-      />
+      {reviewMode ? null : (
+        <EntryCardSaveButton
+          isEditing={isEditing}
+          addLabel="Add surgery"
+          disabled={!isSurgeryComplete(draft)}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }

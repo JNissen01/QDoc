@@ -18,18 +18,19 @@ import {
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import {
+  AllergyEntryCard,
+  ConditionEntryCard,
+  MedicationEntryCard,
+  SurgeryEntryCard,
+} from "@/components/onboarding/steps/health-profile";
+import {
   formatHeightDisplay,
   formatWeightDisplay,
   parseHeightToCm,
   parseWeightToKg,
 } from "@/lib/biometrics-units";
 import {
-  ALLERGY_REACTIONS,
-  CONDITION_DIAGNOSIS_YEARS_OPTIONS,
-  CONDITION_STATUS_OPTIONS,
   filterByQuery,
-  MEDICATION_DOSAGES,
-  MEDICATION_FREQUENCIES,
   MOCK_CLINICS,
   MOCK_PHARMACIES,
 } from "@/lib/mocks";
@@ -46,17 +47,10 @@ import type {
   HistoryCategory,
   MeasurementSystem,
   OnboardingState,
-  Severity,
 } from "@/lib/onboarding-state";
 import { cn } from "@/lib/utils";
 
 const PRONOUNS = ["She/her", "He/him", "They/them", "Prefer not to say"];
-
-const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
-  { value: "mild", label: "Mild" },
-  { value: "moderate", label: "Moderate" },
-  { value: "severe", label: "Severe" },
-];
 
 type ConfirmField =
   | "biometrics"
@@ -110,44 +104,6 @@ function shouldShowCategory(
     }
   }
   return state.historyCategories.includes(category);
-}
-
-function CompactSegmented<T extends string>({
-  value,
-  options,
-  onChange,
-  ariaLabel,
-}: {
-  value: T | null;
-  options: readonly { value: T; label: string }[];
-  onChange: (value: T) => void;
-  ariaLabel: string;
-}) {
-  return (
-    <div
-      className="mt-2 flex h-10 shrink-0 items-center self-stretch rounded-[12px] bg-canvas p-1"
-      role="group"
-      aria-label={ariaLabel}
-    >
-      {options.map((option) => {
-        const selected = value === option.value;
-        return (
-          <button
-            key={option.value}
-            type="button"
-            aria-pressed={selected}
-            onClick={() => onChange(option.value)}
-            className={cn(
-              "flex h-full flex-1 items-center justify-center rounded-[10px] px-1 text-center text-[12px] leading-[14px] font-medium transition-colors",
-              selected ? "bg-action text-white" : "bg-transparent text-ink",
-            )}
-          >
-            {option.label}
-          </button>
-        );
-      })}
-    </div>
-  );
 }
 
 function MeasurementToggle({
@@ -505,58 +461,21 @@ export function ConfirmMedicalProfileStep() {
         >
           <div className="space-y-4">
             {state.medications.map((medication) => (
-              <div
+              <MedicationEntryCard
                 key={medication.id}
-                className="space-y-2 border-b border-line pb-3 last:border-b-0"
-              >
-                <p className="text-[14px] font-semibold text-ink">
-                  {medication.name}
-                </p>
-                <p className="text-[13px] text-caption">Dosage</p>
-                <div className="flex flex-wrap gap-2">
-                  {MEDICATION_DOSAGES.map((dosage) => (
-                    <ConfirmChip
-                      key={dosage}
-                      selected={medication.dosage === dosage}
-                      onClick={() =>
-                        update({
-                          medications: state.medications.map((item) =>
-                            item.id === medication.id
-                              ? { ...item, dosage }
-                              : item,
-                          ),
-                        })
-                      }
-                    >
-                      {dosage}
-                    </ConfirmChip>
-                  ))}
-                </div>
-                <p className="text-[13px] text-caption">Frequency</p>
-                <CompactSegmented
-                  value={
-                    (MEDICATION_FREQUENCIES as readonly string[]).includes(
-                      medication.frequency,
-                    )
-                      ? (medication.frequency as (typeof MEDICATION_FREQUENCIES)[number])
-                      : null
-                  }
-                  options={MEDICATION_FREQUENCIES.map((value) => ({
-                    value,
-                    label: value,
-                  }))}
-                  ariaLabel={`Frequency for ${medication.name}`}
-                  onChange={(frequency) =>
-                    update({
-                      medications: state.medications.map((item) =>
-                        item.id === medication.id
-                          ? { ...item, frequency }
-                          : item,
-                      ),
-                    })
-                  }
-                />
-              </div>
+                reviewMode
+                draft={medication}
+                isEditing
+                onChange={(next) =>
+                  update({
+                    medications: state.medications.map((item) =>
+                      item.id === medication.id ? next : item,
+                    ),
+                  })
+                }
+                onDismiss={() => {}}
+                onSave={() => {}}
+              />
             ))}
           </div>
         </ReviewSectionCard>
@@ -573,48 +492,21 @@ export function ConfirmMedicalProfileStep() {
         >
           <div className="space-y-4">
             {state.allergies.map((allergy) => (
-              <div
+              <AllergyEntryCard
                 key={allergy.id}
-                className="space-y-2 border-b border-line pb-3 last:border-b-0"
-              >
-                <p className="text-[14px] font-semibold text-ink">
-                  {allergy.name}
-                </p>
-                <p className="text-[13px] text-caption">Reactions</p>
-                <div className="flex flex-wrap gap-2">
-                  {ALLERGY_REACTIONS.map((reaction) => (
-                    <ConfirmChip
-                      key={reaction}
-                      selected={allergy.reactions.includes(reaction)}
-                      onClick={() => {
-                        const reactions = allergy.reactions.includes(reaction)
-                          ? allergy.reactions.filter((item) => item !== reaction)
-                          : [...allergy.reactions, reaction];
-                        update({
-                          allergies: state.allergies.map((item) =>
-                            item.id === allergy.id ? { ...item, reactions } : item,
-                          ),
-                        });
-                      }}
-                    >
-                      {reaction}
-                    </ConfirmChip>
-                  ))}
-                </div>
-                <p className="text-[13px] text-caption">Severity</p>
-                <CompactSegmented
-                  value={allergy.severity}
-                  options={SEVERITY_OPTIONS}
-                  ariaLabel={`Severity for ${allergy.name}`}
-                  onChange={(severity) =>
-                    update({
-                      allergies: state.allergies.map((item) =>
-                        item.id === allergy.id ? { ...item, severity } : item,
-                      ),
-                    })
-                  }
-                />
-              </div>
+                reviewMode
+                draft={allergy}
+                isEditing
+                onChange={(next) =>
+                  update({
+                    allergies: state.allergies.map((item) =>
+                      item.id === allergy.id ? next : item,
+                    ),
+                  })
+                }
+                onDismiss={() => {}}
+                onSave={() => {}}
+              />
             ))}
           </div>
         </ReviewSectionCard>
@@ -631,55 +523,21 @@ export function ConfirmMedicalProfileStep() {
         >
           <div className="space-y-4">
             {state.conditions.map((condition) => (
-              <div
+              <ConditionEntryCard
                 key={condition.id}
-                className="space-y-2 border-b border-line pb-3 last:border-b-0"
-              >
-                <p className="text-[14px] font-semibold text-ink">
-                  {condition.name}
-                </p>
-                <p className="text-[13px] text-caption">Severity</p>
-                <CompactSegmented
-                  value={condition.severity}
-                  options={SEVERITY_OPTIONS}
-                  ariaLabel={`Severity for ${condition.name}`}
-                  onChange={(severity) =>
-                    update({
-                      conditions: state.conditions.map((item) =>
-                        item.id === condition.id ? { ...item, severity } : item,
-                      ),
-                    })
-                  }
-                />
-                <p className="text-[13px] text-caption">Status</p>
-                <CompactSegmented
-                  value={condition.status}
-                  options={CONDITION_STATUS_OPTIONS}
-                  ariaLabel={`Status for ${condition.name}`}
-                  onChange={(status) =>
-                    update({
-                      conditions: state.conditions.map((item) =>
-                        item.id === condition.id ? { ...item, status } : item,
-                      ),
-                    })
-                  }
-                />
-                <p className="text-[13px] text-caption">Years since diagnosis</p>
-                <CompactSegmented
-                  value={condition.diagnosisYears}
-                  options={CONDITION_DIAGNOSIS_YEARS_OPTIONS}
-                  ariaLabel={`Diagnosis years for ${condition.name}`}
-                  onChange={(diagnosisYears) =>
-                    update({
-                      conditions: state.conditions.map((item) =>
-                        item.id === condition.id
-                          ? { ...item, diagnosisYears }
-                          : item,
-                      ),
-                    })
-                  }
-                />
-              </div>
+                reviewMode
+                draft={condition}
+                isEditing
+                onChange={(next) =>
+                  update({
+                    conditions: state.conditions.map((item) =>
+                      item.id === condition.id ? next : item,
+                    ),
+                  })
+                }
+                onDismiss={() => {}}
+                onSave={() => {}}
+              />
             ))}
           </div>
         </ReviewSectionCard>
@@ -696,68 +554,21 @@ export function ConfirmMedicalProfileStep() {
         >
           <div className="space-y-4">
             {state.surgeries.map((surgery) => (
-              <div
+              <SurgeryEntryCard
                 key={surgery.id}
-                className="space-y-2 border-b border-line pb-3 last:border-b-0"
-              >
-                <p className="text-[14px] font-semibold text-ink">
-                  {surgery.name}
-                </p>
-                <input
-                  aria-label={`Year for ${surgery.name}`}
-                  inputMode="numeric"
-                  placeholder="Year"
-                  className={confirmControlClass()}
-                  value={surgery.year}
-                  onChange={(event) =>
-                    update({
-                      surgeries: state.surgeries.map((item) =>
-                        item.id === surgery.id
-                          ? {
-                              ...item,
-                              year: event.target.value
-                                .replace(/\D/g, "")
-                                .slice(0, 4),
-                            }
-                          : item,
-                      ),
-                    })
-                  }
-                />
-                <input
-                  aria-label={`Complications for ${surgery.name}`}
-                  placeholder="Complications"
-                  className={confirmControlClass()}
-                  value={surgery.complications}
-                  onChange={(event) =>
-                    update({
-                      surgeries: state.surgeries.map((item) =>
-                        item.id === surgery.id
-                          ? {
-                              ...item,
-                              complications: event.target.value.slice(0, 75),
-                            }
-                          : item,
-                      ),
-                    })
-                  }
-                />
-                <input
-                  aria-label={`Implants for ${surgery.name}`}
-                  placeholder="Implants / hardware"
-                  className={confirmControlClass()}
-                  value={surgery.implants}
-                  onChange={(event) =>
-                    update({
-                      surgeries: state.surgeries.map((item) =>
-                        item.id === surgery.id
-                          ? { ...item, implants: event.target.value.slice(0, 75) }
-                          : item,
-                      ),
-                    })
-                  }
-                />
-              </div>
+                reviewMode
+                draft={surgery}
+                isEditing
+                onChange={(next) =>
+                  update({
+                    surgeries: state.surgeries.map((item) =>
+                      item.id === surgery.id ? next : item,
+                    ),
+                  })
+                }
+                onDismiss={() => {}}
+                onSave={() => {}}
+              />
             ))}
           </div>
         </ReviewSectionCard>
