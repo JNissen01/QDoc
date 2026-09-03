@@ -7,8 +7,8 @@ export const STEP_IDS = [
   "off-ramp",
   "account-intro",
   "confirm-email",
-  "contact",
   "password",
+  "contact",
   "name",
   "sex",
   "address",
@@ -29,8 +29,12 @@ export const STEP_IDS = [
   "pronouns",
   "medical-history",
   "medications",
+  "allergies",
+  "conditions",
+  "surgeries",
   "family-doctor",
   "pharmacy",
+  "confirm-medical-profile",
   "success",
 ] as const;
 
@@ -51,7 +55,7 @@ const ACCOUNT_PHASE = 6;
 const PUBLIC_INSURANCE_PHASE = 6;
 const PRIVATE_INSURANCE_PHASE = 3;
 const PAYMENT_PHASE = 2;
-const PHASE2 = 7;
+const PHASE2 = 8;
 
 export function getProgress(
   step: StepId,
@@ -68,9 +72,9 @@ export function getProgress(
       return { current: 2, total: TRIAGE_PHASE };
     case "confirm-email":
       return { current: 1, total: ACCOUNT_PHASE };
-    case "contact":
-      return { current: 2, total: ACCOUNT_PHASE };
     case "password":
+      return { current: 2, total: ACCOUNT_PHASE };
+    case "contact":
       return { current: 3, total: ACCOUNT_PHASE };
     case "name":
       return { current: 4, total: ACCOUNT_PHASE };
@@ -112,20 +116,55 @@ export function getProgress(
     case "medical-history":
       return { current: 3, total: PHASE2 };
     case "medications":
+    case "allergies":
+    case "conditions":
+    case "surgeries":
       return { current: 4, total: PHASE2 };
     case "family-doctor":
       return { current: 5, total: PHASE2 };
     case "pharmacy":
       return { current: 6, total: PHASE2 };
+    case "confirm-medical-profile":
+      return { current: 7, total: PHASE2 };
     case "biometrics":
       return { current: 1, total: PHASE2 };
     case "success":
-      return { current: 7, total: PHASE2 };
+      return { current: 8, total: PHASE2 };
   }
 }
 
 function hasCategory(state: OnboardingState, category: HistoryCategory) {
   return state.historyCategories.includes(category);
+}
+
+const HISTORY_FOLLOW_UP_STEPS = [
+  "medications",
+  "allergies",
+  "conditions",
+  "surgeries",
+] as const satisfies readonly StepId[];
+
+/** Gated detail screens that follow medical history, in prototype order. */
+export function clinicalFollowUps(state: OnboardingState): StepId[] {
+  return HISTORY_FOLLOW_UP_STEPS.filter((step) => hasCategory(state, step));
+}
+
+function nextAfterHistory(state: OnboardingState): StepId {
+  return clinicalFollowUps(state)[0] ?? "family-doctor";
+}
+
+function nextAfterFollowUp(current: StepId, state: OnboardingState): StepId {
+  const steps = clinicalFollowUps(state);
+  const index = steps.indexOf(current);
+  if (index === -1) return nextAfterHistory(state);
+  return steps[index + 1] ?? "family-doctor";
+}
+
+function prevBeforeFollowUp(current: StepId, state: OnboardingState): StepId {
+  const steps = clinicalFollowUps(state);
+  const index = steps.indexOf(current);
+  if (index <= 0) return "medical-history";
+  return steps[index - 1];
 }
 
 export function getNextStep(
@@ -138,16 +177,16 @@ export function getNextStep(
     case "service-area":
       return state.inServiceArea ? "coverage" : "off-ramp";
     case "off-ramp":
-      return "service-area";
+      return "welcome";
     case "coverage":
       return "account-intro";
     case "account-intro":
       return "confirm-email";
     case "confirm-email":
-      return "contact";
-    case "contact":
       return "password";
     case "password":
+      return "contact";
+    case "contact":
       return "name";
     case "name":
       return "sex";
@@ -189,14 +228,17 @@ export function getNextStep(
     case "pronouns":
       return "medical-history";
     case "medical-history":
-      return hasCategory(state, "medications")
-        ? "medications"
-        : "family-doctor";
+      return nextAfterHistory(state);
     case "medications":
-      return "family-doctor";
+    case "allergies":
+    case "conditions":
+    case "surgeries":
+      return nextAfterFollowUp(current, state);
     case "family-doctor":
       return "pharmacy";
     case "pharmacy":
+      return "confirm-medical-profile";
+    case "confirm-medical-profile":
       return "success";
     case "success":
       return "dashboard";
@@ -219,12 +261,12 @@ export function getPrevStep(
       return "coverage";
     case "confirm-email":
       return "account-intro";
-    case "contact":
-      return "confirm-email";
     case "password":
-      return "contact";
-    case "name":
+      return "confirm-email";
+    case "contact":
       return "password";
+    case "name":
+      return "contact";
     case "sex":
       return "name";
     case "address":
@@ -265,15 +307,20 @@ export function getPrevStep(
     case "medical-history":
       return "pronouns";
     case "medications":
-      return "medical-history";
-    case "family-doctor":
-      return hasCategory(state, "medications")
-        ? "medications"
-        : "medical-history";
+    case "allergies":
+    case "conditions":
+    case "surgeries":
+      return prevBeforeFollowUp(current, state);
+    case "family-doctor": {
+      const followUps = clinicalFollowUps(state);
+      return followUps[followUps.length - 1] ?? "medical-history";
+    }
     case "pharmacy":
       return "family-doctor";
-    case "success":
+    case "confirm-medical-profile":
       return "pharmacy";
+    case "success":
+      return "confirm-medical-profile";
   }
 }
 

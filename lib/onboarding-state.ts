@@ -39,10 +39,40 @@ export type Medication = {
   frequency: string;
 };
 
+export type Allergy = {
+  id: string;
+  name: string;
+  reactions: string[];
+  severity: Severity | null;
+};
+
+export type ConditionStatus = "unmanaged" | "managed" | "in_remission";
+export type ConditionDiagnosisYears = "under_5" | "5_to_10" | "over_10";
+
+export type Condition = {
+  id: string;
+  name: string;
+  severity: Severity | null;
+  status: ConditionStatus | null;
+  diagnosisYears: ConditionDiagnosisYears | null;
+};
+
+export type Surgery = {
+  id: string;
+  name: string;
+  year: string;
+  complications: string;
+  implants: string;
+};
+
 export type OnboardingState = {
   inServiceArea: boolean | null;
   coverage: CoverageType | null;
   issuedProvince: Province | null;
+  /** Free-text province/location for the off-ramp waitlist. */
+  waitlistLocation: string;
+  waitlistEmail: string;
+  waitlistJoined: boolean;
   email: string;
   password: string;
   emailVerified: boolean;
@@ -56,8 +86,6 @@ export type OnboardingState = {
   postalCode: string;
   city: string;
   province: Province | null;
-  waitlistLocation: string;
-  waitlistEmail: string;
   registrationNumber: string;
   healthCardNumber: string;
   healthCardExpiry: string;
@@ -82,15 +110,18 @@ export type OnboardingState = {
   bloodType: BloodType;
   historyCategories: HistoryCategory[];
   medications: Medication[];
-  allergies: string[];
-  conditions: string[];
-  surgeries: string[];
+  allergies: Allergy[];
+  conditions: Condition[];
+  surgeries: Surgery[];
 };
 
 export const defaultOnboardingState: OnboardingState = {
   inServiceArea: null,
   coverage: null,
   issuedProvince: null,
+  waitlistLocation: "",
+  waitlistEmail: "",
+  waitlistJoined: false,
   email: "",
   password: "",
   emailVerified: false,
@@ -104,8 +135,6 @@ export const defaultOnboardingState: OnboardingState = {
   postalCode: "",
   city: "",
   province: null,
-  waitlistLocation: "",
-  waitlistEmail: "",
   registrationNumber: "",
   healthCardNumber: "",
   healthCardExpiry: "",

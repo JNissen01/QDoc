@@ -40,10 +40,14 @@ import {
   PharmacyStep,
 } from "@/components/onboarding/steps/clinical";
 import {
+  AllergiesStep,
+  ConditionsStep,
   MedicalHistoryStep,
   MedicationsStep,
+  SurgeriesStep,
 } from "@/components/onboarding/steps/health-profile";
 import { SuccessStep } from "@/components/onboarding/steps/success";
+import { ConfirmMedicalProfileStep } from "@/components/onboarding/steps/confirm-medical-profile";
 
 export function StepView({ step }: { step: StepId }) {
   switch (step) {
@@ -99,6 +103,8 @@ export function StepView({ step }: { step: StepId }) {
       return <CheckpointStep />;
     case "pharmacy":
       return <PharmacyStep />;
+    case "confirm-medical-profile":
+      return <ConfirmMedicalProfileStep />;
     case "family-doctor":
       return <FamilyDoctorStep />;
     case "biometrics":
@@ -107,6 +113,12 @@ export function StepView({ step }: { step: StepId }) {
       return <MedicalHistoryStep />;
     case "medications":
       return <MedicationsStep />;
+    case "allergies":
+      return <AllergiesStep />;
+    case "conditions":
+      return <ConditionsStep />;
+    case "surgeries":
+      return <SurgeriesStep />;
     case "success":
       return <SuccessStep />;
   }

@@ -1,15 +1,21 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   Field,
+  GhostButton,
   PrimaryButton,
   RadioDot,
   SelectorCard,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import type { CoverageType, Province } from "@/lib/onboarding-state";
+
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
 export function ServiceAreaStep() {
   const { state, update, goNext } = useStepNav("service-area");
@@ -29,7 +35,7 @@ export function ServiceAreaStep() {
       }
     >
       <div>
-        <div className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3">
+        <div className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]">
           <MapPin
             className="size-5 shrink-0 text-action"
             strokeWidth={1.8}
@@ -153,39 +159,74 @@ export function IssuedProvinceStep() {
 
 export function OffRampStep() {
   const { state, update, goTo } = useStepNav("off-ramp");
+  const [submitted, setSubmitted] = useState(false);
+  const joinedThisVisit = useRef(false);
+
+  const location = state.waitlistLocation.trim();
+  const emailIsValid = isValidEmail(state.waitlistEmail);
+  const canJoin = Boolean(location && emailIsValid);
+  const locationError =
+    submitted && !location ? "Enter your province or location" : undefined;
+  const emailError =
+    submitted && !emailIsValid
+      ? "Enter a valid email address"
+      : undefined;
+
+  function goToWelcome() {
+    goTo("welcome");
+  }
+
+  function joinWaitlist() {
+    setSubmitted(true);
+    if (!canJoin) return;
+    joinedThisVisit.current = true;
+    update({ waitlistJoined: true });
+  }
+
+  function onPrimaryClick() {
+    if (state.waitlistJoined) {
+      goToWelcome();
+      return;
+    }
+    joinWaitlist();
+  }
+
+  useEffect(() => {
+    if (!state.waitlistJoined || !joinedThisVisit.current) return;
+    const timeout = window.setTimeout(goToWelcome, 1400);
+    return () => window.clearTimeout(timeout);
+  }, [state.waitlistJoined]);
 
   return (
     <OnboardingShell
       step="off-ramp"
       hideBack
-      title="QDoc isn’t available for this visit yet"
-      subtitle={
-        <div className="space-y-2">
-          <p className="text-[16px] leading-[22px] font-normal text-body">
-            We’re currently able to see patients who are physically in
-            Manitoba, Northwestern Ontario, or Nunavut at the time of their
-            visit.
-          </p>
-          <p className="text-[16px] leading-[22px] font-normal text-body">
-            Join the waitlist and we’ll notify you when QDoc is available in
-            your region.
-          </p>
-        </div>
-      }
+      title="Join the waitlist"
+      subtitle="QDoc can’t be used in your specific region. Enter your location and email and we’ll notify you when QDoc is available in your area."
       footer={
-        <PrimaryButton onClick={() => goTo("service-area")}>
-          Go back
-        </PrimaryButton>
+        <div className="space-y-2">
+          <PrimaryButton
+            disabled={!state.waitlistJoined && !canJoin}
+            onClick={onPrimaryClick}
+          >
+            Join waitlist
+          </PrimaryButton>
+          <GhostButton onClick={() => goTo("service-area")}>Go back</GhostButton>
+        </div>
       }
     >
       <div className="space-y-4 text-left">
         <Field
-          label="Location"
-          autoComplete="address-level2"
-          placeholder="City, province or territory"
+          label="Province or location"
+          autoComplete="address-level1"
+          placeholder="e.g. Saskatchewan"
           value={state.waitlistLocation}
+          error={locationError}
           onChange={(event) =>
-            update({ waitlistLocation: event.target.value })
+            update({
+              waitlistLocation: event.target.value,
+              waitlistJoined: false,
+            })
           }
         />
         <Field
@@ -194,14 +235,26 @@ export function OffRampStep() {
           autoComplete="email"
           placeholder="JaneDoe@email.com"
           value={state.waitlistEmail}
-          onChange={(event) => update({ waitlistEmail: event.target.value })}
+          error={emailError}
+          onChange={(event) =>
+            update({
+              waitlistEmail: event.target.value,
+              waitlistJoined: false,
+            })
+          }
         />
-        <div className="rounded-[14px] bg-white p-4 text-[16px] leading-[22px] text-body">
-          If you chose this by mistake, go back and select a supported region.
-          Emergency care should always go through 911 or your nearest emergency
-          department.
-        </div>
+        {state.waitlistJoined ? (
+          <p className="text-[16px] leading-[22px] font-normal text-body">
+            {`You’re on the list. We’ll email you when QDoc is available in ${location || "your area"}.`}
+          </p>
+        ) : null}
       </div>
+
+      <p className="mt-6 text-[14px] leading-[18px] font-normal text-caption">
+        If you chose this by mistake, go back and select a supported region.
+        Emergency care should always go through 911 or your nearest emergency
+        department.
+      </p>
     </OnboardingShell>
   );
 }

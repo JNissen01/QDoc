@@ -24,8 +24,12 @@ const MEDICAL_PROFILE_STEPS = new Set<StepId>([
   "pronouns",
   "medical-history",
   "medications",
+  "allergies",
+  "conditions",
+  "surgeries",
   "family-doctor",
   "pharmacy",
+  "confirm-medical-profile",
   "success",
 ]);
 
@@ -82,6 +86,7 @@ export function OnboardingShell({
   children,
   hideBack,
   showExit,
+  onBack,
 }: {
   step: StepId;
   title?: string;
@@ -91,6 +96,8 @@ export function OnboardingShell({
   hideBack?: boolean;
   /** Opt in/out of the Exit control. Defaults on for medical-profile steps. */
   showExit?: boolean;
+  /** Override default back navigation (e.g. exit-mode review returns to prior step). */
+  onBack?: () => void;
 }) {
   const router = useRouter();
   const { state } = useOnboarding();
@@ -104,7 +111,7 @@ export function OnboardingShell({
 
   return (
     <PhoneFrame>
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-full flex-col">
         {!progress.hidden ? (
           <ProgressTracker current={progress.current} total={progress.total} />
         ) : null}
@@ -112,7 +119,13 @@ export function OnboardingShell({
         {showNavRow ? (
           <div className="mt-4 flex items-center justify-between gap-3">
             {showBack && prev ? (
-              <BackLink onClick={() => router.push(hrefFor(prev))} />
+              <BackLink
+                onClick={() =>
+                  onBack ? onBack() : router.push(hrefFor(prev))
+                }
+              />
+            ) : onBack ? (
+              <BackLink onClick={onBack} />
             ) : (
               <span aria-hidden className="min-w-0" />
             )}
@@ -155,12 +168,13 @@ export function OnboardingShell({
         >
           {children}
         </div>
+
+        {footer ? (
+          <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-1">
+            {footer}
+          </div>
+        ) : null}
       </div>
-      {footer ? (
-        <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-1">
-          {footer}
-        </div>
-      ) : null}
 
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
         <DialogContent
@@ -176,10 +190,10 @@ export function OnboardingShell({
             <PrimaryButton
               onClick={() => {
                 setExitOpen(false);
-                router.push(hrefFor("dashboard"));
+                router.push(`${hrefFor("confirm-medical-profile")}?exit=1`);
               }}
             >
-              Confirm exit
+              Review and exit
             </PrimaryButton>
             <GhostButton onClick={() => setExitOpen(false)}>Back</GhostButton>
           </DialogFooter>

@@ -66,11 +66,9 @@ export function WelcomeStep() {
           {TRUST_ITEMS.map((item) => (
             <li
               key={item.label}
-              className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3"
+              className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]"
             >
-              <span className="flex size-6 shrink-0 items-center justify-center">
-                <item.icon className={item.iconClassName} />
-              </span>
+              <item.icon className={item.iconClassName} />
               <span className="text-left text-[16px] leading-[22px] font-medium text-ink">
                 {item.label}
               </span>

@@ -6,6 +6,8 @@ import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   Field,
   GhostButton,
+  inputValueCenteredClass,
+  inputValueClass,
   PrimaryButton,
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
@@ -44,7 +46,7 @@ function PasswordField({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label className="text-[13px] leading-4 font-normal text-ink">{label}</Label>
+      <Label className="text-[16px] leading-[1rem] font-medium text-ink">{label}</Label>
       <div className="relative">
         <Input
           type={visible ? "text" : "password"}
@@ -54,7 +56,8 @@ function PasswordField({
           aria-invalid={Boolean(error)}
           onChange={(event) => onChange(event.target.value)}
           className={cn(
-            "h-[70px] rounded-[14px] border border-line bg-white pr-12 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0 md:text-[16px]",
+            "h-[70px] rounded-[14px] border border-line bg-white pr-12 pl-4 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0",
+            inputValueClass,
           )}
         />
         <button
@@ -110,24 +113,17 @@ export function AccountIntroStep() {
     <OnboardingShell
       step="account-intro"
       title="Now that we know you’re eligible, lets set up your account!"
-      subtitle={
-        <p className="text-[16px] leading-[22px] font-normal text-body">
-          Basic account setup needed to insure the privacy and security of your
-          information.
-          <br />
-          Enter your email to begin.
-        </p>
-      }
+      subtitle="We’ll send a 5-digit code to your email to confirm it’s you."
       footer={
         <PrimaryButton onClick={continueAccount}>Create Account</PrimaryButton>
       }
     >
       <Field
+        aria-label="Email"
         type="email"
         autoComplete="email"
-        aria-label="Email"
-        inputClassName="text-center tracking-[0.08em]"
         placeholder="JaneDoe@email.com"
+        inputClassName="text-center"
         value={state.email}
         error={emailError}
         onChange={(event) => update({ email: event.target.value })}
@@ -158,16 +154,16 @@ export function ContactStep() {
     <OnboardingShell
       step="contact"
       title="Contact information"
-      subtitle="We’ll use this number if we need to reach you about your care."
+      subtitle="Enter your phone number below. We’ll use this number if we need to reach you about your care."
       footer={<PrimaryButton onClick={continueContact}>Next</PrimaryButton>}
     >
       <Field
+        aria-label="Phone"
         type="tel"
         autoComplete="tel"
         inputMode="tel"
-        aria-label="Phone"
-        inputClassName="text-center tracking-[0.08em]"
         placeholder="(123) 456-7890"
+        inputClassName="text-center"
         value={state.phone}
         error={phoneError}
         onChange={(event) =>
@@ -244,7 +240,8 @@ export function ConfirmEmailStep() {
             onChange={(event) => setDigit(index, event.target.value)}
             onKeyDown={(event) => onKeyDown(index, event)}
             className={cn(
-              "h-[70px] w-full rounded-[14px] border border-line bg-white text-center text-[24px] font-semibold text-ink placeholder:text-fog focus:border-2 focus:border-action focus:outline-none",
+              "h-[70px] w-full rounded-[14px] border border-line bg-white focus:border-2 focus:border-action focus:outline-none",
+              inputValueCenteredClass,
               error && "border-danger",
             )}
           />

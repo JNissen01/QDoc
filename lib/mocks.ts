@@ -60,12 +60,65 @@ export const MOCK_MEDICATION = {
   frequency: "Twice daily",
 };
 
+export const MOCK_ALLERGY = {
+  name: "Peanuts",
+  reactions: ["Rash", "Hives"],
+  severity: "moderate" as const,
+};
+
+export const ALLERGY_REACTIONS = [
+  "Rash",
+  "Swelling",
+  "Hives",
+  "Nausea",
+  "Trouble breathing",
+  "Anaphylaxis",
+];
+
+export const ALLERGY_SEVERITIES = ["Mild", "Moderate", "Severe"] as const;
+
+export const CONDITION_STATUS_OPTIONS = [
+  { value: "unmanaged", label: "Unmanaged" },
+  { value: "managed", label: "Managed" },
+  { value: "in_remission", label: "In remission" },
+] as const;
+
+export const CONDITION_DIAGNOSIS_YEARS_OPTIONS = [
+  { value: "under_5", label: "<5" },
+  { value: "5_to_10", label: "5-10" },
+  { value: "over_10", label: "10+" },
+] as const;
+
 export const MOCK_PAYMENT_CARD = {
   cardholderName: "Jane Doe",
   cardNumber: "4242 4242 4242 4242",
   cardExpiry: "12/28",
   cardCvv: "123",
 };
+
+export const COMMON_ALLERGIES = [
+  "Peanuts",
+  "Penicillin",
+  "Latex",
+  "Shellfish",
+  "Pollen",
+];
+
+export const COMMON_CONDITIONS = [
+  "Anxiety",
+  "Depression",
+  "Asthma",
+  "Diabetes",
+  "Hypertension",
+];
+
+export const COMMON_SURGERIES = [
+  "Appendectomy",
+  "Tonsillectomy",
+  "C-section",
+  "Gallbladder",
+  "Knee replacement",
+];
 
 export const COMMON_MEDICATIONS = [
   "Lexapro",
@@ -89,14 +142,7 @@ export const MEDICATION_FREQUENCIES = [
   "As needed",
 ] as const;
 
-export const MEDICATION_REACTIONS = [
-  "Rash",
-  "Swelling",
-  "Hives",
-  "Nausea",
-  "Trouble breathing",
-  "Anaphylaxis",
-];
+export const MEDICATION_REACTIONS = ALLERGY_REACTIONS;
 
 export function delay(ms = 1100) {
   return new Promise((resolve) => setTimeout(resolve, ms));

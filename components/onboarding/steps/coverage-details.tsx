@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import {
   Camera,
   Clock,
@@ -32,6 +32,11 @@ import {
 } from "@/lib/mocks";
 import type { Province } from "@/lib/onboarding-state";
 import { cn } from "@/lib/utils";
+import {
+  ConfirmChip,
+  ConfirmRow,
+  confirmControlClass,
+} from "@/components/onboarding/confirm-primitives";
 
 const PROVINCE_LABELS: Record<Province, string> = {
   MB: "Manitoba",
@@ -208,6 +213,9 @@ export function RegistrationNumberStep() {
           })
         }
       />
+      <div className="mt-3">
+        <LockNote>Your information is encrypted and secure</LockNote>
+      </div>
     </OnboardingShell>
   );
 }
@@ -272,93 +280,6 @@ function displayDobInput(value: string) {
   return formatDobInput(value);
 }
 
-function confirmControlClass() {
-  return "mt-1 w-full bg-transparent text-[16px] leading-[22px] font-medium text-ink outline-none";
-}
-
-function ConfirmChip({
-  selected,
-  children,
-  onClick,
-  className,
-}: {
-  selected: boolean;
-  children: ReactNode;
-  onClick: () => void;
-  className?: string;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={selected}
-      onClick={onClick}
-      className={cn(
-        "h-8 rounded-[10px] text-[14px] leading-[18px]",
-        selected
-          ? "province-chip-selected font-medium"
-          : "border border-line bg-white font-normal text-ink",
-        className,
-      )}
-    >
-      {children}
-    </button>
-  );
-}
-
-function ConfirmRow({
-  label,
-  value,
-  editing,
-  active,
-  reserveAction = false,
-  onActivate,
-  children,
-}: {
-  label: string;
-  value: string;
-  editing: boolean;
-  active: boolean;
-  reserveAction?: boolean;
-  onActivate?: () => void;
-  children?: ReactNode;
-}) {
-  const showEditor = Boolean(editing && children);
-
-  return (
-    <div
-      className={cn(
-        reserveAction && "pr-12",
-        editing && active
-          ? "-mx-2 my-2 rounded-[12px] border-2 border-action bg-white px-3 py-3"
-          : editing
-            ? "-mx-4 px-4 py-4"
-            : "-mx-4 border-b border-line px-4 py-4 last:border-b-0",
-      )}
-      onClick={() => {
-        if (editing) onActivate?.();
-      }}
-    >
-      <div className="min-w-0">
-        <p
-          className={cn(
-            "text-[13px] leading-4",
-            editing && active ? "font-medium text-action" : "text-caption",
-          )}
-        >
-          {label}
-        </p>
-        {showEditor ? (
-          children
-        ) : (
-          <p className="mt-1 text-[16px] leading-[22px] font-medium text-ink">
-            {value}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export function ConfirmInfoStep() {
   const { state, update, goNext } = useStepNav("confirm-info");
   const [editing, setEditing] = useState(false);
@@ -408,28 +329,28 @@ export function ConfirmInfoStep() {
         </PrimaryButton>
       }
     >
+      {editing ? null : (
+        <div className="mb-2 flex justify-end">
+          <button
+            type="button"
+            onClick={startEditing}
+            className="text-[16px] leading-[22px] font-medium text-action"
+          >
+            Edit
+          </button>
+        </div>
+      )}
       <div
         className={cn(
           "relative overflow-hidden rounded-[14px] border bg-white px-4",
           editing ? "border-action" : "border-line",
         )}
       >
-        {editing ? null : (
-          <button
-            type="button"
-            onClick={startEditing}
-            aria-label="Edit information"
-            className="absolute top-3 right-3 z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-action"
-          >
-            <Pencil className="size-4" strokeWidth={1.8} />
-          </button>
-        )}
         <ConfirmRow
           label="Issuing Province"
           value={provinceLabel}
           editing={editing}
           active={activeField === "province"}
-          reserveAction={!editing}
           onActivate={() => setActiveField("province")}
         >
           {activeField === "province" ? (
@@ -639,6 +560,24 @@ function formatCardNumber(value: string) {
     .replace(/(\d{4})(?=\d)/g, "$1 ");
 }
 
+const PAYMENT_INTRO_ITEMS = [
+  {
+    icon: Stethoscope,
+    title: "$90 per Visit",
+    body: "With a doctor",
+  },
+  {
+    icon: HeartPulse,
+    title: "$50 per Visit",
+    body: "With a nurse practitioner",
+  },
+  {
+    icon: Clock,
+    title: "$70 late cancellation fee",
+    body: "For missing or cancelling appointments with less than 24h notice.",
+  },
+] as const;
+
 export function PaymentIntroStep() {
   const { goNext } = useStepNav("payment-intro");
 
@@ -652,42 +591,24 @@ export function PaymentIntroStep() {
       }
     >
       <ol className="relative space-y-[62px]">
-        {[
-          {
-            icon: Stethoscope,
-            title: "$90 per Visit",
-            body: "With a doctor",
-          },
-          {
-            icon: HeartPulse,
-            title: "$50 per Visit",
-            body: "With a nurse practitioner",
-          },
-          {
-            icon: Clock,
-            title: "$70 late cancellation fee",
-            body: "For missing or cancelling appointments with less than 24h notice",
-          },
-        ].map((item, index, items) => (
+        {PAYMENT_INTRO_ITEMS.map((item, index, items) => (
           <li
             key={item.title}
-            className="relative flex w-full items-center justify-start gap-5 self-stretch"
+            className="relative flex w-full items-center justify-start gap-[22px] self-stretch"
           >
             <span className="relative shrink-0">
-              <IconWell className="relative z-10 size-[4.125rem] rounded-[0.75rem] border-2 border-line">
-                <item.icon className="size-[2.125rem]" strokeWidth={1.8} />
+              <IconWell className="relative z-10 size-[66px] rounded-[12px] border-2 border-line bg-white">
+                <item.icon className="size-[34px]" strokeWidth={1.8} />
               </IconWell>
               {index < items.length - 1 ? (
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute top-[2.0625rem] left-1/2 z-0 w-px -translate-x-1/2 bg-action"
-                  style={{
-                    height: "calc(2.0625rem + 62px + 2.0625rem)",
-                  }}
+                  className="pointer-events-none absolute top-[33px] left-1/2 z-0 w-0.5 -translate-x-1/2 bg-line"
+                  style={{ height: "calc(33px + 62px + 33px)" }}
                 />
               ) : null}
             </span>
-            <div className="min-w-0 flex-1 pt-0.5">
+            <div className="min-w-0 flex-1">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
                 {item.title}
               </p>

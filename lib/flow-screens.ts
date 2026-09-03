@@ -73,20 +73,20 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
   coverage: { title: "Coverage", note: "2/2" },
   "off-ramp": {
     title: "Off-ramp",
-    note: "Outside the service area · location + email",
+    note: "Waitlist for uncovered areas · confirms, then returns to welcome",
   },
   "account-intro": {
     title: "Account intro",
     note: "Email · Create Account CTA",
   },
   "confirm-email": { title: "Confirm your email", note: "5-digit code · 1/6" },
-  contact: {
-    title: "Contact information",
-    note: "Phone · 2/6",
-  },
   password: {
     title: "Create a password",
-    note: "Password · 3/6",
+    note: "Password · 2/6",
+  },
+  contact: {
+    title: "Contact information",
+    note: "Phone · 3/6",
   },
   name: { title: "Legal name", note: "4/6" },
   sex: {
@@ -140,13 +140,20 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
   },
   payment: { title: "Payment", note: "Uninsured · 2 of 2" },
   checkpoint: { title: "Checkpoint" },
-  biometrics: { title: "Biometrics", note: "Phase 2 · 1/7" },
-  pronouns: { title: "Pronouns", note: "Phase 2 · 2/7" },
-  "medical-history": { title: "Medical history", note: "Phase 2 · 3/7" },
-  medications: { title: "Medications", note: "Phase 2 · 4/7, gated" },
-  "family-doctor": { title: "Family doctor", note: "Phase 2 · 5/7" },
-  pharmacy: { title: "Pharmacy", note: "Phase 2 · 6/7" },
-  success: { title: "Success", note: "Phase 2 · 7/7" },
+  biometrics: { title: "Biometrics", note: "Phase 2 · 1/8" },
+  pronouns: { title: "Pronouns", note: "Phase 2 · 2/8" },
+  "medical-history": { title: "Medical history", note: "Phase 2 · 3/8" },
+  medications: { title: "Medications", note: "Phase 2 · 4/8, gated" },
+  allergies: { title: "Allergies", note: "Phase 2 · 4/8, gated" },
+  conditions: { title: "Ongoing conditions", note: "Phase 2 · 4/8, gated" },
+  surgeries: { title: "Past surgeries", note: "Phase 2 · 4/8, gated" },
+  "family-doctor": { title: "Family doctor", note: "Phase 2 · 5/8" },
+  pharmacy: { title: "Pharmacy", note: "Phase 2 · 6/8" },
+  "confirm-medical-profile": {
+    title: "Confirm medical profile",
+    note: "Phase 2 · 7/8 · review",
+  },
+  success: { title: "Success", note: "Phase 2 · 8/8" },
 };
 
 /** Thematic section for the prototype map (not strictly linear journey order). */
@@ -181,6 +188,10 @@ const SECTION_BY_STEP: Record<StepId | "dashboard", FlowSectionId> = {
   biometrics: "medical-profile",
   "medical-history": "medical-profile",
   medications: "medical-profile",
+  allergies: "medical-profile",
+  conditions: "medical-profile",
+  surgeries: "medical-profile",
+  "confirm-medical-profile": "medical-profile",
   success: "medical-profile",
   dashboard: "dashboard",
 };
@@ -191,8 +202,8 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
   account: [
     "account-intro",
     "confirm-email",
-    "contact",
     "password",
+    "contact",
     "name",
     "sex",
     "address",
@@ -218,8 +229,12 @@ const SECTION_ORDER: Record<FlowSectionId, Array<StepId | "dashboard">> = {
     "pronouns",
     "medical-history",
     "medications",
+    "allergies",
+    "conditions",
+    "surgeries",
     "family-doctor",
     "pharmacy",
+    "confirm-medical-profile",
     "success",
   ],
   dashboard: ["dashboard"],

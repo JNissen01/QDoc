@@ -120,6 +120,17 @@ export function StepFooter({
   );
 }
 
+/** Left-aligned input value and placeholder: 18px / 400. */
+export const inputValueClass =
+  "text-[18px] leading-6 font-normal text-ink placeholder:text-[18px] placeholder:font-normal placeholder:text-fog md:text-[18px]";
+
+/** Centered input value and placeholder: 20px / 400. */
+export const inputValueCenteredClass =
+  "text-center text-[20px] leading-[26px] font-normal text-ink placeholder:text-[20px] placeholder:font-normal placeholder:text-fog md:text-[20px]";
+
+const fieldChromeClass =
+  "h-[70px] rounded-[14px] border border-line bg-white shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0";
+
 export function SearchField({
   className,
   inputClassName,
@@ -130,7 +141,9 @@ export function SearchField({
       <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
       <Input
         className={cn(
-          "h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+          fieldChromeClass,
+          "pr-4 pl-11",
+          inputValueClass,
           inputClassName,
         )}
         {...props}
@@ -153,14 +166,18 @@ export function Field({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {label ? (
-        <Label className="text-[13px] leading-4 font-normal text-ink">
+        <Label className="text-[16px] leading-[1rem] font-medium text-ink">
           {label}
         </Label>
       ) : null}
       <Input
         aria-invalid={Boolean(error)}
         className={cn(
-          "h-[70px] rounded-[14px] border border-line bg-white px-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0 md:text-[16px]",
+          fieldChromeClass,
+          "px-4 aria-invalid:border-danger aria-invalid:bg-red-50 aria-invalid:ring-0",
+          inputClassName?.includes("text-center")
+            ? inputValueCenteredClass
+            : inputValueClass,
           inputClassName,
         )}
         {...props}

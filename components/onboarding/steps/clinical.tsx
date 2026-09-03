@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type ComponentProps } from "react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
+  inputValueClass,
   PrimaryButton,
   RadioDot,
   SearchField,
@@ -11,55 +12,16 @@ import {
 } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import { filterByQuery, MOCK_CLINICS, MOCK_PHARMACIES } from "@/lib/mocks";
-import type { BloodType, MeasurementSystem } from "@/lib/onboarding-state";
+import {
+  formatHeightDisplay,
+  formatWeightDisplay,
+  parseHeightToCm,
+  parseWeightToKg,
+} from "@/lib/biometrics-units";
+import type { MeasurementSystem } from "@/lib/onboarding-state";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-const CM_PER_FT = 30.48;
-const LBS_PER_KG = 2.2046226218;
-
-function roundTo(value: number, places: number) {
-  const factor = 10 ** places;
-  return Math.round(value * factor) / factor;
-}
-
-function formatHeightDisplay(cm: string, system: MeasurementSystem) {
-  if (!cm.trim()) return "";
-  const n = Number(cm);
-  if (!Number.isFinite(n)) return "";
-  return system === "metric"
-    ? String(roundTo(n, 1))
-    : String(roundTo(n / CM_PER_FT, 2));
-}
-
-function formatWeightDisplay(kg: string, system: MeasurementSystem) {
-  if (!kg.trim()) return "";
-  const n = Number(kg);
-  if (!Number.isFinite(n)) return "";
-  return system === "metric"
-    ? String(roundTo(n, 1))
-    : String(roundTo(n * LBS_PER_KG, 1));
-}
-
-/** Returns metric string, "" for empty, or null if input is not yet a number. */
-function parseHeightToCm(display: string, system: MeasurementSystem) {
-  if (!display.trim()) return "";
-  const n = Number(display);
-  if (!Number.isFinite(n)) return null;
-  return String(
-    system === "metric" ? roundTo(n, 2) : roundTo(n * CM_PER_FT, 2),
-  );
-}
-
-function parseWeightToKg(display: string, system: MeasurementSystem) {
-  if (!display.trim()) return "";
-  const n = Number(display);
-  if (!Number.isFinite(n)) return null;
-  return String(
-    system === "metric" ? roundTo(n, 2) : roundTo(n / LBS_PER_KG, 2),
-  );
-}
 
 function UnitField({
   label,
@@ -74,18 +36,19 @@ function UnitField({
 }) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <Label className="text-[13px] leading-4 font-normal text-ink">
+      <Label className="text-[16px] leading-[1rem] font-medium text-ink">
         {label}
       </Label>
       <div className="relative">
         <Input
           className={cn(
-            "h-[70px] rounded-[14px] border border-line bg-white py-0 pr-12 pl-4 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]",
+            "h-[70px] rounded-[14px] border border-line bg-white py-0 pr-12 pl-4 shadow-none focus-visible:border-2 focus-visible:border-action focus-visible:ring-0",
+            inputValueClass,
             inputClassName,
           )}
           {...props}
         />
-        <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[16px] leading-[22px] text-caption">
+        <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[18px] leading-6 font-normal text-caption">
           {suffix}
         </span>
       </div>
@@ -107,7 +70,7 @@ function MeasurementSystemToggle({
 
   return (
     <div>
-      <p className="mb-2 text-[13px] leading-4 text-ink">Measurement System</p>
+      <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">Measurement System</p>
       <div
         className="flex h-12 shrink-0 items-center self-stretch rounded-[12px] border border-line bg-white p-1"
         role="group"
@@ -162,7 +125,7 @@ export function PharmacyStep() {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
-      <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+      <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
         Pharmacies near you
       </p>
       <div className="space-y-3">
@@ -203,7 +166,7 @@ export function FamilyDoctorStep() {
       title="Do you have a family doctor?"
       subtitle="Optional. If you have one, we can keep their clinic on file for referrals."
       footer={
-        <StepFooter onSkip={() => goNext()}>
+        <StepFooter hideSkip>
           <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
             Continue
           </PrimaryButton>
@@ -234,7 +197,7 @@ export function FamilyDoctorStep() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
-          <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
             Clinics near you
           </p>
           <div className="space-y-3">
@@ -256,18 +219,6 @@ export function FamilyDoctorStep() {
     </OnboardingShell>
   );
 }
-
-const BLOOD_TYPES: BloodType[] = [
-  "unknown",
-  "A+",
-  "A-",
-  "B+",
-  "B-",
-  "AB+",
-  "AB-",
-  "O+",
-  "O-",
-];
 
 export function BiometricsStep() {
   const { state, update, goNext, ready } = useStepNav("biometrics");
@@ -291,7 +242,7 @@ export function BiometricsStep() {
     <OnboardingShell
       step="biometrics"
       title="A few basics about your body"
-      subtitle="Height, weight, and blood type help your provider dose and document accurately. You can skip any field you don’t know."
+      subtitle="Height and weight help your provider dose and document accurately. You can skip any field you don’t know."
       footer={
         <StepFooter onSkip={() => goNext()}>
           <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
@@ -330,25 +281,6 @@ export function BiometricsStep() {
               if (metric !== null) update({ weight: metric });
             }}
           />
-        </div>
-        <div>
-          <p className="mb-2 text-[13px] leading-4 text-ink">Blood type</p>
-          <div className="flex flex-wrap gap-2">
-            {BLOOD_TYPES.map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => update({ bloodType: type })}
-                className={
-                  state.bloodType === type
-                    ? "rounded-[0.625rem] bg-action px-3.5 py-2 text-[14px] font-medium text-white"
-                    : "rounded-[0.625rem] border border-line bg-white px-3.5 py-2 text-[14px] font-normal text-ink"
-                }
-              >
-                {type === "unknown" ? "Don’t know" : type}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
     </OnboardingShell>
