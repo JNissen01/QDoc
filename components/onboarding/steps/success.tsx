@@ -8,12 +8,10 @@ import { useStepNav } from "@/components/onboarding/use-step-nav";
 export function SuccessStep() {
   const { state, goTo } = useStepNav("success");
 
-  const coverageLabel =
-    state.coverage === "provincial"
-      ? "Health card connected"
-      : state.coverage === "private"
-        ? "Private insurance on file"
-        : "Payment method on file";
+  const bodyMetricsLabel =
+    state.height.trim() || state.weight.trim()
+      ? "Body metrics saved"
+      : "You can add body metrics anytime";
 
   return (
     <OnboardingShell
@@ -29,7 +27,7 @@ export function SuccessStep() {
     >
       <ul className="space-y-3">
         {[
-          coverageLabel,
+          bodyMetricsLabel,
           state.pharmacy
             ? `Pharmacy set · ${state.pharmacy.name}`
             : "You can add a pharmacy anytime",
