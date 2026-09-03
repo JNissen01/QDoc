@@ -20,7 +20,7 @@ function SummaryEntries({ value }: { value: string }) {
 
   if (entries.length <= 1) {
     return (
-      <p className="mt-1 whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink">
+      <p className="mt-1 whitespace-pre-line text-[16px] leading-[22px] font-normal text-ink">
         {value}
       </p>
     );
@@ -32,7 +32,7 @@ function SummaryEntries({ value }: { value: string }) {
         <li
           key={`${index}-${entry.slice(0, 24)}`}
           className={cn(
-            "whitespace-pre-line text-[16px] leading-[22px] font-medium text-ink",
+            "whitespace-pre-line text-[16px] leading-[22px] font-normal text-ink",
             index < entries.length - 1 && "mb-3 border-b border-line pb-3",
           )}
         >
