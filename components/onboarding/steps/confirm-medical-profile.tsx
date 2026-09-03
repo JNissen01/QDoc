@@ -121,12 +121,14 @@ function sliceForCategory(
 
 function ReviewGroup({
   title,
+  subtitle,
   actionLabel,
   onAction,
   actionAriaLabel,
   children,
 }: {
   title: string;
+  subtitle?: string;
   actionLabel?: string;
   onAction?: () => void;
   actionAriaLabel?: string;
@@ -134,19 +136,24 @@ function ReviewGroup({
 }) {
   return (
     <section className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-[16px] leading-[22px] font-semibold text-ink">
-          {title}
-        </h2>
-        {onAction && actionLabel ? (
-          <button
-            type="button"
-            onClick={onAction}
-            aria-label={actionAriaLabel ?? actionLabel}
-            className="text-[16px] leading-[22px] font-medium text-action"
-          >
-            {actionLabel}
-          </button>
+      <div className="space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-[16px] leading-[22px] font-semibold text-ink">
+            {title}
+          </h2>
+          {onAction && actionLabel ? (
+            <button
+              type="button"
+              onClick={onAction}
+              aria-label={actionAriaLabel ?? actionLabel}
+              className="text-[16px] leading-[22px] font-medium text-action"
+            >
+              {actionLabel}
+            </button>
+          ) : null}
+        </div>
+        {subtitle ? (
+          <p className="text-[13px] leading-5 text-caption">{subtitle}</p>
         ) : null}
       </div>
       {children}
@@ -585,11 +592,7 @@ export function ConfirmMedicalProfileStep() {
 
       <ReviewGroup
         title="Care team"
-        actionLabel={careTeamEditing ? undefined : "Edit"}
-        onAction={
-          careTeamEditing ? undefined : () => startSectionEdit("family-doctor")
-        }
-        actionAriaLabel="Edit care team"
+        subtitle="You can edit your care provider and pharmacy information from the dashboard"
       >
       <div
         className={cn(
