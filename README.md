@@ -40,7 +40,7 @@ To see every screen in journey order, open [http://localhost:43173/flow](http://
   - Provincial health card → scan / enter card number
   - Private insurance → MSH policy details
   - Uninsured → pricing intro → payment details (optional NIHB / IFHP IDs)
-- People outside the service area hit an off-ramp and cannot continue.
+- People outside the service area hit an off-ramp. They can join a waitlist (location + email, stored in the browser only — no email is sent) or go back.
 - After coverage is set, you can skip Phase 2 (clinical background) or complete pharmacy, history, medications, allergies, conditions, and surgeries.
 - Dashboard actions (Book a Visit, Inbox, and so on) are visual only.
 
