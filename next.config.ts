@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Disable streaming metadata so Cursor's preview tab can finish loading.
+  htmlLimitedBots: /.*/,
   // Cursor's browser preview is not localhost. Without these hosts, Next 16
   // 403s /_next JS and CSS, so the preview stays blank.
   allowedDevOrigins: [
