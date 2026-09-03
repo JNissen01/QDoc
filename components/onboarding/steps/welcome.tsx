@@ -68,9 +68,7 @@ export function WelcomeStep() {
               key={item.label}
               className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3"
             >
-              <span className="flex size-6 shrink-0 items-center justify-center">
-                <item.icon className={item.iconClassName} />
-              </span>
+              <item.icon className={item.iconClassName} />
               <span className="text-left text-[16px] leading-[22px] font-medium text-ink">
                 {item.label}
               </span>
