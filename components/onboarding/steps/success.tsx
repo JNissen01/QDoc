@@ -2,7 +2,7 @@
 
 import { CheckCircle2 } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
-import { GhostButton, PrimaryButton } from "@/components/onboarding/primitives";
+import { PrimaryButton } from "@/components/onboarding/primitives";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 
 export function SuccessStep() {
@@ -21,14 +21,9 @@ export function SuccessStep() {
       title="You’re all set"
       subtitle="Your QDoc profile is ready. Book a visit when you need care for a non-emergent issue."
       footer={
-        <div className="space-y-2">
-          <PrimaryButton onClick={() => goTo("dashboard")}>
-            Complete
-          </PrimaryButton>
-          <GhostButton onClick={() => goTo("dashboard")}>
-            Explore Dashboard
-          </GhostButton>
-        </div>
+        <PrimaryButton onClick={() => goTo("dashboard")}>
+          Complete
+        </PrimaryButton>
       }
     >
       <ul className="space-y-3">
