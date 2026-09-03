@@ -23,7 +23,7 @@ export function SuccessStep() {
       footer={
         <div className="space-y-2">
           <PrimaryButton onClick={() => goTo("dashboard")}>
-            Book a Consultation
+            Complete
           </PrimaryButton>
           <GhostButton onClick={() => goTo("dashboard")}>
             Explore Dashboard
