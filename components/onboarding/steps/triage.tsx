@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
@@ -35,7 +35,7 @@ export function ServiceAreaStep() {
       }
     >
       <div>
-        <div className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3">
+        <div className="flex min-h-[70px] items-center gap-3 rounded-[14px] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(30,27,75,0.04)]">
           <MapPin
             className="size-5 shrink-0 text-action"
             strokeWidth={1.8}
@@ -160,6 +160,7 @@ export function IssuedProvinceStep() {
 export function OffRampStep() {
   const { state, update, goTo } = useStepNav("off-ramp");
   const [submitted, setSubmitted] = useState(false);
+  const joinedThisVisit = useRef(false);
 
   const location = state.waitlistLocation.trim();
   const emailIsValid = isValidEmail(state.waitlistEmail);
@@ -171,11 +172,30 @@ export function OffRampStep() {
       ? "Enter a valid email address"
       : undefined;
 
+  function goToWelcome() {
+    goTo("welcome");
+  }
+
   function joinWaitlist() {
     setSubmitted(true);
     if (!canJoin) return;
+    joinedThisVisit.current = true;
     update({ waitlistJoined: true });
   }
+
+  function onPrimaryClick() {
+    if (state.waitlistJoined) {
+      goToWelcome();
+      return;
+    }
+    joinWaitlist();
+  }
+
+  useEffect(() => {
+    if (!state.waitlistJoined || !joinedThisVisit.current) return;
+    const timeout = window.setTimeout(goToWelcome, 1400);
+    return () => window.clearTimeout(timeout);
+  }, [state.waitlistJoined]);
 
   return (
     <OnboardingShell
@@ -186,10 +206,10 @@ export function OffRampStep() {
       footer={
         <div className="space-y-2">
           <PrimaryButton
-            disabled={state.waitlistJoined || !canJoin}
-            onClick={joinWaitlist}
+            disabled={!state.waitlistJoined && !canJoin}
+            onClick={onPrimaryClick}
           >
-            {state.waitlistJoined ? "You’re on the waitlist" : "Join waitlist"}
+            Join waitlist
           </PrimaryButton>
           <GhostButton onClick={() => goTo("service-area")}>Go back</GhostButton>
         </div>
@@ -197,7 +217,7 @@ export function OffRampStep() {
     >
       <div className="space-y-4 text-left">
         <div className="space-y-1">
-          <h2 className="text-[18px] leading-6 font-semibold text-ink">
+          <h2 className="text-[20px] leading-6 font-semibold text-ink">
             Join the waitlist
           </h2>
           <p className="text-[16px] leading-[22px] font-normal text-body">
@@ -235,11 +255,11 @@ export function OffRampStep() {
         />
       </div>
 
-      <div className="mt-6 rounded-[14px] border border-line bg-white p-4 text-[16px] leading-[22px] text-body">
+      <p className="mt-6 text-[14px] leading-[18px] font-normal text-caption">
         If you chose this by mistake, go back and select a supported region.
         Emergency care should always go through 911 or your nearest emergency
         department.
-      </div>
+      </p>
     </OnboardingShell>
   );
 }

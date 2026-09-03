@@ -107,7 +107,7 @@ export function OnboardingShell({
 
   return (
     <PhoneFrame>
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-full flex-col">
         {!progress.hidden ? (
           <ProgressTracker current={progress.current} total={progress.total} />
         ) : null}
@@ -158,12 +158,13 @@ export function OnboardingShell({
         >
           {children}
         </div>
+
+        {footer ? (
+          <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-1">
+            {footer}
+          </div>
+        ) : null}
       </div>
-      {footer ? (
-        <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-1">
-          {footer}
-        </div>
-      ) : null}
 
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
         <DialogContent

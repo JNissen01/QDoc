@@ -19,9 +19,23 @@ import { cn } from "@/lib/utils";
 const PRONOUNS = ["She/her", "He/him", "They/them", "Prefer not to say"];
 const SEXES = ["Male", "Female", "Intersex", "Prefer not to say"];
 
+function getNameError(value: string) {
+  if (!value.trim()) return undefined;
+  if (/\d/.test(value)) {
+    return "Names can't include numbers.";
+  }
+  return undefined;
+}
+
 export function NameStep() {
   const { state, update, goNext } = useStepNav("name");
-  const valid = state.firstName.trim() && state.lastName.trim();
+  const firstNameError = getNameError(state.firstName);
+  const lastNameError = getNameError(state.lastName);
+  const valid =
+    state.firstName.trim() &&
+    state.lastName.trim() &&
+    !firstNameError &&
+    !lastNameError;
 
   return (
     <OnboardingShell
@@ -39,12 +53,14 @@ export function NameStep() {
           label="First name"
           placeholder="e.g. Jane"
           value={state.firstName}
+          error={firstNameError}
           onChange={(event) => update({ firstName: event.target.value })}
         />
         <Field
           label="Last name"
           placeholder="e.g. Doe"
           value={state.lastName}
+          error={lastNameError}
           onChange={(event) => update({ lastName: event.target.value })}
         />
       </div>
@@ -247,7 +263,7 @@ export function AddressStep() {
           />
         </div>
         <div>
-          <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+          <p className="mb-2 text-[16px] leading-[1rem] font-medium text-ink">
             Province
           </p>
           <div className="grid grid-cols-3 gap-2">
