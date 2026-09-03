@@ -34,6 +34,7 @@ export const STEP_IDS = [
   "surgeries",
   "family-doctor",
   "pharmacy",
+  "confirm-medical-profile",
   "success",
 ] as const;
 
@@ -54,7 +55,7 @@ const ACCOUNT_PHASE = 6;
 const PUBLIC_INSURANCE_PHASE = 6;
 const PRIVATE_INSURANCE_PHASE = 3;
 const PAYMENT_PHASE = 2;
-const PHASE2 = 7;
+const PHASE2 = 8;
 
 export function getProgress(
   step: StepId,
@@ -123,10 +124,12 @@ export function getProgress(
       return { current: 5, total: PHASE2 };
     case "pharmacy":
       return { current: 6, total: PHASE2 };
+    case "confirm-medical-profile":
+      return { current: 7, total: PHASE2 };
     case "biometrics":
       return { current: 1, total: PHASE2 };
     case "success":
-      return { current: 7, total: PHASE2 };
+      return { current: 8, total: PHASE2 };
   }
 }
 
@@ -234,6 +237,8 @@ export function getNextStep(
     case "family-doctor":
       return "pharmacy";
     case "pharmacy":
+      return "confirm-medical-profile";
+    case "confirm-medical-profile":
       return "success";
     case "success":
       return "dashboard";
@@ -312,8 +317,10 @@ export function getPrevStep(
     }
     case "pharmacy":
       return "family-doctor";
-    case "success":
+    case "confirm-medical-profile":
       return "pharmacy";
+    case "success":
+      return "confirm-medical-profile";
   }
 }
 

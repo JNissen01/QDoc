@@ -242,7 +242,7 @@ export function AddressStep() {
       <div className="space-y-4 text-left">
         <Field
           label="Address"
-          placeholder="Search here"
+          placeholder="123 main St"
           value={state.address}
           onChange={(event) => update({ address: event.target.value })}
         />

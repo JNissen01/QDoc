@@ -201,8 +201,8 @@ export function OffRampStep() {
     <OnboardingShell
       step="off-ramp"
       hideBack
-      title="QDoc isn’t available for this visit yet"
-      subtitle="We’re currently able to see patients who are physically in Manitoba, Northwestern Ontario, or Nunavut at the time of their visit."
+      title="Join the waitlist"
+      subtitle="QDoc can’t be used in your specific region. Enter your location and email and we’ll notify you when QDoc is available in your area."
       footer={
         <div className="space-y-2">
           <PrimaryButton
@@ -216,16 +216,6 @@ export function OffRampStep() {
       }
     >
       <div className="space-y-4 text-left">
-        <div className="space-y-1">
-          <h2 className="text-[20px] leading-6 font-semibold text-ink">
-            Join the waitlist
-          </h2>
-          <p className="text-[16px] leading-[22px] font-normal text-body">
-            {state.waitlistJoined
-              ? `You’re on the list. We’ll email you when QDoc is available in ${location || "your area"}.`
-              : "Enter your location and email and we’ll notify you when QDoc is available in your area."}
-          </p>
-        </div>
         <Field
           label="Province or location"
           autoComplete="address-level1"
@@ -253,6 +243,11 @@ export function OffRampStep() {
             })
           }
         />
+        {state.waitlistJoined ? (
+          <p className="text-[16px] leading-[22px] font-normal text-body">
+            {`You’re on the list. We’ll email you when QDoc is available in ${location || "your area"}.`}
+          </p>
+        ) : null}
       </div>
 
       <p className="mt-6 text-[14px] leading-[18px] font-normal text-caption">

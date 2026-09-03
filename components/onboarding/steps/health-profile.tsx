@@ -26,11 +26,11 @@ import {
   MEDICATION_FREQUENCIES,
   MOCK_MEDICATION,
 } from "@/lib/mocks";
+import { HISTORY_OPTIONS } from "@/lib/history-options";
+import { formatConditionSummary } from "@/lib/medical-profile-display";
 import type {
   Allergy,
   Condition,
-  ConditionDiagnosisYears,
-  ConditionStatus,
   HistoryCategory,
   Medication,
   Severity,
@@ -40,33 +40,6 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const HISTORY_OPTIONS: {
-  value: HistoryCategory;
-  title: string;
-  description?: string;
-}[] = [
-  {
-    value: "medications",
-    title: "Medications",
-    description: "Prescriptions, OTC drugs, or supplements",
-  },
-  {
-    value: "allergies",
-    title: "Allergies",
-    description: "Drug, food, or environmental allergies",
-  },
-  {
-    value: "conditions",
-    title: "Ongoing conditions",
-    description: "Diagnoses you’re currently managing",
-  },
-  {
-    value: "surgeries",
-    title: "Past surgeries",
-    description: "Any prior procedures or operations",
-  },
-  { value: "none", title: "None of these apply to me" },
-];
 
 export function MedicalHistoryStep() {
   const { state, update, goNext } = useStepNav("medical-history");
@@ -212,7 +185,11 @@ function SoftChip({
       : "border border-line bg-white font-normal text-ink",
   );
   const removeClass =
-    selected && appearance === "filled" ? "text-white" : "text-ink";
+    selected && appearance === "filled"
+      ? "text-white"
+      : selected && appearance === "outlined"
+        ? "text-action"
+        : "text-ink";
 
   if (!onRemove) {
     return (
@@ -436,15 +413,17 @@ function ClearableInput({
   );
 }
 
-function MedicationEntryCard({
+export function MedicationEntryCard({
   draft,
   isEditing,
+  reviewMode = false,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Medication;
   isEditing: boolean;
+  reviewMode?: boolean;
   onChange: (next: Medication) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -465,19 +444,27 @@ function MedicationEntryCard({
   );
 
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-[14px] border border-line bg-white p-4 shadow-sm",
+        reviewMode &&
+          "rounded-none border-0 p-0 shadow-none -mx-4 px-4 border-b border-line pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0",
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">
           {draft.name}
         </p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label="Cancel medication entry"
-        >
-          <X className="size-5" />
-        </button>
+        {reviewMode ? null : (
+          <button
+            type="button"
+            className="shrink-0 text-caption"
+            onClick={onDismiss}
+            aria-label="Cancel medication entry"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-4">
@@ -643,12 +630,14 @@ function MedicationEntryCard({
         </div>
       </div>
 
-      <EntryCardSaveButton
-        isEditing={isEditing}
-        addLabel="Add medication"
-        disabled={!isMedicationComplete(draft)}
-        onSave={onSave}
-      />
+      {reviewMode ? null : (
+        <EntryCardSaveButton
+          isEditing={isEditing}
+          addLabel="Add medication"
+          disabled={!isMedicationComplete(draft)}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }
@@ -832,9 +821,9 @@ export function MedicationsStep() {
           {listedMedications.map((medication) => (
             <div
               key={medication.id}
-              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
                   {medication.name}
                 </p>
@@ -844,7 +833,7 @@ export function MedicationsStep() {
                     .join(" • ")}
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex shrink-0 gap-3">
                 <button
                   type="button"
                   aria-label="Edit medication"
@@ -908,15 +897,17 @@ function isPresetReaction(value: string) {
   return ALLERGY_REACTIONS.includes(value);
 }
 
-function AllergyEntryCard({
+export function AllergyEntryCard({
   draft,
   isEditing,
+  reviewMode = false,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Allergy;
   isEditing: boolean;
+  reviewMode?: boolean;
   onChange: (next: Allergy) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -935,19 +926,27 @@ function AllergyEntryCard({
   }
 
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-[14px] border border-line bg-white p-4 shadow-sm",
+        reviewMode &&
+          "rounded-none border-0 p-0 shadow-none -mx-4 px-4 border-b border-line pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0",
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">
           {draft.name}
         </p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label="Cancel allergy entry"
-        >
-          <X className="size-5" />
-        </button>
+        {reviewMode ? null : (
+          <button
+            type="button"
+            className="shrink-0 text-caption"
+            onClick={onDismiss}
+            aria-label="Cancel allergy entry"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-5">
@@ -1052,12 +1051,14 @@ function AllergyEntryCard({
         </div>
       </div>
 
-      <EntryCardSaveButton
-        isEditing={isEditing}
-        addLabel="Add allergy"
-        disabled={!isAllergyComplete(draft)}
-        onSave={onSave}
-      />
+      {reviewMode ? null : (
+        <EntryCardSaveButton
+          isEditing={isEditing}
+          addLabel="Add allergy"
+          disabled={!isAllergyComplete(draft)}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }
@@ -1122,9 +1123,9 @@ export function AllergiesStep() {
           {listedAllergies.map((allergy) => (
             <div
               key={allergy.id}
-              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
                   {allergy.name}
                 </p>
@@ -1140,7 +1141,7 @@ export function AllergiesStep() {
                     .join(" • ")}
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex shrink-0 gap-3">
                 <button
                   type="button"
                   aria-label="Edit allergy"
@@ -1210,61 +1211,43 @@ function isConditionComplete(condition: Condition) {
   );
 }
 
-function formatConditionStatus(status: ConditionStatus) {
-  return (
-    CONDITION_STATUS_OPTIONS.find((option) => option.value === status)?.label ??
-    status
-  );
-}
-
-function formatConditionDiagnosisYears(years: ConditionDiagnosisYears) {
-  return (
-    CONDITION_DIAGNOSIS_YEARS_OPTIONS.find((option) => option.value === years)
-      ?.label ?? years
-  );
-}
-
-function formatConditionSummary(condition: Condition) {
-  return [
-    condition.severity
-      ? condition.severity.charAt(0).toUpperCase() + condition.severity.slice(1)
-      : null,
-    condition.status ? formatConditionStatus(condition.status) : null,
-    condition.diagnosisYears
-      ? formatConditionDiagnosisYears(condition.diagnosisYears)
-      : null,
-  ]
-    .filter(Boolean)
-    .join(" • ");
-}
-
-function ConditionEntryCard({
+export function ConditionEntryCard({
   draft,
   isEditing,
+  reviewMode = false,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Condition;
   isEditing: boolean;
+  reviewMode?: boolean;
   onChange: (next: Condition) => void;
   onDismiss: () => void;
   onSave: () => void;
 }) {
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-[14px] border border-line bg-white p-4 shadow-sm",
+        reviewMode &&
+          "rounded-none border-0 p-0 shadow-none -mx-4 px-4 border-b border-line pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0",
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">
           {draft.name}
         </p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label="Cancel condition entry"
-        >
-          <X className="size-5" />
-        </button>
+        {reviewMode ? null : (
+          <button
+            type="button"
+            className="shrink-0 text-caption"
+            onClick={onDismiss}
+            aria-label="Cancel condition entry"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-5">
@@ -1305,12 +1288,14 @@ function ConditionEntryCard({
         </div>
       </div>
 
-      <EntryCardSaveButton
-        isEditing={isEditing}
-        addLabel="Add condition"
-        disabled={!isConditionComplete(draft)}
-        onSave={onSave}
-      />
+      {reviewMode ? null : (
+        <EntryCardSaveButton
+          isEditing={isEditing}
+          addLabel="Add condition"
+          disabled={!isConditionComplete(draft)}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }
@@ -1381,9 +1366,9 @@ export function ConditionsStep() {
           {listedConditions.map((condition) => (
             <div
               key={condition.id}
-              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-semibold text-ink">
                   {condition.name}
                 </p>
@@ -1391,7 +1376,7 @@ export function ConditionsStep() {
                   {formatConditionSummary(condition)}
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex shrink-0 gap-3">
                 <button
                   type="button"
                   aria-label="Edit condition"
@@ -1576,15 +1561,17 @@ function SurgeryListDetails({ surgery }: { surgery: Surgery }) {
   );
 }
 
-function SurgeryEntryCard({
+export function SurgeryEntryCard({
   draft,
   isEditing,
+  reviewMode = false,
   onChange,
   onDismiss,
   onSave,
 }: {
   draft: Surgery;
   isEditing: boolean;
+  reviewMode?: boolean;
   onChange: (next: Surgery) => void;
   onDismiss: () => void;
   onSave: () => void;
@@ -1592,19 +1579,27 @@ function SurgeryEntryCard({
   const yearError = getSurgeryYearError(draft.year);
 
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-[14px] border border-line bg-white p-4 shadow-sm",
+        reviewMode &&
+          "rounded-none border-0 p-0 shadow-none -mx-4 px-4 border-b border-line pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0",
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className="text-[18px] leading-6 font-semibold text-ink">
           {draft.name}
         </p>
-        <button
-          type="button"
-          className="shrink-0 text-caption"
-          onClick={onDismiss}
-          aria-label="Cancel surgery entry"
-        >
-          <X className="size-5" />
-        </button>
+        {reviewMode ? null : (
+          <button
+            type="button"
+            className="shrink-0 text-caption"
+            onClick={onDismiss}
+            aria-label="Cancel surgery entry"
+          >
+            <X className="size-5" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-5">
@@ -1639,12 +1634,14 @@ function SurgeryEntryCard({
         />
       </div>
 
-      <EntryCardSaveButton
-        isEditing={isEditing}
-        addLabel="Add surgery"
-        disabled={!isSurgeryComplete(draft)}
-        onSave={onSave}
-      />
+      {reviewMode ? null : (
+        <EntryCardSaveButton
+          isEditing={isEditing}
+          addLabel="Add surgery"
+          disabled={!isSurgeryComplete(draft)}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }
@@ -1718,7 +1715,7 @@ export function SurgeriesStep() {
           {listedSurgeries.map((surgery) => (
             <div
               key={surgery.id}
-              className="flex items-start justify-between gap-3 rounded-[14px] border border-line bg-white px-4 py-3"
+              className="flex items-center justify-between gap-4 rounded-[14px] border border-line bg-white px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[16px] font-semibold text-ink">
