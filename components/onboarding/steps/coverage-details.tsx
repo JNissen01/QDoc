@@ -639,6 +639,24 @@ function formatCardNumber(value: string) {
     .replace(/(\d{4})(?=\d)/g, "$1 ");
 }
 
+const PAYMENT_INTRO_ITEMS = [
+  {
+    icon: Stethoscope,
+    title: "$90 per Visit",
+    body: "With a doctor",
+  },
+  {
+    icon: HeartPulse,
+    title: "$50 per Visit",
+    body: "With a nurse practitioner",
+  },
+  {
+    icon: Clock,
+    title: "$70 late cancellation fee",
+    body: "For missing or cancelling appointments with less than 24h notice.",
+  },
+] as const;
+
 export function PaymentIntroStep() {
   const { goNext } = useStepNav("payment-intro");
 
@@ -652,42 +670,24 @@ export function PaymentIntroStep() {
       }
     >
       <ol className="relative space-y-[62px]">
-        {[
-          {
-            icon: Stethoscope,
-            title: "$90 per Visit",
-            body: "With a doctor",
-          },
-          {
-            icon: HeartPulse,
-            title: "$50 per Visit",
-            body: "With a nurse practitioner",
-          },
-          {
-            icon: Clock,
-            title: "$70 late cancellation fee",
-            body: "For missing or cancelling appointments with less than 24h notice",
-          },
-        ].map((item, index, items) => (
+        {PAYMENT_INTRO_ITEMS.map((item, index, items) => (
           <li
             key={item.title}
-            className="relative flex w-full items-center justify-start gap-5 self-stretch"
+            className="relative flex w-full items-center justify-start gap-[22px] self-stretch"
           >
             <span className="relative shrink-0">
-              <IconWell className="relative z-10 size-[4.125rem] rounded-[0.75rem] border-2 border-line">
-                <item.icon className="size-[2.125rem]" strokeWidth={1.8} />
+              <IconWell className="relative z-10 size-[66px] rounded-[12px] border-2 border-line bg-white">
+                <item.icon className="size-[34px]" strokeWidth={1.8} />
               </IconWell>
               {index < items.length - 1 ? (
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute top-[2.0625rem] left-1/2 z-0 w-px -translate-x-1/2 bg-action"
-                  style={{
-                    height: "calc(2.0625rem + 62px + 2.0625rem)",
-                  }}
+                  className="pointer-events-none absolute top-[33px] left-1/2 z-0 w-0.5 -translate-x-1/2 bg-line"
+                  style={{ height: "calc(33px + 62px + 33px)" }}
                 />
               ) : null}
             </span>
-            <div className="min-w-0 flex-1 pt-0.5">
+            <div className="min-w-0 flex-1">
               <p className="text-[16px] leading-[22px] font-semibold text-ink">
                 {item.title}
               </p>
