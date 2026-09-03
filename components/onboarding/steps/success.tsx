@@ -18,6 +18,7 @@ export function SuccessStep() {
   return (
     <OnboardingShell
       step="success"
+      showExit={false}
       title="You’re all set"
       subtitle="Your QDoc profile is ready. Book a visit when you need care for a non-emergent issue."
       footer={
