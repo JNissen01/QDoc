@@ -590,122 +590,6 @@ export function ConfirmMedicalProfileStep() {
       </div>
       </ReviewGroup>
 
-      <ReviewGroup
-        title="Care team"
-        subtitle="You can edit your care provider and pharmacy information from the dashboard"
-      >
-      <div
-        className={cn(
-          "overflow-hidden rounded-[14px] border bg-white px-4",
-          careTeamEditing ? "border-action" : "border-line",
-        )}
-      >
-        <ConfirmRow
-          label="Family doctor"
-          value={formatFamilyDoctorSummary(
-            state.hasFamilyDoctor,
-            state.familyDoctor,
-          )}
-          editing={careTeamEditing}
-          active={activeField === "family-doctor"}
-          onActivate={() => setActiveField("family-doctor")}
-        >
-          {activeField === "family-doctor" ? (
-            <div className="mt-2 space-y-3">
-              <div className="flex gap-2">
-                <ConfirmChip
-                  selected={state.hasFamilyDoctor === true}
-                  onClick={() => update({ hasFamilyDoctor: true })}
-                >
-                  Yes
-                </ConfirmChip>
-                <ConfirmChip
-                  selected={state.hasFamilyDoctor === false}
-                  onClick={() =>
-                    update({ hasFamilyDoctor: false, familyDoctor: null })
-                  }
-                >
-                  No
-                </ConfirmChip>
-              </div>
-              {state.hasFamilyDoctor ? (
-                <>
-                  <SearchField
-                    placeholder="Search clinics"
-                    value={clinicQuery}
-                    onChange={(event) => setClinicQuery(event.target.value)}
-                  />
-                  <div className="max-h-40 space-y-2 overflow-y-auto">
-                    {clinicResults.map((clinic) => (
-                      <SelectorCard
-                        key={clinic.id}
-                        selected={state.familyDoctor?.id === clinic.id}
-                        title={clinic.name}
-                        description={clinic.address}
-                        leading={
-                          <RadioDot selected={state.familyDoctor?.id === clinic.id} />
-                        }
-                        onClick={() => update({ familyDoctor: clinic })}
-                      />
-                    ))}
-                  </div>
-                </>
-              ) : null}
-            </div>
-          ) : null}
-        </ConfirmRow>
-
-        <ConfirmRow
-          label="Pharmacy"
-          value={formatPharmacySummary(state.pharmacy)}
-          editing={careTeamEditing}
-          active={activeField === "pharmacy"}
-          onActivate={() => setActiveField("pharmacy")}
-        >
-          {activeField === "pharmacy" ? (
-            <div className="mt-2 space-y-3">
-              <SearchField
-                placeholder="Search pharmacies"
-                value={pharmacyQuery}
-                onChange={(event) => setPharmacyQuery(event.target.value)}
-              />
-              <div className="max-h-40 space-y-2 overflow-y-auto">
-                {pharmacyResults.map((pharmacy) => (
-                  <SelectorCard
-                    key={pharmacy.id}
-                    selected={state.pharmacy?.id === pharmacy.id}
-                    title={pharmacy.name}
-                    description={`${pharmacy.address} · ${pharmacy.phone}`}
-                    leading={
-                      <RadioDot selected={state.pharmacy?.id === pharmacy.id} />
-                    }
-                    onClick={() => update({ pharmacy })}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : null}
-        </ConfirmRow>
-
-        {careTeamEditing ? (
-          <div className="flex items-center gap-3 py-3">
-            <GhostButton
-              className="min-w-0 w-auto flex-1 basis-0"
-              onClick={cancelSectionEdit}
-            >
-              Cancel
-            </GhostButton>
-            <PrimaryButton
-              className="h-10 min-w-0 w-auto flex-1 basis-0 text-[16px] leading-[22px]"
-              onClick={stopSectionEdit}
-            >
-              Confirm Edits
-            </PrimaryButton>
-          </div>
-        ) : null}
-      </div>
-      </ReviewGroup>
-
       {hasHistory ? (
         <ReviewGroup
           title="Medical history"
@@ -765,6 +649,127 @@ export function ConfirmMedicalProfileStep() {
           )}
         </ReviewGroup>
       ) : null}
+
+      <ReviewGroup
+        title="Care team"
+        subtitle="You can edit your care provider and pharmacy information from the dashboard"
+      >
+        <div
+          className={cn(
+            "overflow-hidden rounded-[14px] border bg-white px-4",
+            careTeamEditing ? "border-action" : "border-line",
+          )}
+        >
+          <ConfirmRow
+            label="Family doctor"
+            value={formatFamilyDoctorSummary(
+              state.hasFamilyDoctor,
+              state.familyDoctor,
+            )}
+            editing={careTeamEditing}
+            active={activeField === "family-doctor"}
+            onActivate={() => setActiveField("family-doctor")}
+          >
+            {activeField === "family-doctor" ? (
+              <div className="mt-2 space-y-3">
+                <div className="flex gap-2">
+                  <ConfirmChip
+                    selected={state.hasFamilyDoctor === true}
+                    onClick={() => update({ hasFamilyDoctor: true })}
+                  >
+                    Yes
+                  </ConfirmChip>
+                  <ConfirmChip
+                    selected={state.hasFamilyDoctor === false}
+                    onClick={() =>
+                      update({ hasFamilyDoctor: false, familyDoctor: null })
+                    }
+                  >
+                    No
+                  </ConfirmChip>
+                </div>
+                {state.hasFamilyDoctor ? (
+                  <>
+                    <SearchField
+                      placeholder="Search clinics"
+                      value={clinicQuery}
+                      onChange={(event) => setClinicQuery(event.target.value)}
+                    />
+                    <div className="max-h-40 space-y-2 overflow-y-auto">
+                      {clinicResults.map((clinic) => (
+                        <SelectorCard
+                          key={clinic.id}
+                          selected={state.familyDoctor?.id === clinic.id}
+                          title={clinic.name}
+                          description={clinic.address}
+                          leading={
+                            <RadioDot
+                              selected={
+                                state.familyDoctor?.id === clinic.id
+                              }
+                            />
+                          }
+                          onClick={() => update({ familyDoctor: clinic })}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : null}
+              </div>
+            ) : null}
+          </ConfirmRow>
+
+          <ConfirmRow
+            label="Pharmacy"
+            value={formatPharmacySummary(state.pharmacy)}
+            editing={careTeamEditing}
+            active={activeField === "pharmacy"}
+            onActivate={() => setActiveField("pharmacy")}
+          >
+            {activeField === "pharmacy" ? (
+              <div className="mt-2 space-y-3">
+                <SearchField
+                  placeholder="Search pharmacies"
+                  value={pharmacyQuery}
+                  onChange={(event) => setPharmacyQuery(event.target.value)}
+                />
+                <div className="max-h-40 space-y-2 overflow-y-auto">
+                  {pharmacyResults.map((pharmacy) => (
+                    <SelectorCard
+                      key={pharmacy.id}
+                      selected={state.pharmacy?.id === pharmacy.id}
+                      title={pharmacy.name}
+                      description={`${pharmacy.address} · ${pharmacy.phone}`}
+                      leading={
+                        <RadioDot selected={state.pharmacy?.id === pharmacy.id} />
+                      }
+                      onClick={() => update({ pharmacy })}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </ConfirmRow>
+
+          {careTeamEditing ? (
+            <div className="flex items-center gap-3 py-3">
+              <GhostButton
+                className="min-w-0 w-auto flex-1 basis-0"
+                onClick={cancelSectionEdit}
+              >
+                Cancel
+              </GhostButton>
+              <PrimaryButton
+                className="h-10 min-w-0 w-auto flex-1 basis-0 text-[16px] leading-[22px]"
+                onClick={stopSectionEdit}
+              >
+                Confirm Edits
+              </PrimaryButton>
+            </div>
+          ) : null}
+        </div>
+      </ReviewGroup>
+
       </div>
     </OnboardingShell>
   );
