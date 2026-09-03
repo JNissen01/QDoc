@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ArrowRight, Pencil, ScanLine, Search, Trash2, X } from "lucide-react";
 import { CirclePlusIcon } from "@/components/brand/circle-plus-icon";
 import { OnboardingShell } from "@/components/onboarding/shell";
@@ -8,27 +8,23 @@ import {
   CheckBox,
   InfoNote,
   PrimaryButton,
-  SearchField,
   SelectorCard,
   StepFooter,
 } from "@/components/onboarding/primitives";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useStepNav } from "@/components/onboarding/use-step-nav";
 import {
+  COMMON_ALLERGIES,
+  COMMON_CONDITIONS,
   COMMON_MEDICATIONS,
+  COMMON_SURGERIES,
   delay,
   MEDICATION_DOSAGES,
   MEDICATION_FREQUENCIES,
+  MOCK_ALLERGY,
   MOCK_MEDICATION,
 } from "@/lib/mocks";
 import type { HistoryCategory, Medication } from "@/lib/onboarding-state";
+import type { StepId } from "@/lib/onboarding-flow";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,48 +57,22 @@ const HISTORY_OPTIONS: {
   { value: "none", title: "None of these apply to me" },
 ];
 
-const UNDEVELOPED_HISTORY_CATEGORIES = new Set<HistoryCategory>([
-  "allergies",
-  "conditions",
-  "surgeries",
-]);
-
-function selectableHistoryCategories(categories: HistoryCategory[]) {
-  return categories.filter(
-    (category) => !UNDEVELOPED_HISTORY_CATEGORIES.has(category),
-  );
-}
-
 export function MedicalHistoryStep() {
   const { state, update, goNext } = useStepNav("medical-history");
-  const selected = selectableHistoryCategories(state.historyCategories);
-  const [undevelopedOpen, setUndevelopedOpen] = useState(false);
-
-  useEffect(() => {
-    const cleaned = selectableHistoryCategories(state.historyCategories);
-    if (cleaned.length !== state.historyCategories.length) {
-      update({ historyCategories: cleaned });
-    }
-  }, [state.historyCategories, update]);
-
-  function persistSelectable(next: HistoryCategory[]) {
-    update({ historyCategories: selectableHistoryCategories(next) });
-  }
+  const selected = state.historyCategories;
 
   function handleSelect(category: HistoryCategory) {
-    if (UNDEVELOPED_HISTORY_CATEGORIES.has(category)) {
-      setUndevelopedOpen(true);
-      return;
-    }
     if (category === "none") {
-      persistSelectable(selected.includes("none") ? [] : ["none"]);
+      update({
+        historyCategories: selected.includes("none") ? [] : ["none"],
+      });
       return;
     }
     const withoutNone = selected.filter((item) => item !== "none");
     const next = withoutNone.includes(category)
       ? withoutNone.filter((item) => item !== category)
       : [...withoutNone, category];
-    persistSelectable(next);
+    update({ historyCategories: next });
   }
 
   return (
@@ -140,29 +110,6 @@ export function MedicalHistoryStep() {
           You can always add more later from your profile.
         </InfoNote>
       </div>
-
-      <Dialog open={undevelopedOpen} onOpenChange={setUndevelopedOpen}>
-        <DialogContent
-          showCloseButton={false}
-          className="gap-5 rounded-[20px] border border-line bg-white p-6 text-ink ring-0 sm:max-w-sm"
-        >
-          <DialogHeader className="gap-2 text-left">
-            <DialogTitle className="font-sans text-[20px] leading-[26px] font-semibold tracking-normal text-ink">
-              These sections aren’t fully built in this prototype.
-            </DialogTitle>
-            <DialogDescription className="text-[16px] leading-[22px] font-normal text-body">
-              Allergies, ongoing conditions, and past surgeries would follow the
-              same pattern as medications—search, common options, and an
-              expanded card for details. That flow hasn’t been developed yet.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mx-0 mb-0 flex flex-col gap-2 rounded-none border-0 bg-transparent p-0 sm:flex-col sm:justify-stretch">
-            <PrimaryButton onClick={() => setUndevelopedOpen(false)}>
-              Got it
-            </PrimaryButton>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </OnboardingShell>
   );
 }
@@ -766,5 +713,215 @@ export function MedicationsStep() {
         />
       )}
     </OnboardingShell>
+  );
+}
+
+type NamedHistoryKey = "allergies" | "conditions" | "surgeries";
+
+function namesMatch(left: string, right: string) {
+  return left.trim().toLowerCase() === right.trim().toLowerCase();
+}
+
+function NamedHistoryListStep({
+  step,
+  title,
+  subtitle,
+  fieldLabel,
+  placeholder,
+  commonLabel,
+  commonItems,
+  scanLabel,
+  mockScanValue,
+  itemNoun,
+}: {
+  step: StepId & NamedHistoryKey;
+  title: string;
+  subtitle: string;
+  fieldLabel: string;
+  placeholder: string;
+  commonLabel: string;
+  commonItems: string[];
+  scanLabel?: string;
+  mockScanValue?: string;
+  itemNoun: string;
+}) {
+  const { state, update, goNext } = useStepNav(step);
+  const items = state[step];
+  const [query, setQuery] = useState("");
+  const [scanning, setScanning] = useState(false);
+
+  function includesName(name: string) {
+    return items.some((item) => namesMatch(item, name));
+  }
+
+  function add(name: string) {
+    const value = name.trim();
+    if (!value || includesName(value)) {
+      setQuery("");
+      return;
+    }
+    update({ [step]: [...items, value] });
+    setQuery("");
+  }
+
+  function remove(name: string) {
+    update({
+      [step]: items.filter((item) => !namesMatch(item, name)),
+    });
+  }
+
+  function toggle(name: string) {
+    if (includesName(name)) remove(name);
+    else add(name);
+  }
+
+  async function scan() {
+    if (!mockScanValue) return;
+    setScanning(true);
+    await delay(1000);
+    add(mockScanValue);
+    setScanning(false);
+  }
+
+  const canContinue = items.length > 0;
+  const pendingQuery = query.trim();
+
+  return (
+    <OnboardingShell
+      step={step}
+      title={title}
+      subtitle={subtitle}
+      footer={
+        <StepFooter onSkip={() => goNext()}>
+          <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
+            Continue
+          </PrimaryButton>
+        </StepFooter>
+      }
+    >
+      {scanLabel ? (
+        <button
+          type="button"
+          className="mb-5 inline-flex items-center gap-2 text-[16px] font-semibold text-action disabled:text-caption"
+          disabled={scanning}
+          onClick={scan}
+        >
+          <ScanLine className="size-4" />
+          {scanning ? "Scanning label…" : scanLabel}
+        </button>
+      ) : null}
+
+      {items.length > 0 ? (
+        <div className="mb-4 space-y-3">
+          {items.map((item) => (
+            <div
+              key={item}
+              className="flex items-center justify-between rounded-[14px] border border-line bg-white px-4 py-3"
+            >
+              <p className="text-[16px] font-semibold text-ink">{item}</p>
+              <button
+                type="button"
+                aria-label={`Delete ${itemNoun}`}
+                onClick={() => remove(item)}
+                className="text-danger"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      <div>
+        <p className="mb-2 text-[13px] leading-4 font-normal text-ink">
+          {fieldLabel}
+        </p>
+        <div className="relative">
+          <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-caption" />
+          <Input
+            value={query}
+            placeholder={placeholder}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                if (pendingQuery) add(pendingQuery);
+              }
+            }}
+            className="h-[70px] rounded-[14px] border border-line bg-white pr-4 pl-11 text-[16px] leading-[22px] text-ink shadow-none placeholder:text-fog focus-visible:border-2 focus-visible:border-action focus-visible:ring-0 md:text-[16px]"
+          />
+        </div>
+        {pendingQuery ? (
+          <button
+            type="button"
+            className="mt-2 text-[14px] font-semibold text-action"
+            onClick={() => add(pendingQuery)}
+          >
+            Add “{pendingQuery}”
+          </button>
+        ) : null}
+        <p className="mt-5 mb-2 text-[13px] leading-4 font-normal text-ink">
+          {commonLabel}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {commonItems.map((item) => (
+            <SoftChip
+              key={item}
+              selected={includesName(item)}
+              onClick={() => toggle(item)}
+            >
+              {item}
+            </SoftChip>
+          ))}
+        </div>
+      </div>
+    </OnboardingShell>
+  );
+}
+
+export function AllergiesStep() {
+  return (
+    <NamedHistoryListStep
+      step="allergies"
+      title="Any allergies we should know about?"
+      subtitle="Enter the name of any drug, food, or environmental allergies, or scan a label to enter automatically."
+      fieldLabel="Allergy name"
+      placeholder="e.g. Peanuts"
+      commonLabel="Common allergies"
+      commonItems={COMMON_ALLERGIES}
+      scanLabel="Scan Allergy"
+      mockScanValue={MOCK_ALLERGY}
+      itemNoun="allergy"
+    />
+  );
+}
+
+export function ConditionsStep() {
+  return (
+    <NamedHistoryListStep
+      step="conditions"
+      title="Do you have any ongoing conditions?"
+      subtitle="Enter diagnoses you’re currently managing so your provider has the full picture."
+      fieldLabel="Condition name"
+      placeholder="e.g. Asthma"
+      commonLabel="Common conditions"
+      commonItems={COMMON_CONDITIONS}
+      itemNoun="condition"
+    />
+  );
+}
+
+export function SurgeriesStep() {
+  return (
+    <NamedHistoryListStep
+      step="surgeries"
+      title="Have you had any past surgeries?"
+      subtitle="Add prior procedures or operations so they’re on file for this visit."
+      fieldLabel="Surgery name"
+      placeholder="e.g. Appendectomy"
+      commonLabel="Common surgeries"
+      commonItems={COMMON_SURGERIES}
+      itemNoun="surgery"
+    />
   );
 }

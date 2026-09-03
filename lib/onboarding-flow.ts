@@ -29,6 +29,9 @@ export const STEP_IDS = [
   "pronouns",
   "medical-history",
   "medications",
+  "allergies",
+  "conditions",
+  "surgeries",
   "family-doctor",
   "pharmacy",
   "success",
@@ -112,6 +115,9 @@ export function getProgress(
     case "medical-history":
       return { current: 3, total: PHASE2 };
     case "medications":
+    case "allergies":
+    case "conditions":
+    case "surgeries":
       return { current: 4, total: PHASE2 };
     case "family-doctor":
       return { current: 5, total: PHASE2 };
@@ -126,6 +132,36 @@ export function getProgress(
 
 function hasCategory(state: OnboardingState, category: HistoryCategory) {
   return state.historyCategories.includes(category);
+}
+
+const HISTORY_FOLLOW_UP_STEPS = [
+  "medications",
+  "allergies",
+  "conditions",
+  "surgeries",
+] as const satisfies readonly StepId[];
+
+/** Gated detail screens that follow medical history, in prototype order. */
+export function clinicalFollowUps(state: OnboardingState): StepId[] {
+  return HISTORY_FOLLOW_UP_STEPS.filter((step) => hasCategory(state, step));
+}
+
+function nextAfterHistory(state: OnboardingState): StepId {
+  return clinicalFollowUps(state)[0] ?? "family-doctor";
+}
+
+function nextAfterFollowUp(current: StepId, state: OnboardingState): StepId {
+  const steps = clinicalFollowUps(state);
+  const index = steps.indexOf(current);
+  if (index === -1) return nextAfterHistory(state);
+  return steps[index + 1] ?? "family-doctor";
+}
+
+function prevBeforeFollowUp(current: StepId, state: OnboardingState): StepId {
+  const steps = clinicalFollowUps(state);
+  const index = steps.indexOf(current);
+  if (index <= 0) return "medical-history";
+  return steps[index - 1];
 }
 
 export function getNextStep(
@@ -189,11 +225,12 @@ export function getNextStep(
     case "pronouns":
       return "medical-history";
     case "medical-history":
-      return hasCategory(state, "medications")
-        ? "medications"
-        : "family-doctor";
+      return nextAfterHistory(state);
     case "medications":
-      return "family-doctor";
+    case "allergies":
+    case "conditions":
+    case "surgeries":
+      return nextAfterFollowUp(current, state);
     case "family-doctor":
       return "pharmacy";
     case "pharmacy":
@@ -265,11 +302,14 @@ export function getPrevStep(
     case "medical-history":
       return "pronouns";
     case "medications":
-      return "medical-history";
-    case "family-doctor":
-      return hasCategory(state, "medications")
-        ? "medications"
-        : "medical-history";
+    case "allergies":
+    case "conditions":
+    case "surgeries":
+      return prevBeforeFollowUp(current, state);
+    case "family-doctor": {
+      const followUps = clinicalFollowUps(state);
+      return followUps[followUps.length - 1] ?? "medical-history";
+    }
     case "pharmacy":
       return "family-doctor";
     case "success":

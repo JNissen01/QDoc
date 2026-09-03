@@ -41,7 +41,7 @@ To see every screen in journey order, open [http://localhost:43173/flow](http://
   - Private insurance → MSH policy details
   - Uninsured → pricing intro → payment details (optional NIHB / IFHP IDs)
 - People outside the service area hit an off-ramp and cannot continue.
-- After coverage is set, you can skip Phase 2 (clinical background) or complete pharmacy, history, medications, and allergies.
+- After coverage is set, you can skip Phase 2 (clinical background) or complete pharmacy, history, medications, allergies, conditions, and surgeries.
 - Dashboard actions (Book a Visit, Inbox, and so on) are visual only.
 
 ## Stack

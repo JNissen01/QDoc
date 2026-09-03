@@ -60,12 +60,38 @@ export const MOCK_MEDICATION = {
   frequency: "Twice daily",
 };
 
+export const MOCK_ALLERGY = "Peanuts";
+
 export const MOCK_PAYMENT_CARD = {
   cardholderName: "Jane Doe",
   cardNumber: "4242 4242 4242 4242",
   cardExpiry: "12/28",
   cardCvv: "123",
 };
+
+export const COMMON_ALLERGIES = [
+  "Peanuts",
+  "Penicillin",
+  "Latex",
+  "Shellfish",
+  "Pollen",
+];
+
+export const COMMON_CONDITIONS = [
+  "Anxiety",
+  "Depression",
+  "Asthma",
+  "Diabetes",
+  "Hypertension",
+];
+
+export const COMMON_SURGERIES = [
+  "Appendectomy",
+  "Tonsillectomy",
+  "C-section",
+  "Gallbladder",
+  "Knee replacement",
+];
 
 export const COMMON_MEDICATIONS = [
   "Lexapro",
