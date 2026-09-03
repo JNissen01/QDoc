@@ -80,10 +80,6 @@ const TITLES: Record<StepId, { title: string; note?: string }> = {
     note: "Email · Create Account CTA",
   },
   "confirm-email": { title: "Confirm your email", note: "5-digit code · 1/6" },
-  contact: {
-    title: "Contact information",
-    note: "Phone · 2/6",
-  },
   password: {
     title: "Create a password",
     note: "Password · 2/6",
