@@ -237,6 +237,12 @@ export function BiometricsStep() {
 
   const heightSuffix = system === "metric" ? "cm" : "ft";
   const weightSuffix = system === "metric" ? "kg" : "lbs";
+  const parsedHeight = parseHeightToCm(heightDraft, system);
+  const parsedWeight = parseWeightToKg(weightDraft, system);
+  const canContinue = Boolean(
+    (parsedHeight !== null && parsedHeight !== "") ||
+      (parsedWeight !== null && parsedWeight !== ""),
+  );
 
   return (
     <OnboardingShell
@@ -245,7 +251,9 @@ export function BiometricsStep() {
       subtitle="Height and weight help your provider dose and document accurately. You can skip any field you don’t know."
       footer={
         <StepFooter onSkip={() => goNext()}>
-          <PrimaryButton onClick={() => goNext()}>Continue</PrimaryButton>
+          <PrimaryButton disabled={!canContinue} onClick={() => goNext()}>
+            Continue
+          </PrimaryButton>
         </StepFooter>
       }
     >
