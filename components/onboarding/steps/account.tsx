@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Eye } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
@@ -259,9 +259,16 @@ export function ConfirmEmailStep() {
 }
 
 export function PasswordStep() {
-  const { state, update, goNext } = useStepNav("password");
-  const [confirm, setConfirm] = useState(state.password);
+  const { state, update, goNext, ready } = useStepNav("password");
+  const [confirm, setConfirm] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  // Hydrate confirm once localStorage state is ready (e.g. returning to this step).
+  useEffect(() => {
+    if (!ready) return;
+    setConfirm(state.password);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only sync on ready, not every keystroke
+  }, [ready]);
 
   const passwordOk = state.password.length >= 8;
   const confirmOk = confirm.length > 0 && confirm === state.password;
