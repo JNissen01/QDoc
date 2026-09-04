@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Eye } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
@@ -95,15 +95,14 @@ function PasswordField({
 export function AccountIntroStep() {
   const { state, update, goNext } = useStepNav("account-intro");
   const [submitted, setSubmitted] = useState(false);
+  const emailValid = isValidEmail(state.email);
 
   const emailError =
-    submitted && !isValidEmail(state.email)
-      ? "Enter a valid email address"
-      : undefined;
+    submitted && !emailValid ? "Enter a valid email address" : undefined;
 
   function continueAccount() {
     setSubmitted(true);
-    if (!isValidEmail(state.email)) {
+    if (!emailValid) {
       return;
     }
     goNext();
@@ -115,7 +114,9 @@ export function AccountIntroStep() {
       title="Now that we know you’re eligible, lets set up your account!"
       subtitle="We’ll send a 5-digit code to your email to confirm it’s you."
       footer={
-        <PrimaryButton onClick={continueAccount}>Create Account</PrimaryButton>
+        <PrimaryButton disabled={!emailValid} onClick={continueAccount}>
+          Create Account
+        </PrimaryButton>
       }
     >
       <Field
@@ -137,14 +138,13 @@ export function ContactStep() {
   const [submitted, setSubmitted] = useState(false);
 
   const phoneDigits = state.phone.replace(/\D/g, "");
+  const phoneValid = phoneDigits.length >= 10;
   const phoneError =
-    submitted && phoneDigits.length < 10
-      ? "Enter a valid phone number"
-      : undefined;
+    submitted && !phoneValid ? "Enter a valid phone number" : undefined;
 
   function continueContact() {
     setSubmitted(true);
-    if (phoneDigits.length < 10) {
+    if (!phoneValid) {
       return;
     }
     goNext();
@@ -155,7 +155,11 @@ export function ContactStep() {
       step="contact"
       title="Contact information"
       subtitle="Enter your phone number below. We’ll use this number if we need to reach you about your care."
-      footer={<PrimaryButton onClick={continueContact}>Next</PrimaryButton>}
+      footer={
+        <PrimaryButton disabled={!phoneValid} onClick={continueContact}>
+          Next
+        </PrimaryButton>
+      }
     >
       <Field
         aria-label="Phone"
@@ -255,22 +259,29 @@ export function ConfirmEmailStep() {
 }
 
 export function PasswordStep() {
-  const { state, update, goNext } = useStepNav("password");
-  const [confirm, setConfirm] = useState(state.password);
+  const { state, update, goNext, ready } = useStepNav("password");
+  const [confirm, setConfirm] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  // Hydrate confirm once localStorage state is ready (e.g. returning to this step).
+  useEffect(() => {
+    if (!ready) return;
+    setConfirm(state.password);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only sync on ready, not every keystroke
+  }, [ready]);
+
+  const passwordOk = state.password.length >= 8;
+  const confirmOk = confirm.length > 0 && confirm === state.password;
+  const canContinue = passwordOk && confirmOk;
+
   const passwordError =
-    submitted && state.password.length < 8
-      ? "Use at least 8 characters"
-      : undefined;
+    submitted && !passwordOk ? "Use at least 8 characters" : undefined;
   const confirmError =
-    submitted && confirm !== state.password
-      ? "Passwords don’t match"
-      : undefined;
+    submitted && !confirmOk ? "Passwords don’t match" : undefined;
 
   function continuePassword() {
     setSubmitted(true);
-    if (state.password.length < 8 || confirm !== state.password) {
+    if (!canContinue) {
       return;
     }
     goNext();
@@ -283,7 +294,9 @@ export function PasswordStep() {
       subtitle="Choose a strong password to keep your account secure."
       footer={
         <div className="space-y-1">
-          <PrimaryButton onClick={continuePassword}>Next</PrimaryButton>
+          <PrimaryButton disabled={!canContinue} onClick={continuePassword}>
+            Next
+          </PrimaryButton>
           <GhostButton type="button" disabled className="text-caption">
             Use Face ID
           </GhostButton>
