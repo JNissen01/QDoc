@@ -77,7 +77,7 @@ export function DashboardScreen() {
 
       {showMedicalProfileCta ? (
         <TonalButton
-          className="mt-6 h-14 rounded-[14px] bg-[#D6E6FF] text-[16px] leading-[22px] font-semibold"
+          className="mt-6 h-14 rounded-[14px] border-2 border-transparent bg-[#D6E6FF] text-[16px] leading-[22px] font-semibold shadow-[0_2px_8px_rgba(30,27,75,0.08)] active:border-action"
           onClick={() => router.push(hrefFor("biometrics"))}
         >
           Complete medical profile
