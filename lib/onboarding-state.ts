@@ -113,6 +113,11 @@ export type OnboardingState = {
   allergies: Allergy[];
   conditions: Condition[];
   surgeries: Surgery[];
+  /**
+   * Set when the user leaves the Phase 1 checkpoint for the dashboard
+   * without starting the medical profile (Go to Dashboard).
+   */
+  medicalProfileDeferred: boolean;
 };
 
 export const defaultOnboardingState: OnboardingState = {
@@ -160,6 +165,7 @@ export const defaultOnboardingState: OnboardingState = {
   allergies: [],
   conditions: [],
   surgeries: [],
+  medicalProfileDeferred: false,
 };
 
 export const STORAGE_KEY = "qdoc-onboarding-draft";
@@ -191,4 +197,9 @@ export function hasStartedMedicalProfile(state: OnboardingState) {
       state.pharmacy ||
       state.hasFamilyDoctor !== null,
   );
+}
+
+/** Dashboard CTA: hide after Phase 2 progress or after skipping from checkpoint. */
+export function shouldShowMedicalProfileCta(state: OnboardingState) {
+  return !state.medicalProfileDeferred && !hasStartedMedicalProfile(state);
 }

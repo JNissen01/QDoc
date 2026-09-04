@@ -56,7 +56,10 @@ export function CheckpointStep() {
       title="Your account has been created successfully!"
       subtitle="This step is not required right now, but there may be more information needed before your first visit"
       footer={
-        <StepFooter onSkip={() => goTo("dashboard")} skipLabel="Go to Dashboard">
+        <StepFooter
+          onSkip={() => goTo("dashboard", { medicalProfileDeferred: true })}
+          skipLabel="Go to Dashboard"
+        >
           <PrimaryButton onClick={() => goNext()}>
             Complete Medical Profile
           </PrimaryButton>
