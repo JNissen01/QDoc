@@ -27,7 +27,7 @@ const TRUST_ITEMS = [
 ];
 
 export function WelcomeStep() {
-  const { goNext, goTo } = useStepNav("welcome");
+  const { goNext } = useStepNav("welcome");
 
   return (
     <OnboardingShell
@@ -42,8 +42,8 @@ export function WelcomeStep() {
             Already Registered?{" "}
             <button
               type="button"
-              className="font-semibold text-action"
-              onClick={() => goTo("dashboard")}
+              disabled
+              className="font-semibold text-caption"
             >
               Sign In
             </button>

@@ -27,6 +27,24 @@ function getNameError(value: string) {
   return undefined;
 }
 
+/** Canadian postal code: A1A 1A1 (6 chars + space after the third). */
+function formatPostalCode(value: string) {
+  const cleaned = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  let out = "";
+  for (const char of cleaned) {
+    if (out.length >= 6) break;
+    const wantLetter = out.length % 2 === 0;
+    if (wantLetter && /[A-Z]/.test(char)) out += char;
+    else if (!wantLetter && /[0-9]/.test(char)) out += char;
+  }
+  if (out.length > 3) return `${out.slice(0, 3)} ${out.slice(3)}`;
+  return out;
+}
+
+function isValidPostalCode(value: string) {
+  return /^[A-Z]\d[A-Z] \d[A-Z]\d$/.test(value);
+}
+
 export function NameStep() {
   const { state, update, goNext } = useStepNav("name");
   const firstNameError = getNameError(state.firstName);
@@ -216,7 +234,7 @@ export function AddressStep() {
   const { state, update, goNext } = useStepNav("address");
   const valid =
     state.address.trim() &&
-    state.postalCode.trim() &&
+    isValidPostalCode(state.postalCode) &&
     state.city.trim() &&
     state.province;
 
@@ -250,9 +268,12 @@ export function AddressStep() {
           <Field
             label="Postal code"
             placeholder="e.g. A1B 2C3"
+            autoComplete="postal-code"
+            inputMode="text"
+            maxLength={7}
             value={state.postalCode}
             onChange={(event) =>
-              update({ postalCode: event.target.value.toUpperCase() })
+              update({ postalCode: formatPostalCode(event.target.value) })
             }
           />
           <Field

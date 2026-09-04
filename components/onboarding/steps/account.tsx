@@ -284,7 +284,7 @@ export function PasswordStep() {
       footer={
         <div className="space-y-1">
           <PrimaryButton onClick={continuePassword}>Next</PrimaryButton>
-          <GhostButton type="button" onClick={() => {}}>
+          <GhostButton type="button" disabled className="text-caption">
             Use Face ID
           </GhostButton>
         </div>
