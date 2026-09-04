@@ -237,7 +237,12 @@ export function BiometricsStep() {
 
   const heightSuffix = system === "metric" ? "cm" : "ft";
   const weightSuffix = system === "metric" ? "kg" : "lbs";
-  const canContinue = Boolean(state.height.trim() || state.weight.trim());
+  const parsedHeight = parseHeightToCm(heightDraft, system);
+  const parsedWeight = parseWeightToKg(weightDraft, system);
+  const canContinue = Boolean(
+    (parsedHeight !== null && parsedHeight !== "") ||
+      (parsedWeight !== null && parsedWeight !== ""),
+  );
 
   return (
     <OnboardingShell
