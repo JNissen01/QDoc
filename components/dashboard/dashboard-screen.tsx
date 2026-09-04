@@ -20,8 +20,8 @@ import { useFlowPreview } from "@/components/flow/flow-preview-context";
 import { hrefFor } from "@/lib/onboarding-flow";
 import {
   displayFirstName,
-  hasStartedMedicalProfile,
   initialsFromName,
+  shouldShowMedicalProfileCta,
 } from "@/lib/onboarding-state";
 
 const ACTIONS = [
@@ -37,7 +37,7 @@ export function DashboardScreen() {
   const { state, reset } = useOnboarding();
   const initials = initialsFromName(state.firstName, state.lastName);
   const firstName = displayFirstName(state.firstName);
-  const showMedicalProfileCta = !hasStartedMedicalProfile(state);
+  const showMedicalProfileCta = shouldShowMedicalProfileCta(state);
 
   function restartPrototype() {
     reset();

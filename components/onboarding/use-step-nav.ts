@@ -15,7 +15,8 @@ export function useStepNav(step: StepId) {
     router.push(hrefFor(getNextStep(step, nextState)));
   }
 
-  function goTo(target: StepId | "dashboard") {
+  function goTo(target: StepId | "dashboard", patch?: Partial<OnboardingState>) {
+    if (patch) update(patch);
     router.push(hrefFor(target));
   }
 
