@@ -1277,7 +1277,7 @@ export function ConditionEntryCard({
 
         <div>
           <p className="mb-2 text-[14px] leading-4 font-medium text-ink">
-            How many years has it been since your diagnosis
+            Years since diagnosis
           </p>
           <CanvasSegmented
             value={draft.diagnosisYears}
