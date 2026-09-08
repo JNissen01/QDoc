@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowRight, Check, Pencil, ScanLine, Search, Trash2, X } from "lucide-react";
-import { CirclePlusIcon } from "@/components/brand/circle-plus-icon";
+import { ArrowRight, Pencil, ScanLine, Search, Trash2, X } from "lucide-react";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import {
   CheckBox,
@@ -127,12 +126,10 @@ function isPresetFrequency(value: string): value is FrequencyOption {
 
 function EntryCardSaveButton({
   isEditing,
-  addLabel,
   disabled,
   onSave,
 }: {
   isEditing: boolean;
-  addLabel: string;
   disabled: boolean;
   onSave: () => void;
 }) {
@@ -143,19 +140,7 @@ function EntryCardSaveButton({
       disabled={disabled}
       onClick={onSave}
     >
-      <span className="inline-flex items-center justify-center gap-2">
-        {isEditing ? (
-          <>
-            <Check className="size-5 shrink-0" strokeWidth={2.5} />
-            Confirm edits
-          </>
-        ) : (
-          <>
-            <CirclePlusIcon className="size-5 shrink-0" />
-            {addLabel}
-          </>
-        )}
-      </span>
+      {isEditing ? "Confirm edits" : "Submit"}
     </button>
   );
 }
@@ -633,7 +618,6 @@ export function MedicationEntryCard({
       {reviewMode ? null : (
         <EntryCardSaveButton
           isEditing={isEditing}
-          addLabel="Add medication"
           disabled={!isMedicationComplete(draft)}
           onSave={onSave}
         />
@@ -1054,7 +1038,6 @@ export function AllergyEntryCard({
       {reviewMode ? null : (
         <EntryCardSaveButton
           isEditing={isEditing}
-          addLabel="Add allergy"
           disabled={!isAllergyComplete(draft)}
           onSave={onSave}
         />
@@ -1291,7 +1274,6 @@ export function ConditionEntryCard({
       {reviewMode ? null : (
         <EntryCardSaveButton
           isEditing={isEditing}
-          addLabel="Add condition"
           disabled={!isConditionComplete(draft)}
           onSave={onSave}
         />
@@ -1637,7 +1619,6 @@ export function SurgeryEntryCard({
       {reviewMode ? null : (
         <EntryCardSaveButton
           isEditing={isEditing}
-          addLabel="Add surgery"
           disabled={!isSurgeryComplete(draft)}
           onSave={onSave}
         />
