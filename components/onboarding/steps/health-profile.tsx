@@ -127,12 +127,10 @@ function isPresetFrequency(value: string): value is FrequencyOption {
 
 function EntryCardSaveButton({
   isEditing,
-  addLabel,
   disabled,
   onSave,
 }: {
   isEditing: boolean;
-  addLabel: string;
   disabled: boolean;
   onSave: () => void;
 }) {
@@ -152,7 +150,7 @@ function EntryCardSaveButton({
         ) : (
           <>
             <CirclePlusIcon className="size-5 shrink-0" />
-            {addLabel}
+            Submit
           </>
         )}
       </span>
@@ -633,7 +631,6 @@ export function MedicationEntryCard({
       {reviewMode ? null : (
         <EntryCardSaveButton
           isEditing={isEditing}
-          addLabel="Add medication"
           disabled={!isMedicationComplete(draft)}
           onSave={onSave}
         />
@@ -1054,7 +1051,6 @@ export function AllergyEntryCard({
       {reviewMode ? null : (
         <EntryCardSaveButton
           isEditing={isEditing}
-          addLabel="Add allergy"
           disabled={!isAllergyComplete(draft)}
           onSave={onSave}
         />
@@ -1291,7 +1287,6 @@ export function ConditionEntryCard({
       {reviewMode ? null : (
         <EntryCardSaveButton
           isEditing={isEditing}
-          addLabel="Add condition"
           disabled={!isConditionComplete(draft)}
           onSave={onSave}
         />
@@ -1637,7 +1632,6 @@ export function SurgeryEntryCard({
       {reviewMode ? null : (
         <EntryCardSaveButton
           isEditing={isEditing}
-          addLabel="Add surgery"
           disabled={!isSurgeryComplete(draft)}
           onSave={onSave}
         />
