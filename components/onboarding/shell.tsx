@@ -160,14 +160,7 @@ export function OnboardingShell({
           </header>
         )}
 
-        <div
-          className={cn(
-            "flex-1 pb-4 text-left",
-            !(title || subtitle) && "mt-6",
-          )}
-        >
-          {children}
-        </div>
+        <div className="flex-1 pb-4 text-left">{children}</div>
 
         {footer ? (
           <div className="sticky bottom-0 shrink-0 bg-canvas pt-3 pb-1">
