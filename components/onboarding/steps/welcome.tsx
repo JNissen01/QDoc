@@ -51,7 +51,7 @@ export function WelcomeStep() {
         </div>
       }
     >
-      <div className="flex h-full w-full flex-col items-stretch justify-center">
+      <div className="mt-[34px] flex h-full w-full flex-col items-stretch justify-start">
         <div className="flex justify-center">
           <QDocLogo />
         </div>

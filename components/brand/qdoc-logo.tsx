@@ -24,7 +24,7 @@ export function QDocLogo({ className }: { className?: string }) {
           fill="#1E1B4B"
         />
       </svg>
-      <p className="mt-3 text-center text-[15px] leading-5 font-medium text-ink">
+      <p className="mt-3 text-center text-[16px] leading-5 font-medium text-[#1E1B4B]">
         Virtual Healthcare
       </p>
     </div>
