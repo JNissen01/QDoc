@@ -18,6 +18,17 @@ import {
 
 export { PhoneFrame };
 
+/** Account information (flow screens 5–11) — Back is hidden on these steps. */
+const ACCOUNT_INFORMATION_STEPS = new Set<StepId>([
+  "account-intro",
+  "confirm-email",
+  "password",
+  "contact",
+  "name",
+  "sex",
+  "address",
+]);
+
 /** Phase 2 clinical intake — Exit is shown on these steps by default. */
 const MEDICAL_PROFILE_STEPS = new Set<StepId>([
   "biometrics",
@@ -106,7 +117,8 @@ export function OnboardingShell({
   const [exitOpen, setExitOpen] = useState(false);
 
   const exitEnabled = showExit ?? MEDICAL_PROFILE_STEPS.has(step);
-  const showBack = !hideBack && Boolean(prev);
+  const showBack =
+    !hideBack && Boolean(prev) && !ACCOUNT_INFORMATION_STEPS.has(step);
   const showNavRow = showBack || exitEnabled;
 
   return (
