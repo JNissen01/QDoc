@@ -20,6 +20,7 @@ export { PhoneFrame };
 
 /** Screens that do not show the default Back control (flow map numbers). */
 const HIDE_BACK_STEPS = new Set<StepId>([
+  "service-area",
   "coverage",
   "account-intro",
   "confirm-email",
