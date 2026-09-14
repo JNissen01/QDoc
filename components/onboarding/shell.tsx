@@ -18,8 +18,9 @@ import {
 
 export { PhoneFrame };
 
-/** Account information (flow screens 5–11) — Back is hidden on these steps. */
-const ACCOUNT_INFORMATION_STEPS = new Set<StepId>([
+/** Screens that do not show the default Back control (flow map numbers). */
+const HIDE_BACK_STEPS = new Set<StepId>([
+  "coverage",
   "account-intro",
   "confirm-email",
   "password",
@@ -27,6 +28,20 @@ const ACCOUNT_INFORMATION_STEPS = new Set<StepId>([
   "name",
   "sex",
   "address",
+  "scan-card",
+  "issued-province",
+  "registration-number",
+  "health-card",
+  "dob",
+  "confirm-info",
+  "insurance-provider",
+  "insurance-policy",
+  "insurance-member",
+  "payment-intro",
+  "payment",
+  "biometrics",
+  "confirm-medical-profile",
+  "success",
 ]);
 
 /** Phase 2 clinical intake — Exit is shown on these steps by default. */
@@ -118,7 +133,7 @@ export function OnboardingShell({
 
   const exitEnabled = showExit ?? MEDICAL_PROFILE_STEPS.has(step);
   const showBack =
-    !hideBack && Boolean(prev) && !ACCOUNT_INFORMATION_STEPS.has(step);
+    !hideBack && Boolean(prev) && !HIDE_BACK_STEPS.has(step);
   const showNavRow = showBack || exitEnabled;
 
   return (
